@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/class_detail_bg"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/top_layout"
+        
+        layout="@layout/topbar" />
+
+    <ScrollView
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+	
+        <LinearLayout
+            android:id="@+id/parentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_1"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/head_gray"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:text="@string/summary_discipline"
+                android:textSize="@dimen/text_size_small" />
+
+            <LinearLayout
+                android:id="@+id/ly_rb_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <RatingBar
+                    android:id="@+id/rb_1"
+                    style="@style/foodRatingBarBig"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:max="5"
+                    android:numStars="5"
+                    android:rating="3"
+                    android:stepSize="1" />
+
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/group_discipline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dip" >
+
+                <RadioButton
+                    android:id="@+id/group1_bn1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="@string/summary_perfect"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group1_bn2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_good"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group1_bn3"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_well"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group1_bn4"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_bad"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tv_2"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/head_gray"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:text="@string/summary_health"
+                android:textSize="@dimen/text_size_small" />
+
+            <LinearLayout
+                android:id="@+id/ly_rb_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <RatingBar
+                    android:id="@+id/rb_2"
+                    style="@style/foodRatingBarBig"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:max="5"
+                    android:minHeight="30dp"
+                    android:numStars="5"
+                    android:rating="3"
+                    android:stepSize="1" />
+
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/group_health"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dip" >
+
+                <RadioButton
+                    android:id="@+id/group2_bn1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="@string/summary_perfect"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group2_bn2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_good"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group2_bn3"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_well"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <RadioButton
+                    android:id="@+id/group2_bn4"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dip"
+                    android:background="@drawable/class_summary"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/summary_bad"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/tv_3"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dip"
+                android:background="@color/head_gray"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:text="@string/summary_content"
+                android:textSize="@dimen/text_size_small" />
+
+            <EditText
+                android:id="@+id/et_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dip"
+                android:background="@drawable/summary_bg"
+                android:gravity="top"
+                android:hint="@string/content_hint"
+                android:minLines="6"
+                android:textColor="#444444"
+                android:textColorHint="#c2d2c9"
+                android:textSize="@dimen/text_size_normal" />
+
+            <TextView
+                android:id="@+id/tv_4"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dip"
+                android:background="@color/head_gray"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:text="@string/summary_homework"
+                android:textSize="@dimen/text_size_small" />
+
+            <EditText
+                android:id="@+id/et_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dip"
+                android:background="@drawable/summary_bg"
+                android:gravity="top"
+                android:hint="@string/homework_hint"
+                android:minLines="6"
+                android:textColor="#444444"
+                android:textColorHint="#c2d2c9"
+                android:textSize="@dimen/text_size_normal" />
+
+            <com.yujieshipin.crm.widget.NonScrollableGridView
+                android:id="@+id/grid_picture"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:columnWidth="@dimen/gridView_image_child_width"
+                android:horizontalSpacing="2.0dip"
+                android:listSelector="@color/white"
+                android:numColumns="auto_fit"
+                android:scrollingCache="false"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2.0dip" />
+            
+            <com.yujieshipin.crm.widget.NonScrollableGridView
+                android:id="@+id/grid_picture1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:columnWidth="@dimen/gridView_image_child_width"
+                android:horizontalSpacing="2.0dip"
+                android:listSelector="@color/white"
+                android:numColumns="auto_fit"
+                android:scrollingCache="false"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2.0dip" />
+
+        </LinearLayout>
+       
+     
+    </ScrollView>
+ <!-- 数据加载中提示 -->
+
+            <include
+                layout="@layout/list_loading_with_text"
+                android:visibility="gone" />
+
+            <!-- 数据加载失败提示 -->
+
+            <include layout="@layout/empty_error" />
+</LinearLayout>

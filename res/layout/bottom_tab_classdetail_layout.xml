@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="50dip"
+    android:layout_alignParentBottom="true"
+    android:background="@color/transparent" >
+
+    <com.yujieshipin.crm.widget.BottomTabLayout
+        android:id="@+id/bottom_tab_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/botton_tab_background"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <!-- 课程 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_curriculum"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_class_detail_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_newspaper_selector"
+                android:text="@string/course"
+                android:textSize="@dimen/text_size_micro" />
+        </FrameLayout>
+        <!-- 点名 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_roll_call"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_class_detail_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_clock_selector"
+                android:text="@string/roll_call"
+                android:textSize="@dimen/text_size_micro" />
+        </FrameLayout>
+        <!-- 课件 -->
+
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_classroom_course"
+            android:layout_width="0.0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_class_detail_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_arrow_down_selector"
+                android:text="@string/classroom_course"
+                android:textSize="@dimen/text_size_micro" />
+        </FrameLayout>
+
+        <!-- 测验 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_classroom_test"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_class_detail_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_crayon_selector"
+                android:text="@string/classroom_test"
+                android:textSize="@dimen/text_size_micro" />
+        </FrameLayout>
+
+        <!-- 总结 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_summary"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_class_detail_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_star_selector"
+                android:text="@string/summary"
+                android:textSize="@dimen/text_size_micro" />
+        </FrameLayout>
+    </com.yujieshipin.crm.widget.BottomTabLayout>
+
+</FrameLayout>

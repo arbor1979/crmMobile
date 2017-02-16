@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/dialog_bn_bg_selector"
+        android:paddingBottom="8dip"
+        android:paddingTop="8dip"
+        android:text="关闭"
+        android:textColor="@color/dialog_text_selector"
+        android:textSize="@dimen/text_size_normal" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:layout_above="@id/close"
+        android:background="@android:color/transparent" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/line"
+        android:background="@drawable/dialog_content_bg"
+        android:listSelector="@android:color/transparent" >
+    </ListView>
+
+</RelativeLayout>

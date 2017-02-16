@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e9f7ef"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/setting_head" />
+
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray_deep"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+      
+            
+            android:gravity="center_vertical|right"
+            android:padding="5dip" >
+            
+             <ImageView
+                 android:id="@+id/face"
+                 android:layout_width="40dip"
+                 android:layout_height="40dip"
+                 android:layout_alignParentLeft="true"
+                 android:layout_centerVertical="true"
+                 android:layout_marginRight="2dip"
+                 android:contentDescription="@null"
+                 android:src="@drawable/chat_interact_face" />
+
+              <ImageView
+                  android:id="@+id/camera"
+                  android:layout_width="40dip"
+                  android:layout_height="40dip"
+                  android:layout_centerVertical="true"
+                  android:layout_toRightOf="@id/face"
+                  android:contentDescription="@null"
+                  android:src="@drawable/chat_interact_camera" />
+
+            <TextView
+                android:id="@+id/send"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="2dip"
+                android:layout_marginTop="2dip"
+                
+                android:gravity="center"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:text="发送"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_normal" />
+
+             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/camera"
+                android:layout_toLeftOf="@id/send"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" 
+                android:id="@+id/layout_edit">
+
+                <EditText
+                    android:id="@+id/edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chat_bottombar_input"
+                    android:inputType="none"
+                    android:padding="5dp"
+                    android:textColor="#606366"
+                    android:textSize="@dimen/text_size_normal" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/viewpager_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="180dip"
+            android:background="@drawable/express_item"
+            android:visibility="gone" >
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/tabpager"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingTop="5.0dp" />
+
+            <RelativeLayout
+                android:id="@+id/express_spot_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_horizontal" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <com.yujieshipin.crm.widget.XListView
+        android:id="@+id/chat_list_interact"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       
+        android:layout_above="@id/bottom"
+        android:layout_below="@+id/include"
+        android:divider="@null"
+        android:dividerHeight="5dip"
+        android:listSelector="@android:color/transparent"
+        android:padding="5dip"
+        android:transcriptMode="normal" />
+
+</RelativeLayout>

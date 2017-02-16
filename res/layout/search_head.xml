@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/head_layout_height"
+    android:background="@color/gray_deep"
+    android:gravity="center" >
+
+    <TextView
+        android:id="@+id/chat_btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+       
+        android:gravity="center"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:singleLine="true"
+        android:text="@string/search_cancel"
+        android:textColor="@color/title_text_selector"
+        android:textSize="@dimen/text_size_small" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="7dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10.0dp"
+        android:layout_marginTop="7dip"
+        android:layout_toLeftOf="@id/chat_btn_cancel"
+        android:background="@drawable/search_bg"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dip" >
+
+        <ImageView
+            android:id="@+id/search_img"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:contentDescription="@null"
+            android:src="@drawable/classroom_search_bn" />
+
+        <com.yujieshipin.crm.widget.ClearEditText
+            android:id="@+id/edit_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dip"
+            android:background="@null"
+            android:focusable="true"
+            android:hint="@string/search_choose_hint"
+            android:textColorHint="#bad1c4"
+            android:textSize="@dimen/text_size_small"
+            android:imeOptions="actionSearch" 
+            android:singleLine="true" />
+    </LinearLayout>
+
+</RelativeLayout>

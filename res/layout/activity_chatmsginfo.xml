@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#e9f7ef">
+    <include 
+        layout="@layout/setting_head"/>
+    
+    <LinearLayout 
+        android:id="@+id/infolayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chatmsginfo_bg_nor"
+        android:gravity="center"
+        android:layout_margin="5dip"
+        android:clickable="true"
+        android:orientation="vertical">
+        <ImageView 
+            android:layout_marginTop="5dip"
+            android:id="@+id/photoIV"
+            android:layout_width="72dip"
+            android:layout_height="72dip"
+            android:src="@drawable/ic_launcher"
+            android:scaleType="centerCrop"/>
+        <Button 
+            android:padding="5dip"
+            android:layout_margin="5dip"
+            android:id="@+id/bn_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="名字"
+            android:textColor="#444444"
+            android:textSize="@dimen/text_size_normal"
+            android:background="#ffffff"/>
+    </LinearLayout>
+
+    <LinearLayout 
+        android:id="@+id/search_info"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:background="@drawable/chatmsginfo_bg_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:layout_margin="5dip"
+        android:padding="5dip">
+        
+        <TextView 
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:text="查看资料"
+            android:textColor="#444444"
+            android:textSize="@dimen/text_size_normal"
+            android:layout_weight="1"/>
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/classroom_course_next"/>
+    </LinearLayout>
+    
+ <!--     <LinearLayout 
+        android:id="@+id/download_chatinfo"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:background="@drawable/chatmsginfo_bg_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:layout_margin="5dip"
+        android:padding="5dip">
+        
+        <TextView 
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:text="下载聊天记录"
+            android:textColor="#444444"
+            android:textSize="@dimen/text_size_normal"
+            android:layout_weight="1"/>
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/classroom_course_next"/>
+    </LinearLayout> -->
+    <LinearLayout 
+        android:id="@+id/clear_chat"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:background="@drawable/chatmsginfo_bg_selector"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:layout_margin="5dip"
+        android:padding="5dip">
+        
+        <TextView 
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:text="清除聊天记录"
+            android:textColor="#444444"
+            android:textSize="@dimen/text_size_normal"
+            android:layout_weight="1"/>
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/classroom_course_next"/>
+    </LinearLayout>
+</LinearLayout>

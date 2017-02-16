@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+ 
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/page_title"
+        android:layout_width="match_parent"
+        android:layout_height="70dip"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="10dip" >
+
+        <TextView
+            android:id="@+id/company_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:text="@string/login_title"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_big" />
+
+        <TextView
+            android:id="@+id/page_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2013-10-15 星期五"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/page_exit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/logout_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:background="@drawable/setting_exit_selector"
+        android:text="@string/logout"
+        android:textColor="@color/title_text_selector"
+        android:textSize="@dimen/text_size_normal" />
+
+    <ImageView
+        android:id="@+id/page_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/page_title"
+        android:layout_marginRight="10dip"
+        android:background="#ffffff"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/page_exit"
+        android:layout_below="@id/page_line"
+        android:layout_marginBottom="40dip"
+        android:layout_marginLeft="10dip"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/page_photo"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/image_photo" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="6.0dip"
+                android:gravity="center_vertical"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/page_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="你好，朱亮老师"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_big" />
+
+                <TextView
+                    android:id="@+id/department_or_class_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/text_size_normal" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dip" >
+
+            <ImageView
+                android:layout_width="23dip"
+                android:layout_height="23dip"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/page_call" />
+
+            <Button
+                android:id="@+id/page_myinfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:background="@null"
+                android:gravity="left|center_vertical"
+                android:text="@string/page_myinfo"
+                android:textColor="@color/page_text_selector"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+		
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dip" >
+
+            <ImageView
+                android:layout_width="23dip"
+                android:layout_height="23dip"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/page_grade" />
+
+            <Button
+                android:id="@+id/change_Pwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:background="@null"
+                android:gravity="left|center_vertical"
+                android:text="@string/settings_changePwd"
+                android:textColor="@color/page_text_selector"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dip" >
+
+            <ImageView
+                android:layout_width="23dip"
+                android:layout_height="23dip"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_delete" />
+
+            <Button
+                android:id="@+id/page_clear_cache"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:background="@null"
+                android:gravity="left|center_vertical"
+                android:text="@string/clear_cache"
+                android:textColor="@color/page_text_selector"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dip" >
+
+            <ImageView
+                android:layout_width="23dip"
+                android:layout_height="23dip"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/page_img_feedback" />
+
+            <Button
+                android:id="@+id/page_feedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:background="@null"
+                android:gravity="left|center_vertical"
+                android:text="@string/page_feedback"
+                android:textColor="@color/page_text_selector"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dip" >
+
+            <ImageView
+                android:layout_width="23dip"
+                android:layout_height="23dip"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/my_album_icon" />
+
+            <Button
+                android:id="@+id/versionDetect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:background="@null"
+                android:gravity="left|center_vertical"
+                android:text="@string/version_detection"
+                android:textColor="@color/page_text_selector"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

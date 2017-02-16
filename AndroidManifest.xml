@@ -1,0 +1,375 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.yujieshipin.crm"
+    android:versionCode="11"
+    android:versionName="1.1" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="23" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>   
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+	<uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-permission android:name="android.permission.SEND_SMS"/>
+	<uses-permission android:name="android.permission.GET_TASKS" /> 
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="andorid.permission.CHANGE_CONFIGURATION"/>
+	<uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+	 <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
+	 <!-- 适配Android N系统必需的ContentProvider写权限声明，写权限包含应用包名-->
+    <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.yujieshipin.crm" /> 
+	 <permission
+        android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.yujieshipin.crm"
+        android:protectionLevel="normal">
+    </permission>
+    
+	<uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    
+    <application
+        android:name=".CampusApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_logo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+       
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.CutImageActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ExperienceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.CourseListPage"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.RegisterActivity"
+            android:label="@string/label_register"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.StudentInfoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="org.achartengine.GraphicalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.SysSettingActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.CommunicationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.LocalVideos"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ChatMsgActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified"
+             android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.SubjectActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.SummaryActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.EditStuInfoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.TabHostActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" 
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.UserInfoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.EditUserInfoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ContactsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ChatFriendActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.NoticeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.FeedbackActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+
+        <activity
+            android:name="com.yujieshipin.crm.activity.TabSchoolActivtiy"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.SchoolActivity"
+            android:screenOrientation="portrait" 
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.SchoolDetailActivity"
+            android:screenOrientation="portrait" 
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="orientation|keyboard|screenSize">
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ClassDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" 
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name="com.yujieshipin.crm.activity.CurriculumActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.CallClassActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.CourseClassActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.TestClassActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.SummaryClassActivity"
+            android:screenOrientation="portrait" 
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name="com.yujieshipin.crm.activity.AlbumActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.ImageFolderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.ImagesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yujieshipin.crm.activity.WebSiteActivity"
+            android:screenOrientation="portrait" android:hardwareAccelerated="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation" >
+        </activity>
+		<activity
+            android:name="com.yujieshipin.crm.activity.ShowPersonInfo"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ContactsSelectActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.LocalDocument"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.AlbumFlowActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+		<activity
+            android:name="com.yujieshipin.crm.activity.AlbumShowImagePage"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.AlbumShowImageDetail"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.AlbumPersonalActivity"
+            android:screenOrientation="portrait" 
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.AlbumShowMessage"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.yujieshipin.crm.activity.ChangePwdActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+			android:name="com.alipay.sdk.app.H5PayActivity"
+			android:configChanges="orientation|keyboardHidden|navigation"
+			android:exported="false"
+			android:screenOrientation="behind" >
+		</activity>
+		<activity
+			android:name="com.alipay.sdk.auth.AuthActivity"
+			android:configChanges="orientation|keyboardHidden|navigation"
+			android:exported="false"
+			android:screenOrientation="behind" >
+		</activity>
+		
+        <activity
+            android:name="com.yujieshipin.crm.activity.MipcaActivityCapture"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        
+         <receiver
+            android:name="com.yujieshipin.crm.service.Alarmreceiver"
+            android:exported="false" >
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+            </intent-filter>
+        </receiver>
+		<receiver android:name="com.yujieshipin.crm.service.CompleteReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
+            </intent-filter>
+        </receiver>
+        
+		<service android:name="com.yujieshipin.crm.service.UploadPOIService" >
+            <intent-filter>
+                <action android:name="com.yujieshipin.crm.service.UploadPOIService" />
+            </intent-filter>
+        </service>
+        
+        <!-- ===========  消息推送 begin =========== -->
+        <!-- push应用定义消息receiver声明 -->
+        
+        <receiver android:name="com.yujieshipin.crm.service.MyPushMessageReceiver" >
+            <intent-filter>
+
+                <!-- 接收push消息 -->
+                <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
+                <!-- 接收bind,unbind,fetch,delete等反馈消息 -->
+                <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.CLICK" />
+            </intent-filter>
+        </receiver>
+
+         <!-- push必须的receviver和service声明 -->
+        <receiver
+            android:name="com.baidu.android.pushservice.PushServiceReceiver"
+            android:process=":bdservice_v1" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW" />
+                <action android:name="com.baidu.android.pushservice.action.media.CLICK" />
+                <!-- 以下四项为可选的action声明，可大大提高service存活率和消息到达速度 -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.baidu.android.pushservice.RegistrationReceiver"
+            android:process=":bdservice_v1" >
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.METHOD" />
+                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.baidu.android.pushservice.PushService"
+            android:exported="true"
+            android:process=":bdservice_v1" >
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.baidu.android.pushservice.CommandService"
+            android:exported="true" />
+
+		 <!-- 适配Android N系统必需的ContentProvider声明，写权限包含应用包名-->
+        <provider
+            android:name="com.baidu.android.pushservice.PushInfoProvider"
+            android:authorities="com.yujieshipin.crm.bdpush"
+            android:writePermission="baidu.push.permission.WRITE_PUSHINFOPROVIDER.com.yujieshipin.crm"
+            android:protectionLevel = "signature"
+            android:exported="true" />
+        <!-- 在百度开发者中心查询应用的API Key -->
+        <meta-data
+            android:name="api_key" android:value="2oy1EeFByIAnFro1eo1ScPRQ" />
+
+        <!-- ===========   消息推送 end  =========== -->
+    </application>
+
+</manifest>

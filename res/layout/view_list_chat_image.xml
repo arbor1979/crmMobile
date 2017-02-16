@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="4dip" 
+    android:layout_gravity="center">
+
+    <ImageView 
+        android:id="@+id/showImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:contentDescription="@null"
+        android:onClick="showImage"/>
+
+    <ProgressBar
+            android:id="@+id/progressBarImage"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:visibility="invisible"
+            android:layout_gravity="center"/>
+
+</FrameLayout>

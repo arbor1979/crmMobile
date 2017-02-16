@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:padding="5dip" >
+
+    <ImageView
+        android:id="@+id/image_course"
+        android:layout_width="36dip"
+        android:layout_height="36dip"
+        android:layout_alignParentLeft="true" 
+        android:contentDescription="@null"/>
+    
+        <ImageView
+            android:id="@+id/image_course_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/course_right" 
+            android:contentDescription="@null"/>
+
+    <LinearLayout
+        android:layout_toLeftOf="@id/image_course_info"
+        android:layout_toRightOf="@id/image_course"
+        android:layout_marginLeft="5dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:text="你好"
+                android:id="@+id/tv_homepage_course"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#444444"
+                android:textSize="@dimen/text_size_normal" 
+                />
+
+            <TextView
+                android:id="@+id/tv_homepage_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dip"
+                android:textColor="#27ae62"
+                android:textSize="@dimen/text_size_xmicro"
+                
+                android:text="你好" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_homepage_courseinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#9a9e9c"
+            android:textSize="@dimen/text_size_micro" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>

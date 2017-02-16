@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_totalmoney"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lines="1"
+        android:text="金额"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/red_color"
+        android:textSize="@dimen/text_size_huge" />
+
+    <RadioGroup
+        android:id="@+id/rg_ifpay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rb_ifpay0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="付款" />
+
+        <RadioButton
+            android:id="@+id/rb_ifpay1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="欠款" />
+    </RadioGroup>
+
+    <Spinner
+        android:id="@+id/sp_accountid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <EditText
+            android:id="@+id/et_quling"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="去零"
+            android:inputType="numberDecimal"
+            android:lines="1"
+            android:maxLength="10"
+            android:selectAllOnFocus="true" />
+
+        <TextView
+            android:id="@+id/tv_yingshou"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="(应收￥0.00)"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <EditText
+            android:id="@+id/et_shoukuan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="收款"
+            android:inputType="numberDecimal"
+            android:lines="1"
+            android:maxLength="10"
+            android:selectAllOnFocus="true" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/tv_zhaoling"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="(找零￥0.00)"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+</LinearLayout>

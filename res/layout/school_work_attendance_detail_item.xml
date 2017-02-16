@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6.0dip"
+       
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="6.0dip" >
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="46.0dip"
+            android:layout_height="46.0dip"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="10.0dip"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/school_title_style"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="2013-2014学期期末考试" />
+
+            <TextView
+                android:id="@+id/tv_time_and_address"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="总分:100分"
+                android:textSize="@dimen/text_size_micro"  />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_right"
+            android:layout_width="38.0dip"
+            android:layout_height="38.0dip"
+            android:contentDescription="@null"
+            android:src="@drawable/course_right1" />
+
+        <TextView
+            android:id="@+id/tv_right"
+            android:layout_width="50.0dip"
+            android:layout_height="wrap_content"
+            android:text="排名: 1"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
+
+</LinearLayout>

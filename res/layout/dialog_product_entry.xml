@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/bt_scancode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/scancode"
+        android:text="扫描条码" />
+
+    <EditText
+        android:id="@+id/et_productid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:singleLine="true"
+        android:hint="输入商品条码或原厂码" />
+
+    <EditText
+        android:id="@+id/et_producttype"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:singleLine="true"
+        android:hint="输入产品类型" />
+
+    <EditText
+        android:id="@+id/et_standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:singleLine="true"
+        android:hint="输入颜色" />
+
+    <EditText
+        android:id="@+id/et_supplyid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:ems="10"
+        android:singleLine="true"
+        android:hint="输入供应商" />
+
+</LinearLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e9f7ef"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/title_include"
+        layout="@layout/chat_head" 
+        android:visibility="visible"/>
+
+    <!--
+    <LinearLayout
+        android:id="@+id/search_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" >
+
+        <include layout="@layout/search_head" />
+    </LinearLayout>
+    -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/logout_button_height" >
+
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/chat_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".CommunicationActivity" >
+        </android.support.v4.view.ViewPager>
+
+        <LinearLayout
+            android:id="@+id/search_choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#d6e2db"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dip"
+            android:visibility="invisible" >
+
+            <RadioGroup
+                android:id="@+id/group_discipline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/search_stu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/classroom_searchstu_bg"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="@string/search_choose_stu"
+                    android:textColor="#ffffff" />
+
+                <RadioButton
+                    android:id="@+id/search_class"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/classroom_searchclass_bg"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="@string/search_choose_cls"
+                    android:textColor="#aacdb8" />
+            </RadioGroup>
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

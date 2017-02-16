@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/subject_alert_bg"
+    android:orientation="vertical"
+    android:padding="20dip" 
+    android:gravity="center">
+
+    <LinearLayout
+        android:id="@+id/ll_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="授课时间"
+            android:textColor="#27ae62"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:textColor="#000000"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dip"
+        android:id="@+id/ll_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_time"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="授课地点"
+            android:textColor="#27ae62"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:textColor="#000000"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dip"
+        android:id="@+id/ll_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_address"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="授课班级"
+            android:textColor="#27ae62"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/tv_class"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:textColor="#000000"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
+
+    <Button 
+        android:id="@+id/close"
+        android:layout_marginTop="10dip"
+        android:layout_centerHorizontal="true"
+        android:layout_width="150dip"
+        android:layout_height="40dip"
+        android:layout_below="@id/ll_class"
+        android:background="@drawable/subject_alert_bn"
+        android:text="关闭"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/text_size_normal"/>
+</RelativeLayout>

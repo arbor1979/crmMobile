@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#e9f7ef">
+    <include 
+        layout="@layout/setting_head"/>
+
+    <ListView 
+        android:id="@+id/contacts_member_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/stuinfo_line"
+        android:dividerHeight="0.5dip"
+        android:listSelector="@android:color/transparent">
+        
+    </ListView>
+    
+    <LinearLayout
+        android:id="@+id/initlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="30dip"
+            android:layout_height="30dip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="数据加载中..."
+            android:textColor="#000000"
+            android:textSize="@dimen/text_size_normal" />
+    </LinearLayout>
+    
+</LinearLayout>

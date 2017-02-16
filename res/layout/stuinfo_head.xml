@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/head_layout_height"
+    android:background="#27ae62"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/stuinfo_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal" >
+
+        <include layout="@layout/left_button" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/stuinfo_btn_goto"
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dip"
+        android:background="#27ae62"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/text_size_micro" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_toLeftOf="@id/stuinfo_btn_goto"
+        android:layout_toRightOf="@id/stuinfo_back"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/stuinfo_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/head_title_font_size" />
+    </RelativeLayout>
+
+</RelativeLayout>

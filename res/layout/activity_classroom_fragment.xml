@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+  
+	
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/head_layout_height"
+        android:background="#27ae62"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dip" >
+
+        <TextView
+            android:id="@+id/call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:background="@drawable/chat_msg_bg_sel"
+            android:gravity="center"
+            android:text="@string/classroom_call"
+            android:textColor="#27ae62"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:background="@drawable/chat_middle_bg_nor"
+            android:gravity="center"
+            android:text="@string/classroom_course"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:background="@drawable/chat_middle_bg_nor"
+            android:gravity="center"
+            android:text="@string/classroom_test"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:background="@drawable/chat_group_bg_nor"
+            android:gravity="center"
+            android:text="@string/classroom_summary"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal" />
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/classroom_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainClassRoomFragment" />
+
+</LinearLayout>

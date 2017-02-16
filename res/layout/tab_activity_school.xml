@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/topbar" />
+
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" 
+        android:background="#E6FFFF">
+
+        <GridView
+            android:id="@+id/mygridview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:numColumns="4"
+            android:scrollbars="none" />
+
+        <include layout="@layout/list_empty" />
+    </LinearLayout>
+
+    <!-- 数据加载中提示 -->
+
+    <include layout="@layout/list_loading_with_text" />
+
+    <!-- 数据加载失败提示 -->
+
+    <include layout="@layout/empty_error" />
+
+</LinearLayout>

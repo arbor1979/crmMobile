@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:padding="5dip" >
+
+    <ImageView
+        android:id="@+id/attend_img_photo"
+        android:layout_width="36dip"
+        android:layout_height="36dip" 
+        android:src="@drawable/ic_launcher"/>
+    
+    <ImageView
+        android:id="@+id/attend_img_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="7dip"
+        android:src="@drawable/course_right"
+        android:layout_marginTop="5dip" 
+       />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:layout_toRightOf="@id/attend_img_photo"
+        android:layout_toLeftOf="@id/attend_img_right"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/attend_tv_stuname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="你好"
+            android:textColor="#444444"
+            android:textSize="@dimen/text_size_normal" />
+
+        <TextView
+            
+            android:id="@+id/attend_class_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="你好"
+            android:textColor="#9a9e9c"
+            android:textSize="@dimen/text_size_xmicro" />
+    </LinearLayout>
+
+
+</RelativeLayout>

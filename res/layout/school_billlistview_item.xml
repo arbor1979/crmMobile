@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_frame_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="46.0dip"
+        android:layout_height="46.0dip"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="3dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_launcher" />
+
+    <LinearLayout
+        android:layout_width="0.0dip"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="6.0dip"
+        android:layout_marginRight="6.0dip"
+        android:layout_marginTop="3dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/school_title_style"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:singleLine="true"
+                android:text="2013-2014学期期末考试" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/bill_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="状态"
+                    android:textSize="@dimen/text_size_micro"
+                    />
+
+                <TextView
+                    android:id="@+id/theShopper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:singleLine="true"
+                    android:text="导购:张三"
+                    android:textSize="@dimen/text_size_micro" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/theTotalMoney"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="总金额:￥100 赠品:￥100 退货:￥100"
+                android:textSize="@dimen/text_size_micro" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_right"
+        android:layout_width="25dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="6dp"
+        android:contentDescription="@null"
+        android:src="@drawable/pop_menu" />
+
+</LinearLayout>

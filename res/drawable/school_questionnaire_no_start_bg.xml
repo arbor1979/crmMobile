@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 描边 ：边框宽度与颜色 -->
+    <padding
+        android:bottom="0dip"
+        android:left="10dip"
+        android:right="10dip"
+        android:top="0dip" />
+    <!-- 主要内容的padding 文字距离上下左右的距离 -->
+    <corners
+        android:bottomLeftRadius="5dip"
+        android:bottomRightRadius="5dip"
+        android:topLeftRadius="5dip"
+        android:topRightRadius="5dip" />
+    <!-- 圆角的半径  也可以统一设置半径 android:radius="9dip" -->
+    <solid android:color="@color/no_start_color" />
+
+</shape>

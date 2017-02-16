@@ -1,0 +1,53 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="head_layout_height">48.0dp</dimen>
+    <dimen name="head_title_font_size">18sp</dimen>
+    <dimen name="text_size_xmicro">10.0sp</dimen>
+    <dimen name="text_size_micro">12.0sp</dimen>
+    <dimen name="text_size_small">14.0sp</dimen>
+    <dimen name="text_size_normal">16.0sp</dimen>
+    <dimen name="text_size_big">18.0sp</dimen>
+    <dimen name="text_size_big2">20.0sp</dimen>
+    <dimen name="text_size_large">22.0sp</dimen>
+    <dimen name="text_size_huge">24.0sp</dimen>
+
+    <!-- System settings -->
+    <dimen name="logout_button_height">45.0dp</dimen>
+    <dimen name="bottom_tab_padding_drawable">1.0dip</dimen>
+    <dimen name="bottom_tab_layout_height">50.0dp</dimen>
+    <dimen name="bottom_tab_padding_up">4.0dip</dimen>
+    <dimen name="small">13sp</dimen>
+    <dimen name="topbar_layout_height">50.0dp</dimen>
+    <dimen name="topbar_button_layout_height">22dip</dimen>
+    <dimen name="topbar_title_font_size">20sp</dimen>
+    <dimen name="slidingmenu_offset">100dp</dimen>
+    <dimen name="list_padding">10dp</dimen>
+    <dimen name="shadow_width">10dp</dimen>
+
+    <integer name="num_cols">1</integer>
+    <!-- subject -->
+    <dimen name="shadow_size">8dip</dimen>
+    <dimen name="getpic_dialog_size_hight">220dp</dimen>
+    <dimen name="subject_text">8sp</dimen>
+
+    <!-- school_work -->
+    <dimen name="image_width">72dp</dimen>
+    <dimen name="school_text_size">12sp</dimen>
+    <!-- top_bar -->
+    <dimen name="top_bar_btn">24dp</dimen>
+    <!-- Widget -->
+    <dimen name="header_height">60dp</dimen>
+    <dimen name="footer_height">90dp</dimen>
+    <dimen name="footer_padding">10dp</dimen>
+    <dimen name="toolbar_height">46.0dip</dimen>
+    <!-- image gridview size -->
+    <dimen name="gridView_width">300dip</dimen>
+    <dimen name="gridView_image_child_width">52dip</dimen>
+    <dimen name="work_attendance_hight">210dip</dimen>
+    <!-- contacts -->
+    <dimen name="userName_text_size">18sp</dimen>
+	<dimen name="radio_button_conner_radius">5dp</dimen>
+</resources>

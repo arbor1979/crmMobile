@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+	 <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_content_bg"
+         >
+    </ListView>
+
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:background="@android:color/transparent"/>
+   <!--  <Button
+        android:id="@+id/get_pic_from_camera"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30.0dip"
+        android:layout_marginRight="30.0dip"
+        android:layout_marginTop="20.0dip"
+        android:text="@string/pize"
+        android:textColor="@color/black" 
+        />
+ -->
+   <!--  <Button
+        android:id="@+id/get_pic_from_location"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30.0dip"
+        android:layout_marginRight="30.0dip"
+        android:layout_marginTop="15.0dip"
+        android:text="@string/choose_location_picture"
+        android:background="@drawable/bg_alibuybutton"/> -->
+         <Button
+        android:id="@+id/get_pic_from_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bn_bg_selector"
+        android:gravity="center"
+        android:text="拍照"
+        android:textColor="@color/dialog_text_selector"
+        android:textSize="@dimen/text_size_normal" 
+        android:paddingTop="8dip"
+        android:paddingBottom="8dip"/>
+    <Button
+        android:id="@+id/get_pic_from_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bn_bg_selector"
+        android:gravity="center"
+        android:text="从本地获取图片"
+        android:textColor="@color/dialog_text_selector"
+        android:textSize="@dimen/text_size_normal" 
+        android:paddingTop="8dip"
+        android:paddingBottom="8dip"/>
+   <!--  <Button
+        android:id="@+id/get_pic_close"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30.0dip"
+        android:layout_marginRight="30.0dip"
+        android:layout_marginTop="15.0dip"
+        android:text="@string/close"
+       android:background="@drawable/bg_alibuybutton" /> -->
+<Button
+        android:id="@+id/get_pic_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bn_bg_selector"
+        android:gravity="center"
+        android:text="取消"
+        android:textColor="@color/dialog_text_selector"
+        android:textSize="@dimen/text_size_normal" 
+        android:paddingTop="8dip"
+        android:paddingBottom="8dip"/>
+</LinearLayout>

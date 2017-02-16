@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navibar"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/topbar_layout_height"
+    android:background="@color/topbar_background"
+    android:gravity="center" >
+
+   <LinearLayout
+        android:id="@+id/layout_back"
+        android:layout_width="50dip"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/title_layout_selector"
+        android:clickable="true"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_marginLeft="10dp"
+            android:background="#27ae62"
+            android:clickable="false"
+            android:focusable="false" />
+
+    </LinearLayout>
+
+   <LinearLayout
+        android:id="@+id/layout_goto"
+        android:layout_width="50dip"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center" 
+        android:clickable="true"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/btn_goto"
+            android:layout_width="wrap_content"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@color/transparent"
+            android:clickable="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_normal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/contactlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_toLeftOf="@id/layout_goto"
+        android:layout_toRightOf="@id/layout_back"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/head_title_font_size" />
+
+        <LinearLayout
+            android:id="@+id/title_group"
+            android:layout_width="match_parent"
+            android:layout_height="40dip"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dip"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/friends"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="60dip"
+                android:layout_weight="1"
+                android:background="@drawable/chat_msg_bg_sel"
+                android:gravity="center"
+                android:text="好友"
+                android:textColor="#27ae62"
+                android:textSize="@dimen/text_size_normal" />
+
+            <TextView
+                android:id="@+id/group"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="60dip"
+                android:layout_weight="1"
+                android:background="@drawable/chat_group_bg_nor"
+                android:gravity="center"
+                android:text="群组"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bn_title"
+            android:layout_width="10dip"
+            android:layout_height="10dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:layout_toRightOf="@id/tv_title"
+            android:background="@drawable/summary_class_choose_bn"
+            android:gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/initlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible" >
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="30dip"
+            android:layout_height="30dip" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/data_init_loadings"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/topbar" />
+
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <ListView
+            android:id="@+id/my_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+        </ListView>
+
+        <include
+            
+            layout="@layout/list_empty" />
+
+        <LinearLayout
+            android:id="@+id/ll_huizong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/head_gray"
+            android:padding="5dp" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_huizong1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:text="总数量:100 总金额:1000"
+                    android:textSize="@dimen/text_size_micro"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_huizong2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:text="退货:100 赠品:100"
+                    android:textSize="@dimen/text_size_micro" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bt_gotopay"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="120dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:background="#EF451A"
+                android:text="结算"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    
+
+    <!-- 数据加载中提示 -->
+
+    <include layout="@layout/list_loading_with_text" />
+
+    <!-- 数据加载失败提示 -->
+
+    <include layout="@layout/empty_error" />
+
+</LinearLayout>

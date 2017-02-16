@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- 调查问卷选择题模板 -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6.0dip"
+        android:background="@drawable/common_frame_selector"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_questionnaire_name"
+            style="@style/school_title_style"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="6.0dip" />
+
+        <RadioGroup
+            android:id="@+id/rg_choose"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+		
+        
+        <com.yujieshipin.crm.widget.NonScrollableListView
+            android:id="@+id/lv_choose"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/transparent"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/et_answer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="6.0dip"
+            android:background="@drawable/edittext_bg"
+            android:gravity="left|top"
+            android:inputType="textMultiLine"
+            android:minLines="6"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textSize="@dimen/text_size_normal"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/sp_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bt_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/bt_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:visibility="gone" />
+        <TextView
+            android:id="@+id/tv_answer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6.0dip"
+            android:visibility="gone" />
+
+        <com.yujieshipin.crm.widget.NonScrollableGridView
+            android:id="@+id/grid_picture"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:horizontalSpacing="2.0dip"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="auto_fit"
+            android:columnWidth="@dimen/gridView_image_child_width"
+            android:scrollingCache="false"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="2.0dip"
+            android:layout_margin="6.0dip"
+            android:visibility="gone" />
+          <TextView
+            android:id="@+id/tv_remark"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6.0dip"
+            android:visibility="gone"
+            android:textColor="@color/title_color"/>
+    </LinearLayout>
+
+</LinearLayout>

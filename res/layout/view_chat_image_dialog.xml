@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:padding="4dip" >
+  <!-- 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
+
+        <com.yujieshipin.crm.widget.ZoomableImageView
+            android:id="@+id/showImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showImage" >
+        </com.yujieshipin.crm.widget.ZoomableImageView>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBarImage"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="40dip"
+        android:layout_height="40dip"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+ -->
+  <com.yujieshipin.crm.widget.ZoomableImageView
+            android:id="@+id/showImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="showImage" >
+        </com.yujieshipin.crm.widget.ZoomableImageView>
+ 
+</FrameLayout>
