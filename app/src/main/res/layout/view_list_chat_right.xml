@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    
+
+            <com.yujieshipin.crm.widget.PredicateLayout
+                android:id="@+id/toid_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dip" >
+            </com.yujieshipin.crm.widget.PredicateLayout>
+
+        
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <ImageView
+        android:id="@+id/chat_left_photo"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_launcher1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="8dip"
+        android:layout_toLeftOf="@id/chat_left_photo"
+        android:gravity="right"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/msgContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chat_right_msg_select"
+            android:gravity="center_vertical" >
+
+            <com.example.androidgifdemo.MyTextViewEx
+                android:id="@+id/chat_left_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:textColor="#606366"
+                android:textSize="@dimen/text_size_normal" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="5dip" >
+
+            <TextView
+                android:id="@+id/chat_send_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chat_sendstate_bg_hassend"
+                android:text="送达"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xmicro"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:layout_width="10dip"
+                android:layout_height="10dip"
+                android:layout_marginLeft="32dip"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_time" />
+
+            <TextView
+                android:id="@+id/chat_left_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="42dip"
+                android:text="16:50"
+                android:textColor="#606366"
+                android:textSize="@dimen/text_size_xmicro" />
+        </FrameLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dip" >
+
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dip"
+        android:background="@drawable/stuinfo_bg"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/stuinfo_stuname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="朱亮"
+                android:textColor="#27ae62"
+                android:textSize="@dimen/text_size_large" />
+            <TextView
+                android:layout_below="@id/stuinfo_stuname"
+                android:id="@+id/stuinfo_attendanceRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#27ae62"
+                android:layout_alignParentLeft="true"
+                android:textSize="@dimen/text_size_small" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <LinearLayout
+                android:id="@+id/ll_pie_chart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="5dip"
+                android:orientation="@null" >
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/stuinfo_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="出勤率："
+            android:textColor="#27ae62"
+            android:textSize="@dimen/text_size_large" />
+
+    </LinearLayout>
+	 <!-- 数据加载中提示 -->
+
+    <include layout="@layout/list_loading_with_text" />
+
+    <!-- 数据加载失败提示 -->
+
+    <include layout="@layout/empty_error" />
+</LinearLayout>

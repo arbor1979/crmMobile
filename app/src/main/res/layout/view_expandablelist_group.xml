@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="10dip" >
+
+    <ImageView 
+        android:id="@+id/group_image"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:visibility="gone"/>
+    
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="5dip"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textColor="#000000"
+        android:textSize="@dimen/text_size_normal" />
+
+    <CheckBox
+        android:id="@+id/select_Radio"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/group_count"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="10dip"
+        android:gravity="center_vertical|right"
+        android:textColor="#666666"
+        android:textSize="@dimen/text_size_micro" />
+
+    <TextView
+        android:id="@+id/show_member"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/contacts_member_selector"
+        android:gravity="center"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:text="@string/member"
+        android:textColor="@color/login_pop_text_selector"
+        android:textSize="@dimen/text_size_normal"
+        android:visibility="gone" />
+
+</LinearLayout>

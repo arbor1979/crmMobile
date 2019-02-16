@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <ImageView
+        android:id="@+id/photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="10dip"
+        android:background="@drawable/ic_launcher1"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:id="@+id/contacts_info1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/child"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="#000000"
+            android:textSize="@dimen/text_size_big" />
+
+        <TextView
+            android:id="@+id/signature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/text_size_micro"
+            android:visibility="gone" />
+        
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/callIV"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/greentel"
+        android:contentDescription="@null"
+        android:visibility="gone" />
+    
+    <ImageButton
+        android:id="@+id/btn_moreMenu"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/pop_menu"
+        android:contentDescription="@null"
+		android:visibility="gone" />
+
+    <CheckBox
+        android:id="@+id/radio_select_child"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone" />
+
+</LinearLayout>

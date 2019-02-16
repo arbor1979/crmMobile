@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contactsgroup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e9f7ef"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <include
+        android:id="@+id/include"
+        layout="@layout/setting_head" />
+
+        <include
+            android:id="@+id/search_head"
+            layout="@layout/search_head" />
+
+
+        <fragment android:name="com.yujieshipin.crm.fragment.ContactsSelectFragment"
+            android:id="@+id/contacts_list"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="#3d27ae62" >
+
+            
+            <HorizontalScrollView  
+        	android:layout_width="0dp"  
+        	android:layout_height="wrap_content"  
+        	android:layout_weight="1"
+        	android:scrollbars="none" >  
+        	
+        	 	<LinearLayout  
+            	android:layout_width="0dp"  
+           	 	android:layout_height="wrap_content"  
+            	android:orientation="horizontal" >  
+            	
+		            <GridView
+		                android:id="@+id/grid_picture"
+		                android:layout_width="fill_parent"
+		                android:layout_height="32dp"
+		                android:layout_margin="5dip"
+		                android:columnWidth="32dp"
+		                android:stretchMode="none" >
+		
+		            </GridView>
+		            
+	            </LinearLayout>  
+            </HorizontalScrollView> 
+
+            <Button
+                android:id="@+id/confirm_sel"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_round_corner_green"
+                android:text="@string/go"
+                android:textColor="@color/title_text_selector"
+                android:textSize="@dimen/text_size_small" />
+            
+        </LinearLayout>
+        
+    </LinearLayout>
+
+</LinearLayout>

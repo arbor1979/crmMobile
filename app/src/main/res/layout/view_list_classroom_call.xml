@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/datalog"
+        android:layout_width="match_parent"
+        android:layout_height="20dip"
+        android:background="#e2f2e9"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dip"
+        android:textColor="#27ae62"
+        android:textSize="@dimen/text_size_xmicro"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dip"
+        android:paddingRight="5dip" >
+
+        <LinearLayout
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" >
+
+            <ImageView
+                android:id="@+id/call_stu_photo"
+                android:layout_width="36dip"
+                android:layout_height="36dip"
+                android:scaleType="centerInside" 
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:id="@+id/ll"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="123"
+                    android:textSize="@dimen/text_size_big" />
+
+				<TextView
+				    android:id="@+id/tv_phone"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_weight="0"
+				    android:textColor="#9a9e9c"
+				    android:textSize="@dimen/text_size_xmicro" />
+                 
+            </LinearLayout>
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fadingEdge="horizontal"
+            android:scrollbars="none" >
+
+           
+            <LinearLayout
+                android:id="@+id/radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/rdo_attend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:checked="true"
+                    android:drawableTop="@drawable/class_call_attend"
+                    android:gravity="center"
+                    android:tag="@string/attend"
+                    android:text="@string/attend"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                     />
+
+                <CheckBox
+                    android:id="@+id/rdo_late"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_late"
+                    android:gravity="center"
+                    android:text="@string/late"
+                    android:tag="@string/late"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro" 
+                    android:visibility="gone"/>
+				
+                
+                
+                <CheckBox
+                    android:id="@+id/rdo_leave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_leave"
+                    android:gravity="center"
+                    android:text="@string/leave"
+                    android:tag="@string/leave"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/rdo_absence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_absence"
+                    android:gravity="center"
+                    android:text="@string/absence"
+                    android:tag="@string/absence"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+                
+               <CheckBox
+                     android:id="@+id/rdo_zaotui"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:minWidth="40dp"
+                     android:layout_weight="1"
+                     android:background="@null"
+                     android:button="@null"
+                     android:drawableTop="@drawable/class_call_zaotui"
+                     android:gravity="center"
+                     android:text="@string/zaotui"
+                     android:tag="@string/zaotui"
+                     android:textColor="@color/classroom_call_status"
+                     android:textSize="@dimen/text_size_micro"
+                     android:visibility="gone" /> 
+
+                <CheckBox
+                    android:id="@+id/rdo_gongjia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_gongjia"
+                    android:gravity="center"
+                    android:text="@string/gongjia"
+                    android:tag="@string/gongjia"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/rdo_bingjia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_bingjia"
+                    android:gravity="center"
+                    android:text="@string/bingjia"
+                    android:tag="@string/bingjia"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/rdo_shuijiao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_shuijiao"
+                    android:gravity="center"
+                    android:text="@string/shuijiao"
+                    android:tag="@string/shuijiao"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/rdo_wanshouji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_wanshouji"
+                    android:gravity="center"
+                    android:text="@string/wanshouji"
+                    android:tag="@string/wanshouji"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+id/rdo_wuzhuoxiaofu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:button="@null"
+                    android:drawableTop="@drawable/class_call_wuzhuoxiaofu"
+                    android:gravity="center"
+                    android:text="@string/wuzhaoxiaofu"
+                    android:tag="@string/wuzhaoxiaofu"
+                    android:textColor="@color/classroom_call_status"
+                    android:textSize="@dimen/text_size_micro"
+                    android:visibility="gone" />
+
+               
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+    </LinearLayout>
+
+</LinearLayout>

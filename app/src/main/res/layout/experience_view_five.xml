@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="fitXY" />
+
+    <Button
+        android:id="@+id/to_login"
+        android:layout_width="wrap_content"
+        android:layout_height="32dip"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/test_bn_bg_selector"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:text="立即体验"
+        android:textColor="@color/title_text_selector"
+        android:textSize="@dimen/text_size_normal" />
+
+</FrameLayout>

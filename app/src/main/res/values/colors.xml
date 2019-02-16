@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#6c6c6c</color>
+    <color name="background">#D44094</color>
+    <color name="menubackground">#9E3DCB</color>
+    <color name="background_gray">#EDEDED</color>
+    <color name="transparent">#00000000</color>
+    <color name="bottom_tab_bg_color">#43464A</color>
+    <color name="botton_tab_background">#094f07</color>
+    <color name="shadow_start">#80000000</color>
+    <color name="shadow_end">#00000000</color>
+    <color name="edit_color">#44b977</color>
+    <color name="semitransparent">#99000000</color>
+    <color name="text_gray">#ff666666</color>
+    <color name="gray_light">#ffB7CACF</color>
+    
+    <color name="list_empty_background">#ebe8e8</color>
+    <color name="none_color">#00000000</color>
+    <color name="bule_overlay">#660D92DD</color>
+    <color name="all_bg">#f5f5f5</color>
+     <color name="list_background">#E6FFFF</color>
+     <color name="gray_deep">#909998</color>
+    <!-- dialog -->
+    <color name="item_nor">#f6f6f6</color>
+    <color name="item_sel">#999999</color>
+    <color name="bn_nor">#d0decd</color>
+    <color name="bn_sel">#999999</color>
+    <color name="get_pic">#eeeeee</color>
+    <!-- subject -->
+    <color name="subject_single">#288d4d</color>
+    <color name="subject_double">#4ebc77</color>
+    <color name="red_color">#F20331</color>
+    
+    <color name="blue_color_shade">#3698D2</color>
+	<color name="blue_color_1">#6699ff</color>
+	<color name="blue_color_2">#3366cc</color>
+	<color name="blue_color_3">#003399</color>
+    <!-- title -->
+    <color name="title_sel">#66ffffff</color>
+    <color name="title_nor">#0027ae62</color>
+    <color name="title_color">#333333</color>
+
+    <!-- login -->
+    <color name="login_delete_sel">#dd999999</color>
+    <!-- contacts -->
+    <color name="contacts_member_nor">#22000000</color>
+    <color name="contacts_member_sel">#99000000</color>
+    <color name="contacts_member_stroke">#44000000</color>
+
+    <!-- 边框 -->
+    <color name="common_frame">#55d2d2d7</color>
+    <color name="common_frame_sel">#55d2d2d7</color>
+    <color name="common_frame_sel_high">#88d2d2d7</color>
+  <!--   <color name="common_view">#55d2d2d7</color> -->
+    <!-- topBar -->
+    <!-- <color name="topbar_bg">#0096fa</color> -->
+    <color name="topbar_bg">#00000000</color>
+    <color name="topbar_btn_sel">#55ffffff</color>
+    <color name="topbar_background">#D44094</color>
+    <color name="topbar_background_light">#DF72B0</color>
+    <!-- school -->
+    <color name="btn_work_attendance_bg">#505155</color>
+    <color name="stoped_color">#245bb1</color>
+    <color name="runing_color">#27ae62</color>
+    <color name="no_start_color">#d3912b</color>
+    <color name="unread">#FFF6CE</color>
+    <color name="class_detail_bg">#e9f7ef</color>
+    <color name="head_gray">#E2E7E5</color>
+    
+    <!--classdetail-->
+    <color name="title_bg">#f0eff4</color>
+    
+    <color name="field_text_color">#33a7ff</color>
+    <color name="button_ok">#078347</color>
+	<!--radio_button-->
+	 <color name="radio_button_selected_color">#27ae62</color>
+    <!-- <color name="radio_button_selected_color">#ff33b5e5</color> -->
+    <color name="radio_button_unselected_color">@android:color/transparent</color>
+     <color name="dialog_textColor">#444444</color>
+     <color name="dialog_textColorHint">#c2d2c9</color>
+	
+     <color name="moban_color_blue">#2831AF</color>
+     <color name="moban_color_red">#AF2831</color>
+     <color name="moban_color_brown">#AF6228</color>
+     <color name="moban_color_pink">#D44094</color>
+     <color name="moban_color_blue_light">#2874AF</color>
+     <color name="moban_color_red_light">#AF2874</color>
+     <color name="moban_color_brown_light">#AFA628</color>
+     <color name="moban_color_pink_light">#DF72B0</color>
+     
+      <color name="result_view">#b0000000</color>
+      <color name="viewfinder_mask">#60000000</color>
+      <color name="possible_result_points">#c0ffff00</color> 
+      <color name="viewfinder_frame">#ff000000</color>
+  <color name="viewfinder_laser">#ffff0000</color>
+    <color name="colorPrimary">#D44094</color>
+    <color name="colorPrimaryDark">#D44094</color>
+</resources>

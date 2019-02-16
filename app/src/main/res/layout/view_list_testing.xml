@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/testing_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dip"
+        android:layout_marginTop="5dip"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textColor="#27ae62"
+        android:textSize="@dimen/text_size_normal" />
+
+    <RadioGroup
+        android:id="@+id/answer_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dip"
+        android:layout_weight="1"
+        android:gravity="center" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/type_A"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="A："
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <RadioButton
+                        android:id="@+id/testing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dip"
+                        android:text="腾讯"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" 
+                       
+                        android:tag="a"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/type_B"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="B："
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <RadioButton
+                        android:id="@+id/testing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dip"
+                        android:text="腾讯"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" 
+                   
+                        android:tag="b"/>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/type_C"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="C："
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <RadioButton
+                        android:id="@+id/testing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dip"
+                        android:text="腾讯好好好好好好好好阿红"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" 
+                       
+                        android:tag="c"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/type_D"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="D："
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <RadioButton
+                        android:id="@+id/testing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dip"
+                        android:text="腾讯好好好好好好好好阿红"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/text_size_normal"
+                        android:tag="d" />
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </RadioGroup>
+
+</LinearLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/head_layout_height"
+        android:background="#27ae56"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dip" >
+
+        <TextView
+            android:id="@+id/attend"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/chat_msg_bg_sel"
+            android:gravity="center"
+            android:text="@string/summary_attend"
+            android:textColor="#27ae56"
+            android:textSize="@dimen/text_size_normal"
+             />
+
+        <TextView
+            android:id="@+id/exam"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/chat_middle_bg_nor"
+            android:gravity="center"
+            android:text="@string/summary_exam"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal" 
+            android:layout_marginLeft="1dip"/>
+
+        <TextView
+            android:id="@+id/grade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/chat_group_bg_nor"
+            android:gravity="center"
+            android:text="@string/summary_grade"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_normal"
+            android:layout_marginLeft="1dip" />
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/summary_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CommunicationActivity" >
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

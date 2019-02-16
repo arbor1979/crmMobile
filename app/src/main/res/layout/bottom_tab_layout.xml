@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/bottom_tab_layout_height"
+    android:layout_alignParentBottom="true"
+    
+    tools:context=".activity.EditStuInfoActivity" >
+
+    <com.yujieshipin.crm.widget.BottomTabLayout
+        android:id="@+id/bottom_tab_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/bottom_tab_bg_color"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <!-- 校园 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_school"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/botton_school_selector"
+                android:text="@string/school"
+                android:textSize="@dimen/text_size_xmicro" />
+        </FrameLayout>
+        <!-- 工作 -->
+
+        <!-- 消息 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_message"
+            android:layout_width="0.0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:visibility="gone" >
+
+            <TextView
+                style="@style/bottom_tab_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_communication_selector"
+                android:text="@string/message"
+                android:textSize="@dimen/text_size_xmicro" />
+
+            <TextView
+                android:id="@+id/unreadCnt"
+                android:layout_width="18dip"
+                android:layout_height="18dip"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/round_num_bg"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_micro"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <!-- 沟通 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_communication"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0" >
+
+            <TextView
+                style="@style/bottom_tab_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/botton_contact_selector"
+                android:text="@string/contacts"
+                android:textSize="@dimen/text_size_xmicro" />
+        </FrameLayout>
+
+        <!-- 汇总 -->
+
+        <FrameLayout
+            android:id="@+id/bottom_tab_album"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:visibility="gone" >
+
+            <TextView
+                style="@style/bottom_tab_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawableTop="@drawable/bottom_album_selector"
+                android:text="@string/album"
+                android:textSize="@dimen/text_size_xmicro" />
+
+            <TextView
+                android:id="@+id/unreadCntAlbum"
+                android:layout_width="18dip"
+                android:layout_height="18dip"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/round_num_bg"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_micro"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+        </FrameLayout>
+    </com.yujieshipin.crm.widget.BottomTabLayout>
+
+</FrameLayout>

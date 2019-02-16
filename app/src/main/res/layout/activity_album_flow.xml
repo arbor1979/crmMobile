@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+<include layout="@layout/topbar_album" />
+
+<TextView
+    android:id="@+id/unreadMsgCount"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    
+    android:background="@color/head_gray"
+    android:gravity="center"
+    android:textColor="#E05A00"
+    android:textSize="@dimen/text_size_small"
+    android:paddingBottom="3dp"
+    android:paddingTop="3dp"
+    android:text="有10条未读消息"
+    android:visibility="gone" />
+
+<android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+<com.yujieshipin.crm.widget.MultiColumnListView
+        xmlns:pla="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        pla:plaColumnNumber="3"
+        pla:plaLandscapeColumnNumber="3"
+        >
+    </com.yujieshipin.crm.widget.MultiColumnListView>
+
+  
+</android.support.v4.widget.SwipeRefreshLayout>
+<include layout="@layout/list_loading_with_text" />
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#27ae62" >
+
+    <include
+        android:id="@+id/include1"
+        layout="@layout/head" />
+
+    <FrameLayout
+        android:id="@+id/homepage_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include1"
+        android:background="#e9f7ef" >
+    </FrameLayout>
+
+</RelativeLayout>

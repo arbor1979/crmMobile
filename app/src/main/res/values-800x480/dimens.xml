@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+    <dimen name="schedule_text">8sp</dimen>
+    <dimen name="subject_text">10sp</dimen>
+    <!-- school_work -->
+    <dimen name="image_width">60dp</dimen>
+    <dimen name="school_text_size">12sp</dimen>
+    <dimen name="head_title_font_size">20sp</dimen>
+    <dimen name="work_attendance_hight">210dip</dimen>
+
+</resources>
