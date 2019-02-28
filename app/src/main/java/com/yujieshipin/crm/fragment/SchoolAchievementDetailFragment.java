@@ -553,7 +553,7 @@ public class SchoolAchievementDetailFragment extends Fragment {
 				if(holder.grid_picture.getAdapter()==null)
 				{
 					MyPictureAdapter myPictureAdapter = new MyPictureAdapter(getActivity(),
-						false, achievement.getImageList(), 10,"课堂笔记");
+						false, achievement.getImageList(), 10,"课堂笔记",0);
 					holder.grid_picture.setAdapter(myPictureAdapter);
 				}
 				else

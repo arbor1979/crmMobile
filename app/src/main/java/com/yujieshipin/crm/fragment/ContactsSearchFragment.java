@@ -308,6 +308,7 @@ public class ContactsSearchFragment extends DialogFragment {
 					// TODO Auto-generated method stub
 					// Toast.makeText(getActivity(), contactsMember.getName(),
 					// Toast.LENGTH_SHORT).show();
+					/*
 					Intent intent = new Intent(getActivity(),
 							ChatMsgActivity.class);
 					intent.putExtra("toid", contactsMember.getUserNumber());
@@ -315,6 +316,13 @@ public class ContactsSearchFragment extends DialogFragment {
 					intent.putExtra("toname", contactsMember.getName());
 					intent.putExtra("userImage", contactsMember.getUserImage());
 					getActivity().startActivity(intent);
+					*/
+					Intent intent = new Intent(getActivity(),
+							ShowPersonInfo.class);
+					intent.putExtra("studentId", contactsMember.getNumber());
+					intent.putExtra("userImage", contactsMember.getUserImage());
+					intent.putExtra("userType", contactsMember.getUserType());
+					startActivity(intent);
 					dismiss();
 				}
 			});

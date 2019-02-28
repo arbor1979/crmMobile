@@ -241,12 +241,14 @@ public class SchoolNoticeDetailFragment extends Fragment {
 		String content = noticesDetail.getContent();
 		Log.d(TAG, "content:"+content);
 		TextView contentview=aq.id(R.id.tv_content).getTextView();
+		TextView fujianView=aq.id(R.id.tv_fujian).getTextView();
 		Spanned spanned = Html.fromHtml(content, new MyImageGetter(getActivity(),contentview), new MyTagHandler(getActivity()));
 		contentview.setText(spanned);
 		JSONArray ja=noticesDetail.getFujian();
 		if(ja!=null && ja.length()>0)
 		{
-			aq.id(R.id.tv_content).getTextView().append("附件：\r\n");
+			fujianView.setVisibility(View.VISIBLE);
+			fujianView.setText("附件：\r\n");
 			for(int i=0;i<ja.length();i++)
 			{
 				JSONObject jo;
@@ -258,22 +260,22 @@ public class SchoolNoticeDetailFragment extends Fragment {
 			                   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			        ss.setSpan(new MyURLSpan(jo.optString("url")), 0, ss.length(),
 			                   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			        
-			        aq.id(R.id.tv_content).getTextView().append(ss);
-			        aq.id(R.id.tv_content).getTextView().append("\r\n\r\n");
+
+					fujianView.append(ss);
+					fujianView.append("\r\n\r\n");
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			
+
 				
 			}
-			
-			
-			
+			fujianView.setMovementMethod(LinkMovementMethod.getInstance());
 			
 		}
-		aq.id(R.id.tv_content).getTextView().setMovementMethod(LinkMovementMethod.getInstance());
+		else
+			fujianView.setVisibility(View.GONE);
+
 		ja=noticesDetail.getTupian();
 		if(ja!=null && ja.length()>0)
 		{
@@ -328,12 +330,12 @@ public class SchoolNoticeDetailFragment extends Fragment {
 			Intent intent;
 	        if(file.exists() && file.isFile())
 	        {
-	        	intent=IntentUtility.openUrl(filePath);
+	        	intent=IntentUtility.openUrl(getActivity(),filePath);
 	        	IntentUtility.openIntent(widget.getContext(), intent,true);
 	        }
 	        else
 	        {
-	        	intent=IntentUtility.openUrl(mUrl);
+	        	intent=IntentUtility.openUrl(getActivity(),mUrl);
 	        	if(intent==null)
 	        	{
 		    		Uri uri = Uri.parse(mUrl);

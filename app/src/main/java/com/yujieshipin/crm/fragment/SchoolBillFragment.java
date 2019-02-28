@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -212,7 +213,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 						else if(res.equals("成功"))
 						{
 							AppUtility.showToastMsg(getActivity(), jo.optString("msg"));
-							getAchievesItem(false,true);
+							getAchievesItem(false);
 						}
 					}
 					catch (JSONException e) {
@@ -231,7 +232,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) { //resultCode为回传的标记，我在B中回传的是RESULT_OK
 		case 101:
-			getAchievesItem(true,true);
+			getAchievesItem(true);
 		    break;
 		case SCANNIN_GREQUEST_CODE:
 			if(resultCode == Activity.RESULT_OK){
@@ -310,10 +311,10 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			@Override
 			public void onClick(View v) {
 				
-				getAchievesItem(true,true);
+				getAchievesItem(true);
 			}
 		});
-		getAchievesItem(true,true);
+		getAchievesItem(true);
 		return view;
 	}
 
@@ -345,12 +346,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	 * @author shengguo 2014-4-16 上午11:12:43
 	 * 
 	 */
-	public void getAchievesItem(boolean flag,boolean reload) {
+	public void getAchievesItem(boolean flag) {
 		showProgress(flag);
-		if(reload)
-		{
-			filterObject.remove("page");
-		}
 		if(interfaceName==null)
 			return;
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
@@ -689,17 +686,14 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		final EditText et_productid=(EditText)textEntryView.findViewById(R.id.et_productid);
 		final EditText et_producttype=(EditText)textEntryView.findViewById(R.id.et_producttype);
 		final EditText et_supplyid=(EditText)textEntryView.findViewById(R.id.et_supplyid);
-		
+
 		bt_scanCode.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-            	Intent intent = new Intent();
-				intent.setClass(getActivity(), CaptureActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivityForResult(intent, SCANNIN_GREQUEST_CODE);
-            	
-            }
-         });
+			@Override
+			public void onClick(View v) {
+				if (AppUtility.checkPermission(getActivity(), 6, Manifest.permission.CAMERA))
+					openScanCode();
+			}
+		});
 		
 			String productid=filterObject.optString("productid");
 			if(productid!=null && productid.length()>0)
@@ -733,7 +727,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					e.printStackTrace();
 				}
 				
-				getAchievesItem(true,true);
+				getAchievesItem(true);
 				
 			}
 			
@@ -741,6 +735,15 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		searchDialog=builder.create();
         searchDialog.show();
 		//TimeUtility.popSoftKeyBoard(getActivity(),et_productid);
+	}
+	private void openScanCode()
+	{
+
+
+		Intent intent = new Intent();
+		intent.setClass(getActivity(), CaptureActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivityForResult(intent, SCANNIN_GREQUEST_CODE);
 	}
 	private void popBillFilterDlg()
 	{
@@ -823,7 +826,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					e.printStackTrace();
 				}
 				
-				getAchievesItem(true,true);
+				getAchievesItem(true);
 				
 			}
 			
@@ -884,9 +887,9 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		String createtime=filterObject.optString("createtime");
 		if(createtime!=null && createtime.length()>0)
 		{
-			for(int i=0;i<mItems1.length;i++)
+			for(int i=0;i<mItems.length;i++)
 			{
-				if(mItems1[i].equals(createtime))
+				if(mItems[i].equals(createtime))
 				{
 					sp_createtime.setSelection(i);
 					break;
@@ -946,7 +949,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						getAchievesItem(true,true);
+						getAchievesItem(true);
 
 					}
 
@@ -1048,12 +1051,39 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			getAchievesItem(false,false);
+			getAchievesItem(false);
 		}
 	}
 	@Override
 	public void onRefresh() {
 		// TODO Auto-generated method stub
-		getAchievesItem(false,true);
+		getAchievesItem(false);
 	}
+
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+	{
+		AppUtility.permissionResult(requestCode,grantResults,getActivity(),callBack);
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+	public AppUtility.CallBackInterface callBack=new AppUtility.CallBackInterface()
+	{
+		@Override
+		public void getLocation1() {
+
+		}
+
+		@Override
+		public void getPictureByCamera1() {
+			openScanCode();
+			if(searchDialog.isShowing())
+				searchDialog.dismiss();
+		}
+
+		@Override
+		public void getPictureFromLocation1() {
+			// TODO Auto-generated method stub
+
+		}
+
+	};
 }

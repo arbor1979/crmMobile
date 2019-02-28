@@ -481,4 +481,5 @@ public class SchoolNoticeFragment extends Fragment implements IXListViewListener
 		}
 		CampusAPI.httpPost(jo, mHandler, 0);
 	}
+
 }

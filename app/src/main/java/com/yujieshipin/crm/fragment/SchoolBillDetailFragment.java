@@ -224,7 +224,8 @@ public class SchoolBillDetailFragment extends Fragment{
 						JSONObject jo = new JSONObject(result);
 						String res = jo.optString("result");
 						if(res.equals("失败")){
-							AppUtility.showToastMsg(getActivity(), jo.optString("errorMsg"));
+							//AppUtility.showToastMsg(getActivity(), jo.optString("errorMsg"));
+							AppUtility.showErrorDialog(getActivity(), jo.optString("errorMsg"),"");
 							adapter.notifyDataSetChanged();
 						}
 						else 
@@ -407,21 +408,22 @@ public class SchoolBillDetailFragment extends Fragment{
 		
 		if(billDetail.getOpertionType().equals("edit"))
 		{
-			Button bottomBtn=new Button(getActivity());
-			bottomBtn.setBackground(null);
-			bottomBtn.setText("开启扫码");
-			bottomBtn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (Build.VERSION.SDK_INT >= 23) {
-						if (AppUtility.checkPermission(getActivity(), 6, Manifest.permission.CAMERA))
-							openScanCode();
-					} else
-						openScanCode();
-				}
-			});
-			myListview.addFooterView(bottomBtn);
-
+		    if(myListview.getFooterViewsCount()==0) {
+                Button bottomBtn = new Button(getActivity());
+                bottomBtn.setBackground(null);
+                bottomBtn.setText("开启扫码");
+                bottomBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            if (AppUtility.checkPermission(getActivity(), 6, Manifest.permission.CAMERA))
+                                openScanCode();
+                        } else
+                            openScanCode();
+                    }
+                });
+                myListview.addFooterView(bottomBtn);
+            }
 			tvRight.setText("新增");
 			tvRight.setVisibility(View.VISIBLE);
 			lyRight.setOnClickListener(new OnClickListener() {
@@ -431,7 +433,7 @@ public class SchoolBillDetailFragment extends Fragment{
 						popSearchDlg();
 				}
 			});
-			huizongLayout.setVisibility(View.VISIBLE);
+			bt_gotopay.setVisibility(View.VISIBLE);
 			tv_huizong1.setText(billDetail.getHuizong1());
 			tv_huizong2.setText(billDetail.getHuizong2());
 			bt_gotopay.setText(billDetail.getRightbottomBtn());
@@ -455,7 +457,9 @@ public class SchoolBillDetailFragment extends Fragment{
 		else
 		{
 			tvRight.setVisibility(View.GONE);
-			huizongLayout.setVisibility(View.GONE);
+			tv_huizong1.setText(billDetail.getHuizong1());
+			tv_huizong2.setText(billDetail.getHuizong2());
+			bt_gotopay.setVisibility(View.GONE);
 			lyRight.setOnClickListener(null);
 		}
 		adapter.notifyDataSetChanged();

@@ -37,6 +37,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -67,6 +68,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.yujieshipin.crm.BuildConfig;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.activity.ImagesActivity;
 import com.yujieshipin.crm.adapter.MyPictureAdapter;
@@ -211,6 +213,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					try {
 						JSONObject	jo = new JSONObject(result);
 						if("成功".equals(jo.optString("result"))){
+							images=questions.get(myPictureAdapter.getPosition()).getImages();
 							for (int i = 0; i < images.size(); i++) {
 								if(images.get(i).getDownAddress().equals(delImagePath)){
 									images.remove(i);
@@ -221,6 +224,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 								cacheFile.delete();
 							picturePaths.remove(delImagePath);
 							myPictureAdapter.setPicPaths(picturePaths);
+
 							//myPictureAdapter.notifyDataSetChanged();
 						}else{
 							AppUtility.showToastMsg(getActivity(), jo.optString("STATUS"));
@@ -498,9 +502,13 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 		picturePath =FileUtility.getRandomSDFileName("jpg");
 		
 		File mCurrentPhotoFile = new File(picturePath);
-		Uri uri = Uri.fromFile(mCurrentPhotoFile);
-		
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".fileProvider", mCurrentPhotoFile)); //Uri.fromFile(tempFile)
+		else {
+			Uri uri = Uri.fromFile(mCurrentPhotoFile);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		}
 		startActivityForResult(intent, REQUEST_CODE_TAKE_CAMERA);
 	}
 
@@ -692,6 +700,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					
 					String usersAnswer = questions.get(i).getUsersAnswer();
 					String isRequired = questions.get(i).getIsRequired();//是否必填
+					String validate=questions.get(i).getValidate();
 					if(AppUtility.isNotEmpty(isRequired)){
 						if(isRequired.equals("是")){
 							if(AppUtility.isNotEmpty(usersAnswer)){
@@ -699,7 +708,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 								joarr.put(title,usersAnswer);
 								
 							}else{
-								AppUtility.showToastMsg(getActivity(),"请完成问卷再提交");
+								AppUtility.showToastMsg(getActivity(),"请填写所有必填项");
 								myListview.setSelection(i);
 								
 								return null;
@@ -707,11 +716,29 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 						}else{
 							joarr.put(title,usersAnswer);
 						}
-					}else{
-						if(AppUtility.isNotEmpty(usersAnswer)){
-							joarr.put(title,usersAnswer);
-						}else{
-							AppUtility.showToastMsg(getActivity(),"请完成问卷再提交");
+					}
+					if(AppUtility.isNotEmpty(validate) && AppUtility.isNotEmpty(usersAnswer)){
+						if(validate.equals("手机号") && !AppUtility.checkPhone(usersAnswer))
+						{
+							AppUtility.showToastMsg(getActivity(),title+",格式不正确");
+							myListview.setSelection(i);
+							return null;
+						}
+						else if(validate.equals("浮点型") && !AppUtility.isDecimal(usersAnswer))
+						{
+							AppUtility.showToastMsg(getActivity(),title+",必须是浮点型数字,如:99.9");
+							myListview.setSelection(i);
+							return null;
+						}
+						else if(validate.equals("整型") && !AppUtility.isInteger(usersAnswer))
+						{
+							AppUtility.showToastMsg(getActivity(),title+",必须整形数字,如:99");
+							myListview.setSelection(i);
+							return null;
+						}
+						else if(validate.equals("邮箱") && !AppUtility.checkEmail(usersAnswer))
+						{
+							AppUtility.showToastMsg(getActivity(),title+",邮箱格式不正确");
 							myListview.setSelection(i);
 							return null;
 						}
@@ -878,11 +905,13 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			convertView.setOnTouchListener(touchListener);
 			
 			String mStatus = question.getStatus();
-			
-			holder.title.setText(position+1+"."+question.getTitle());
+			String addstr="";
+			if(question.getIsRequired().equals("是") && !question.getTitle().endsWith("*"))
+				addstr="*";
+			holder.title.setText(position+1+"."+question.getTitle()+addstr);
 
 			String remark = question.getRemark();
-			if(remark.length()>0){
+			if(AppUtility.isNotEmpty(remark) && remark.length()>0){
 				holder.tvRemark.setText(remark);
 				holder.tvRemark.setVisibility(View.VISIBLE);
 				if(remark.length()>=7 && (remark.substring(0, 7).equals("答题状态:错误") || remark.indexOf("error")>0)){
@@ -904,6 +933,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.sp_select.setVisibility(View.GONE);
 				final List<JSONObject> answers = question.getOptions();
 				holder.radioGroup.removeAllViews();
+
 				int checkIndex = -1;
 				holder.radioGroup.setOnCheckedChangeListener(null);
 				for (int i = 0; i < answers.size(); i++) {
@@ -915,7 +945,10 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					radioButton.setText(value);
 					radioButton.setTextSize(12.0f);
 					radioButton.setId(i);
-					radioButton.setEnabled(isEnable);
+					boolean bflag=false;
+					if(isEnable && !question.isIfRead())
+						bflag=true;
+					radioButton.setEnabled(bflag);
 					if (key.equals(question.getUsersAnswer())) {
 						checkIndex = i;
 					}
@@ -1025,8 +1058,10 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 						}
 					}
 				}
-				
-				myPictureAdapter = new MyPictureAdapter(getActivity(),isEnable,picturePaths,question.getLines(),"调查问卷");
+				boolean bflag=false;
+				if(!question.isIfRead() && isEnable)
+					bflag=true;
+				myPictureAdapter = new MyPictureAdapter(getActivity(),bflag,picturePaths,question.getLines(),"调查问卷",position);
 				myPictureAdapter.setFrom(TAG);
 				holder.imageGridView.setAdapter(myPictureAdapter);
 			}
@@ -1039,6 +1074,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.bt_date.setVisibility(View.VISIBLE);
 				holder.bt_datetime.setVisibility(View.GONE);
 				holder.sp_select.setVisibility(View.GONE);
+				holder.bt_date.setEnabled(!question.isIfRead());
 				if(!AppUtility.isNotEmpty(question.getUsersAnswer()))
 				{
 					question.setUsersAnswer(DateHelper.getToday());
@@ -1096,6 +1132,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.bt_date.setVisibility(View.GONE);
 				holder.bt_datetime.setVisibility(View.VISIBLE);
 				holder.sp_select.setVisibility(View.GONE);
+				holder.bt_datetime.setEnabled(!question.isIfRead());
 				if(!AppUtility.isNotEmpty(question.getUsersAnswer()))
 				{
 					question.setUsersAnswer(DateHelper.getToday());
@@ -1126,11 +1163,14 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.bt_date.setVisibility(View.GONE);
 				holder.bt_datetime.setVisibility(View.GONE);
 				holder.sp_select.setVisibility(View.VISIBLE);
+				holder.sp_select.setEnabled(!question.isIfRead());
 				String [] listStr=new String[question.getOptions().size()];
 				int pos=0;
 				for(int i=0;i<question.getOptions().size();i++)
 				{
 					JSONObject obj=question.getOptions().get(i);
+					if(i==0 && !AppUtility.isNotEmpty(question.getUsersAnswer()))
+						question.setUsersAnswer(obj.optString("key"));
 					listStr[i]=obj.optString("value");
 					if(obj.optString("key").equals(question.getUsersAnswer()))
 						pos=i;
