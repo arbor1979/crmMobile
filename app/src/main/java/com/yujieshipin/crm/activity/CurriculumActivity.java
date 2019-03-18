@@ -193,7 +193,7 @@ public class CurriculumActivity extends Activity {
 				picturePaths.add(down.getDownAddress());
 			}
 			myPictureAdapter = new MyPictureAdapter(this,
-					false, picturePaths, 10,"课堂笔记");
+					false, picturePaths, 10,"课堂笔记",0);
 			myPictureAdapter.setFrom(TAG);
 			grid_picture.setAdapter(myPictureAdapter);
 		}
@@ -206,7 +206,7 @@ public class CurriculumActivity extends Activity {
 				picturePaths.add(down.getDownAddress());
 			}
 			myPictureAdapter1 = new MyPictureAdapter(this,
-					false, picturePaths, 10,"课堂作业");
+					false, picturePaths, 10,"课堂作业",0);
 			myPictureAdapter1.setFrom(TAG);
 			grid_picture1.setAdapter(myPictureAdapter1);
 		}

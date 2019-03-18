@@ -200,8 +200,8 @@ public class AppUtility {
 	 * @return
 	 */
 	public static final boolean checkPhone(String phone) {
-		Pattern pattern = Pattern
-				.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+		//Pattern pattern = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9])|(17[0-9])|(147))\\d{8}$");
+		Pattern pattern = Pattern.compile("^(1\\d{10})$");
 		Matcher matcher = pattern.matcher(phone);
 
 		if (matcher.matches()) {
@@ -209,7 +209,20 @@ public class AppUtility {
 		}
 		return false;
 	}
-
+	//是否浮点型
+	public static boolean isDecimal(String str) {
+		if(str==null || "".equals(str))
+			return false;
+		java.util.regex.Pattern pattern = Pattern.compile("[0-9]*(\\.?)[0-9]*");
+		return pattern.matcher(str).matches();
+	}
+	//是否整形
+	public static boolean isInteger(String str){
+		if(str==null )
+			return false;
+		Pattern pattern = Pattern.compile("[0-9]+");
+		return pattern.matcher(str).matches();
+	}
 	public static void report(Throwable e) {
 		if (e == null)
 			return;
@@ -458,7 +471,12 @@ public class AppUtility {
 				.setMessage(message)
 				.setPositiveButton(R.string.Commons_Ok, null).show();
 	}
-
+	public static void showErrorDialog(Context context, String title, String message) {
+		new AlertDialog.Builder(context).setTitle(title)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage(message)
+				.setPositiveButton(R.string.Commons_Ok, null).show();
+	}
 	/**
 	 * 检查IP地址是否正确
 	 * 
@@ -911,8 +929,9 @@ public class AppUtility {
 		}
 		DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);  
 	   	 Uri uri = Uri.parse(url);  
-	   	 Request request = new Request(uri); 
-	   	 request.setDestinationUri(Uri.fromFile(file));
+	   	 Request request = new Request(uri);
+		if(file.getAbsolutePath().startsWith("/storage/sdcard") || file.getAbsolutePath().startsWith("/storage/emulated"))
+			request.setDestinationUri(Uri.fromFile(file));
 	   	 //request.setDestinationInExternalFilesDir(context, "", file.getAbsolutePath());
 	   	 request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE|DownloadManager.Request.NETWORK_WIFI);
 	   	 //request.setDestinationInExternalFilesDir(WebSiteActivity.this, null, "PacketCampus");

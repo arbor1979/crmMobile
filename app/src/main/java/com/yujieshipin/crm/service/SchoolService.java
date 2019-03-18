@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.db.DatabaseHelper;
@@ -209,7 +210,7 @@ public class SchoolService extends Service {
 							if (!downFile.exists()) {
 								return;
 							}
-							Intent intent=IntentUtility.openUrl(downFile.toString());
+							Intent intent=IntentUtility.openUrl(CampusApplication.getContext(),downFile.toString());
 							IntentUtility.openIntent(mContext,intent,true);
 						}
 						map_downloadtask.remove(mDownTask.getUrl());// 移除已完成任务

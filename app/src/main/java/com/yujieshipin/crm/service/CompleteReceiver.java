@@ -9,7 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.app.DownloadManager.Query; 
+import android.app.DownloadManager.Query;
+import android.os.Build;
+
+import java.io.File;
+
 public class CompleteReceiver extends BroadcastReceiver {
 
 	private DownloadManager downloadManager; 
@@ -21,52 +25,31 @@ public class CompleteReceiver extends BroadcastReceiver {
         	AppUtility.showToastMsg(context, "下载完毕！");
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);                                                                                      //TODO 判断这个id与之前的id是否相等，如果相等说明是之前的那个要下载的文件  
             Query query = new Query();  
-            query.setFilterById(id);  
-            downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);  
-            Cursor cursor = downloadManager.query(query);  
-              
-            int columnCount = cursor.getColumnCount();  
-            String path = null;                                                                                                                                       //TODO 这里把所有的列都打印一下，有什么需求，就怎么处理,文件的本地路径就是path  
-            while(cursor.moveToNext()) {  
-                for (int j = 0; j < columnCount; j++) {  
-                    String columnName = cursor.getColumnName(j);  
-                    String string = cursor.getString(j);  
-                    if(columnName.equals("local_uri")) {  
-                        path =string;  
-                    }  
-                    if(string != null) {  
-                    	
-                        System.out.println(columnName+": "+ string);  
-                    }else {  
-                        System.out.println(columnName+": null");  
-                    }  
-                }  
-            }  
-            cursor.close();  
-            if(path!=null)
-            {
-        //如果sdcard不可用时下载下来的文件，那么这里将是一个内容提供者的路径，这里打印出来，有什么需求就怎么样处理                                                   
-	            if(path.startsWith("content:")) 
-	            {  
-	            	cursor = context.getContentResolver().query(Uri.parse(path), null, null, null, null);  
-	                columnCount = cursor.getColumnCount();  
-	                while(cursor.moveToNext())
-	                {  
-	                                    for (int j = 0; j < columnCount; j++) {  
-	                                                String columnName = cursor.getColumnName(j);  
-	                                                String string = cursor.getString(j);  
-	                                                if(string != null) {  
-	                                                     System.out.println(columnName+": "+ string);  
-	                        }else {  
-	                            System.out.println(columnName+": null");  
-	                        }  
-	                    }  
-	                }  
-	                cursor.close();  
-	            }  
-	            Intent aintent=IntentUtility.openUrl(Uri.decode(path).replace("file://", ""));
-	            if(aintent!=null)
-	            	IntentUtility.openIntent(context, aintent,true);
+            query.setFilterById(id);
+            downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            Cursor cursor = downloadManager.query(query);
+            String local_filename = null;
+            if (cursor.moveToFirst()) {
+                int fileUriIdx = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+                String local_uri = cursor.getString(fileUriIdx);
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    if (local_uri != null) {
+                        local_filename = Uri.parse(local_uri).getPath();
+                    }
+                } else {
+                    int fileNameIdx = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+                    local_filename = cursor.getString(fileNameIdx);
+                }
+            }
+            cursor.close();
+            if(local_filename!=null) {
+                File file = new File(Uri.decode(local_filename));
+                if(file.exists())
+                    local_filename=Uri.decode(local_filename);
+                Intent aintent = IntentUtility.openUrl(context,local_filename.replace("file://", ""));
+                if (aintent != null)
+                    IntentUtility.openIntent(context, aintent, true);
             }
               
         }else if(action.equals(DownloadManager.ACTION_NOTIFICATION_CLICKED)) {  

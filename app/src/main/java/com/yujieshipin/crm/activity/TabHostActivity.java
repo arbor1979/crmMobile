@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -61,6 +62,7 @@ import com.yujieshipin.crm.util.AppUtility.CallBackInterface;
 import com.yujieshipin.crm.util.BaiduPushUtility;
 import com.yujieshipin.crm.util.Base64;
 import com.yujieshipin.crm.util.DialogUtility;
+import com.yujieshipin.crm.util.IntentUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.TimeUtility;
 import com.yujieshipin.crm.widget.BottomTabLayout;
@@ -868,11 +870,13 @@ public class TabHostActivity extends TabActivity   {
 					}
 				}).create();
 		dialog_UpdateTips.show();
+
 	}
 	
 	private void downloadFile(String url)
 	{
 		AppUtility.downloadUrl(url, null, this);
+
 	}
 	
 	private void getAlbumUnreadCount() {

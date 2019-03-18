@@ -225,7 +225,7 @@ public class SchoolBillDetailFragment extends Fragment{
 						String res = jo.optString("result");
 						if(res.equals("失败")){
 							//AppUtility.showToastMsg(getActivity(), jo.optString("errorMsg"));
-							AppUtility.showErrorDialog(getActivity(), jo.optString("errorMsg"),"");
+							AppUtility.showErrorDialog(getActivity(), "提示",jo.optString("errorMsg"));
 							adapter.notifyDataSetChanged();
 						}
 						else 
@@ -794,8 +794,8 @@ public class SchoolBillDetailFragment extends Fragment{
             }
          });
         searchDialog.show();
-        EditText et=(EditText)textEntryView.findViewById(R.id.et_prodid);
-		TimeUtility.popSoftKeyBoard(getActivity(),et);
+        //EditText et=(EditText)textEntryView.findViewById(R.id.et_prodid);
+		//TimeUtility.popSoftKeyBoard(getActivity(),et);
 		
 	}
 	private void openScanCode()

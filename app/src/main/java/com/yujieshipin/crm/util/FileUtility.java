@@ -242,6 +242,21 @@ public class FileUtility {
         	extName="";
         return  extName;
     }
+	public static String getUrlExtName(String path)
+	{
+		int index=path.lastIndexOf(".");
+		String extName="";
+		if(index>-1) {
+			extName = path.substring(index + 1);
+			String tempstr[]=extName.split("&");
+			if(tempstr.length>1)
+				extName=tempstr[0];
+			index=extName.lastIndexOf("\\?");
+			if(index>-1)
+				extName = extName.substring(0,index);
+		}
+		return  extName;
+	}
     public static String getFileDir(String path)
     {
     	

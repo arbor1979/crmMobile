@@ -162,10 +162,10 @@ public class SummaryClassActivity extends Activity {
 					if (userType.equals("家长"))
 						bCanAdd=false;
 					myPictureAdapter = new MyPictureAdapter(SummaryClassActivity.this,
-							bCanAdd, picturePaths, size,"课堂笔记");
+							bCanAdd, picturePaths, size,"课堂笔记",0);
 					
 					myPictureAdapter1 = new MyPictureAdapter(SummaryClassActivity.this,
-							bCanAdd, picturePaths1, size,"课堂作业");
+							bCanAdd, picturePaths1, size,"课堂作业",0);
 					myPictureAdapter.setFrom(TAG);
 					myPictureAdapter1.setFrom(TAG);
 					myGridView.setAdapter(myPictureAdapter);

@@ -35,7 +35,7 @@ public class NotificationBean extends Notification {
 		}
 		else
 		{
-			intent=IntentUtility.openUrl(filePath);
+			intent=IntentUtility.openUrl(mContext,filePath);
         	//IntentUtility.openIntent(context, intent);
 		}
 		

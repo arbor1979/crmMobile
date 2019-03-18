@@ -416,13 +416,13 @@ public class WebSiteActivity extends Activity {
 				Intent intent;
 		        if(file.exists() && file.isFile())
 		        {
-		        	intent=IntentUtility.openUrl(filePath);
+		        	intent=IntentUtility.openUrl(WebSiteActivity.this,filePath);
 		        	IntentUtility.openIntent(WebSiteActivity.this, intent,true);
 		        }
 		        else
 		        {
 		        	
-		        	intent=IntentUtility.openUrl(url);
+		        	intent=IntentUtility.openUrl(WebSiteActivity.this,url);
 		        	if(intent==null)
 		        	{
 		        		view.loadUrl(url);
@@ -487,7 +487,7 @@ public class WebSiteActivity extends Activity {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
                                     long contentLength) {
-        	Intent intent=IntentUtility.openUrl(url);
+        	Intent intent=IntentUtility.openUrl(WebSiteActivity.this,url);
         	if(intent==null)
 	    	{
         		Uri uri = Uri.parse(url);

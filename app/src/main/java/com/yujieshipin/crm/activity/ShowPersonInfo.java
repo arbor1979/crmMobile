@@ -25,6 +25,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.text.InputType;
 import android.text.util.Linkify;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.ImageOptions;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.yujieshipin.crm.BuildConfig;
 import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.api.CampusAPI;
@@ -482,8 +484,12 @@ public class ShowPersonInfo extends Activity {
 		
 		File mCurrentPhotoFile = new File(picturePath);
 
-		Uri uri = Uri.fromFile(mCurrentPhotoFile);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", mCurrentPhotoFile)); //Uri.fromFile(tempFile)
+        else {
+            Uri uri = Uri.fromFile(mCurrentPhotoFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
 		startActivityForResult(intent, REQUEST_CODE_TAKE_CAMERA);
 	}
 	

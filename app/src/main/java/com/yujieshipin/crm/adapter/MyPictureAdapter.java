@@ -37,13 +37,14 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	private int size = 9;//最大图片数量
 	private String from;
 	private String imagetype;
-	
-	public MyPictureAdapter(Context context,boolean flag, List<String> picPaths,int size,String imagetype) {
+	private int position;
+	public MyPictureAdapter(Context context,boolean flag, List<String> picPaths,int size,String imagetype,int position) {
 		this.mContext = context;
 		this.picPaths = picPaths;
 		this.isCanAdd= flag;
 		this.size = size;
 		this.imagetype=imagetype;
+		this.position=position;
 		inflater = LayoutInflater.from(context);
 		Log.d(TAG, "isCanAdd"+isCanAdd);
 		if(isCanAdd){
@@ -52,11 +53,17 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	}
 
 	private void initData() {
+		if(picPaths != null && picPaths.size() >size && picPaths.contains(""))
+			picPaths.remove("");
 		if(picPaths != null && picPaths.size() < size && !picPaths.contains("loading")){
 			picPaths.remove("");
 			picPaths.add("");
 			
 		}
+	}
+
+	public int getPosition() {
+		return position;
 	}
 
 	public void setPicPaths(List<String> picPaths) {

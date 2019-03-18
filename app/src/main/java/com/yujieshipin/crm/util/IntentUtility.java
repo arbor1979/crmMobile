@@ -14,6 +14,10 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 
 @SuppressLint("DefaultLocale")
 public class IntentUtility {
@@ -56,51 +60,82 @@ public class IntentUtility {
 			return getAllIntent(filePath);
 		}
 	}
-	
-	public static Intent openUrl(String url) {
+
+	public static Intent openUrl(Context context,String url) {
 		/* 取得扩展名 */
-		String end = url.substring(url.lastIndexOf(".") + 1,url.length()).toLowerCase();
-		if (end==null || end.length()==0)
+		String end=FileUtility.getUrlExtName(url).toLowerCase();
+		if (end==null || end.length()==0 || end.length()>4)
 			return null;
-		
-		System.out.println("-------------------end----------" + end);
+		String fileType=null;
 		/* 依扩展名的类型决定MimeType */
 		if (end.equals("m4a") || end.equals("mp3") || end.equals("mid")
 				|| end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
-			return getAudioFileIntent(url);
-		} else if (end.equals("3gp") || end.equals("mp4") || end.equals("mov") || end.equals("avi") 
-				|| end.equals("flv") || end.equals("f4v") || end.equals("wmv") || end.equals("rm") 
-				|| end.equals("asf") || end.equals("mpg") || end.equals("mpeg") || end.equals("rmvb") 
+			fileType="audio/*";
+		} else if (end.equals("3gp") || end.equals("mp4") || end.equals("mov") || end.equals("avi")
+				|| end.equals("flv") || end.equals("f4v") || end.equals("wmv") || end.equals("rm")
+				|| end.equals("asf") || end.equals("mpg") || end.equals("mpeg") || end.equals("rmvb")
 				|| end.equals("ogm")) {
-			return getVideoFileIntent(url);
+			fileType="video/*";
+
 		} else if (end.equals("jpg") || end.equals("gif") || end.equals("png")
 				|| end.equals("jpeg") || end.equals("bmp")) {
-			return getImageFileIntent(url);
+			fileType="image/*";
 		} else if (end.equals("apk")) {
-			return getApkFileIntent(url);
+			fileType="application/vnd.android.package-archive";
 		} else if (end.equals("ppt")) {
-			return getPptFileIntent(url);
+			fileType="application/vnd.ms-powerpoint";
 		} else if (end.equals("xls") || end.equals("xlsx")) {
-			return getExcelFileIntent(url);
+			fileType="application/vnd.ms-excel";
 		} else if (end.equals("doc") || (end.equals("docx"))) {
-			return getWordFileIntent(url);
+			fileType="application/msword";
 		} else if (end.equals("pdf")) {
-			return getPdfFileIntent(url);
+			fileType="application/pdf";
 		} else if (end.equals("chm")) {
-			return getChmFileIntent(url);
+			fileType="application/x-chm";
 		} else if (end.equals("txt")) {
-			return getTextFileIntent(url, false);
+			fileType="text/plain";
 		} else if(end.equals("rar")){
-			return getRarFileIntent(url);
+			fileType="application/x-rar-compressed";
 		}else if(end.equals("zip")){
-			return getZipFileIntent(url);
+			fileType="application/zip";
 		}else if(end.equals("swf")){
-			return getFlashFileIntent(url);
+			fileType="application/x-shockwave-flash";
 		}
-		else{
+		if(fileType!=null)
+			return getFileIntentByType(context,url,fileType);
+		else
 			return null;
-		}
 	}
+	public static Intent getFileIntentByType(final Context context,String param,String fileType) {
+
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		//intent.addCategory("android.intent.category.DEFAULT");
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		Uri uri;
+		if(param.startsWith("http:"))
+			uri=Uri.parse(param);
+		else {
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileProvider", new File(param));
+				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			}
+			else
+				uri = Uri.fromFile(new File(param));
+		}
+		intent.setDataAndType(uri, fileType);
+		return intent;
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public static void startInstallPermissionSettingActivity(Context context) {
+		Uri packageURI = Uri.parse("package:" + context.getApplicationContext().getPackageName());
+		//注意这个是8.0新API
+		Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+		context.startActivity(intent);
+	}
+
+
 	public static Intent getFlashFileIntent(String param) {
 
 		Intent intent = new Intent();

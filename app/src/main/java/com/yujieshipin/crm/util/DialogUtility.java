@@ -2,8 +2,10 @@ package com.yujieshipin.crm.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -85,4 +87,14 @@ public class DialogUtility {
 			}
 		});
 	}
+	public static void showDialog(Context context, String msg, boolean cancelable,
+								  DialogInterface.OnClickListener yesOnClick,
+								  DialogInterface.OnClickListener noOnClick){
+		AlertDialog dialog = new AlertDialog.Builder(context).setTitle("提示")
+				.setMessage(msg).setCancelable(cancelable)
+				.setPositiveButton("是",yesOnClick).setNegativeButton("否",noOnClick).create();
+		dialog.show();;
+
+	}
+
 }

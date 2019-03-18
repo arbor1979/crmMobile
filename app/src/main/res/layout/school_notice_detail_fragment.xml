@@ -79,7 +79,15 @@
                     android:layout_marginRight="15dp"
                     android:autoLink="all"
                     android:textSize="@dimen/text_size_normal" />
-
+                <TextView
+                    android:id="@+id/tv_fujian"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textSize="@dimen/text_size_normal"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <!-- 数据加载中提示 -->

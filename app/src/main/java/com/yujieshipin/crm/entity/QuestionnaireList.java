@@ -122,6 +122,12 @@ public class QuestionnaireList implements Serializable {
 		private List<JSONObject> options;
 		private List<ImageItem> images; 
 		private String isRequired;
+		private String validate;
+
+		public String getValidate() {
+			return validate;
+		}
+
 		public Question(JSONObject jo) {
 			title = jo.optString("题目");
 			status = jo.optString("类型");
@@ -163,6 +169,7 @@ public class QuestionnaireList implements Serializable {
 				usersAnswer = jo.optString("用户答案");
 			}
 			ifRead=jo.optBoolean("只读");
+			validate=jo.optString("校验");
 		}
 
 		public boolean isIfRead() {

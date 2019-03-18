@@ -166,6 +166,9 @@ public class LoginActivity extends UmengNotifyClickActivity implements OnClickLi
 		loginButton.setOnClickListener(this);
 		//experienceButton.setOnClickListener(this);
 		login_choose.setOnClickListener(this);
+		String thisVersion = CampusApplication.getVersion();
+		TextView tv_copyright = (TextView) findViewById(R.id.tv_copyright);
+		tv_copyright.setText(tv_copyright.getText()+" v"+thisVersion);
 		
 	}
 
