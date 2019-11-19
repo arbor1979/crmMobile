@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:paddingRight="8dp">
+
+    <Button
+        android:id="@+id/btn_startscan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:drawableLeft="@drawable/scancode"
+        android:drawablePadding="-120dp"
+        android:paddingLeft="140dp"
+        android:text="开启扫码" />
+
+    <TextView
+        android:id="@+id/tx_percent"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingTop="10dp"
+        android:text="%" />
+
+    <EditText
+        android:id="@+id/et_zhekouall"
+        android:layout_width="110dp"
+        android:layout_height="match_parent"
+        android:ems="10"
+        android:gravity="center_vertical|bottom"
+        android:inputType="numberSigned"
+        android:lines="1"
+        android:maxLength="10"
+        android:selectAllOnFocus="true"
+        android:text=""
+        android:textSize="@dimen/text_size_small" />
+
+</LinearLayout>
