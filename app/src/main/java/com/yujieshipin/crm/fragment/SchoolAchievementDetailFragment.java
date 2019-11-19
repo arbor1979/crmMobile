@@ -93,23 +93,9 @@ public class SchoolAchievementDetailFragment extends Fragment {
 			case 0:
 				showProgress(false);
 				String result = msg.obj.toString();
-				String resultStr = "";
 				if (AppUtility.isNotEmpty(result)) {
 					try {
-						resultStr = new String(Base64.decode(result
-								.getBytes("GBK")));
-						Log.d(TAG, resultStr);
-					} catch (UnsupportedEncodingException e) {
-						showFetchFailedView();
-						e.printStackTrace();
-					}
-				}else{
-					showFetchFailedView();
-				}
-
-				if (AppUtility.isNotEmpty(resultStr)) {
-					try {
-						JSONObject jo = new JSONObject(resultStr);
+						JSONObject jo = new JSONObject(result);
 						String res = jo.optString("结果");
 						if(AppUtility.isNotEmpty(res)){
 							AppUtility.showToastMsg(getActivity(), res);
@@ -129,23 +115,9 @@ public class SchoolAchievementDetailFragment extends Fragment {
 				break;
 			case 1:
 				result = msg.obj.toString();
-				resultStr = "";
 				if (AppUtility.isNotEmpty(result)) {
 					try {
-						resultStr = new String(Base64.decode(result
-								.getBytes("GBK")));
-						Log.d(TAG, resultStr);
-					} catch (UnsupportedEncodingException e) {
-						showFetchFailedView();
-						e.printStackTrace();
-					}
-				}else{
-					showFetchFailedView();
-				}
-
-				if (AppUtility.isNotEmpty(resultStr)) {
-					try {
-						JSONObject jo = new JSONObject(resultStr);
+						JSONObject jo = new JSONObject(result);
 						String res = jo.optString("结果");
 						AppUtility.showToastMsg(getActivity(), "操作"+res);
 						if(res.equals("成功"))
@@ -165,23 +137,10 @@ public class SchoolAchievementDetailFragment extends Fragment {
 				break;
 			case 3:
 				result = msg.obj.toString();
-				resultStr = "";
+
 				if (AppUtility.isNotEmpty(result)) {
 					try {
-						resultStr = new String(Base64.decode(result
-								.getBytes("GBK")));
-						Log.d(TAG, resultStr);
-					} catch (UnsupportedEncodingException e) {
-						showFetchFailedView();
-						e.printStackTrace();
-					}
-				}else{
-					showFetchFailedView();
-				}
-
-				if (AppUtility.isNotEmpty(resultStr)) {
-					try {
-						JSONObject jo = new JSONObject(resultStr);
+						JSONObject jo = new JSONObject(result);
 						String res = jo.optString("结果");
 						
 						if(res.equals("成功"))
@@ -257,18 +216,23 @@ public class SchoolAchievementDetailFragment extends Fragment {
 	public SchoolAchievementDetailFragment() {
 		
 	}
-	public SchoolAchievementDetailFragment(String title, String iunterfaceName) {
-		this.title = title;
-		this.interfaceName = iunterfaceName;
+	public static final Fragment newInstance(String title, String interfaceName){
+		Fragment fragment = new SchoolAchievementDetailFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString("title", title);
+		bundle.putString("interfaceName", interfaceName);
+		fragment.setArguments(bundle);
+		return fragment;
+	}
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		title=getArguments().getString("title");
+		interfaceName=getArguments().getString("interfaceName");
 		leftParams = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT, 1.0f);
 		rightParams = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT, 1.0f);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
 		this.inflater = inflater;
 		View view = inflater.inflate(R.layout.school_listview_fragment,
 				container, false);
@@ -454,40 +418,13 @@ public class SchoolAchievementDetailFragment extends Fragment {
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		Log.d(TAG, "----------datatime:" + datatime);
 		Log.d(TAG, "----------checkCode:" + checkCode + "++");
-		JSONObject jo = new JSONObject();
+		JSONObject jo = AppUtility.parseQueryStrToJson(interfaceName);
 		try {
 			jo.put("用户较验码", checkCode);
-			jo.put("DATETIME", datatime);
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		String base64Str = Base64.encode(jo.toString().getBytes());
-		Log.d(TAG, "------->base64Str:" + base64Str);
-		CampusParameters params = new CampusParameters();
-		params.add(Constants.PARAMS_DATA, base64Str);
-		CampusAPI.getSchoolItem(params, interfaceName, new RequestListener() {
-
-			@Override
-			public void onIOException(IOException e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(CampusException e) {
-				Log.d(TAG, "----response" + e.getMessage());
-
-			}
-
-			@Override
-			public void onComplete(String response) {
-				Log.d(TAG, "----response" + response);
-				Message msg = new Message();
-				msg.what = 0;
-				msg.obj = response;
-				mHandler.sendMessage(msg);
-			}
-		});
+		CampusAPI.httpPost(jo, mHandler, 0);
 	}
 
 	@SuppressLint("NewApi")

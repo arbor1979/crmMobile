@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
@@ -42,6 +43,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedUpdate;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.CampusApplication;
+import com.yujieshipin.crm.activity.ChatMsgActivity;
 import com.yujieshipin.crm.activity.TabHostActivity;
 import com.yujieshipin.crm.api.CampusAPI;
 import com.yujieshipin.crm.api.CampusException;
@@ -50,6 +52,7 @@ import com.yujieshipin.crm.api.RequestListener;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.db.DatabaseHelper;
 import com.yujieshipin.crm.db.InitData;
+import com.yujieshipin.crm.entity.ChatFriend;
 import com.yujieshipin.crm.entity.DownloadSubject;
 import com.yujieshipin.crm.entity.MyClassSchedule;
 import com.yujieshipin.crm.entity.NoticeClass;
@@ -71,7 +74,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 	SQLiteDatabase sdb;
 	private Dao<MyClassSchedule, Integer> myClassScheduleDao;
 	private Dao<TeacherInfo, Integer> teacherInfoDao;
-	
+
 	private Dao<Suggestions,Integer> suggestDao;
 	private Dao<NoticeClass,Integer> noticeDao;
 	private Dao<User, Integer> userDao;
@@ -84,22 +87,24 @@ public class Alarmreceiver extends BroadcastReceiver {
 	NoticeClass notices;
 	DownloadSubject downloadSubject;
 	public static Boolean isdialog=false;
-	
+
 	private String actionName,checkCode;;
 	private Context context;
 	private Location myLocation;
 	private LocationManager locationManager;
-	
+
 	public static NotificationManager notificationManager;
-	
-	
+
+
 	@Override
 	public void onReceive(Context context1, Intent intent) {
 		this.context = context1;
-		
+
 		database = OpenHelperManager.getHelper(context, DatabaseHelper.class);
 		sdb = database.getWritableDatabase();
 		checkCode = intent.getStringExtra(Constants.PREF_CHECK_CODE);
+		if(checkCode==null)
+			checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		Log.d(TAG, "Alarmreceiver-------------checkCode"+checkCode);
 		actionName = intent.getAction();
 		Log.d(TAG, "Alarmreceiver-------------actionName"+actionName);
@@ -110,7 +115,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 			suggestDao = database.getSuggestionsDao();
 			noticeDao = database.getNoticeClassDao();
 			downloadSubjectDao = database.getDownloadSubjectDao();
-			
+
 			if("initBaseData".equals(actionName)){
 				InitData initData = new InitData(context,database, null,"refreshSubject",checkCode);
 				initData.initAllInfo();
@@ -119,7 +124,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 				initData.initContactInfo();
 			}
 			else if (actionName.equals(Intent.ACTION_BOOT_COMPLETED) ||
-					actionName.equals(Intent.ACTION_USER_PRESENT)) 
+					actionName.equals(Intent.ACTION_USER_PRESENT))
 			{
 				/*
 	            Handler handler = new Handler(Looper.getMainLooper());
@@ -133,9 +138,12 @@ public class Alarmreceiver extends BroadcastReceiver {
 	            }, 30*1000);
 	            */
 	        }
+			else if ("getMsgList".equals(actionName)) {
+				getMsgFromServer();
+			}
 			else if ("reportLocation".equals(actionName))
 			{
-				locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);			
+				locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 				getNetLocation();
 			}else if ("reminderMyClass".equals(actionName)) {
 				/****************************** 课程提醒 begin ********************************************/
@@ -146,7 +154,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 				//每日课程提醒
 				boolean booleanReminderDayClass = PrefUtility.getBoolean("booleanReminderDayClass", true);
 				//每日提醒时间
-				
+
 				//开启课前提醒
 				/*
 				if (booleanReminderBeforeClass) {
@@ -162,11 +170,11 @@ public class Alarmreceiver extends BroadcastReceiver {
 				*/
 				//开启每日课程提醒
 				if (booleanReminderDayClass) {
-					
+
 					String remindClassTime = PrefUtility.get("remindClassTime", "前一天 20:00");
 					Log.d("alarm", remindClassTime);
 					String preDay=remindClassTime.split(" ")[0];
-					String theDay=""; 
+					String theDay="";
 					String dayStr="";
 					if(preDay.equals("前一天"))
 					{
@@ -187,7 +195,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 						for (MyClassSchedule teacherInfo : dayclassList) {
 							if(!banjiList.contains(teacherInfo.getClassGrade()))
 								banjiList.add(teacherInfo.getClassGrade());
-							
+
 						}
 						if(banjiList.size()>0)
 						{
@@ -212,7 +220,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 							else
 								contentText = "您的孩子"+dayStr+"没有课";
 						}
-							
+
 						else
 						{
 							if(banjiList.size()>0)
@@ -225,13 +233,13 @@ public class Alarmreceiver extends BroadcastReceiver {
 					}
 					Log.d("alarm", contentText);
 					showDialog(intent, contentTitle, contentText);
-					
+
 				}
 				/****************************** 课程提醒 end ********************************************/
 			}else{
 				/************************** 修改学生考勤信息 begin ************************************************/
 				if ("submitdata".equals(actionName)  || "changekaoqininfo".equals(actionName)) { //提交手机本地数据到服务器
-					
+
 					// 根据标识isModify=1查询需要提交服务器的数据
 					teacherInfoList = teacherInfoDao.queryBuilder().where()
 							.eq("isModify", 1).query();
@@ -249,9 +257,9 @@ public class Alarmreceiver extends BroadcastReceiver {
 					}
 
 				}
-				
+
 				/************* 修改学生考勤信息 end ************/
-				
+
 				/************************** 修改学生信息 begin ************************************************/
 				/*
 				if ("submitdata".equals(actionName)  || "changestudentinfo".equals(actionName)) {
@@ -274,7 +282,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 					// 根据标识isModify=1查询需要提交服务器的数据
 					userInfo = userDao.queryBuilder().where().eq("isModify", 1)
 							.queryForFirst();
-					
+
 					/**
 					 * 获取教师信息修改数据
 					 */
@@ -338,7 +346,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	public void showDialog(Intent intent,CharSequence contentTitle,CharSequence contentText){
 		/*
 		String isrunflag = intent.getStringExtra("isStartTabHostActivity");
@@ -356,7 +364,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 		*/
 		setNotification(contentTitle, contentText,TabHostActivity.class);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void setNotification(CharSequence contentTitle,CharSequence contentText,Class activity){
 		//消息通知栏
@@ -366,7 +374,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 		int icon = R.drawable.ic_logo1;
 		CharSequence tickerText = "掌上校园通知";
 		long when = System.currentTimeMillis();
-		
+
 		Intent notificationIntent = new Intent(context, activity);
 		notificationIntent.putExtra("contentText", contentText);
 		notificationIntent.putExtra("tab", "1");
@@ -374,12 +382,12 @@ public class Alarmreceiver extends BroadcastReceiver {
 				| Intent.FLAG_ACTIVITY_NEW_TASK);
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 		notificationIntent, 0);
-		
+
 		Notification.Builder builder = new Notification.Builder(context);
 		builder.setWhen(when);
         builder.setAutoCancel(true);
         builder.setTicker(tickerText);
-        builder.setContentTitle(contentTitle);               
+        builder.setContentTitle(contentTitle);
         builder.setContentText(contentText);
         builder.setSmallIcon(R.drawable.ic_launcher1);
         builder.setContentIntent(contentIntent);
@@ -387,7 +395,7 @@ public class Alarmreceiver extends BroadcastReceiver {
         //builder.setSubText("This is subtext...");   //API level 16
         //builder.setNumber(100);
         builder.build();
-		
+
         Notification notification = builder.getNotification();
         mNotificationManager.cancel(2);
         mNotificationManager.notify(2, notification);
@@ -411,10 +419,10 @@ public class Alarmreceiver extends BroadcastReceiver {
 
 	/**
 	 * 功能描述:加工需要修改的考勤数据
-	 * 
+	 *
 	 * @author yanzy 2013-12-3 下午2:51:37
-	 * 
-	 * @param subjectIdList
+	 *
+	 * @param
 	 */
 	public String getChangekaoqininfo(List<TeacherInfo> teacherInfoList) {
 		try {
@@ -435,7 +443,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 							}
 						}
 					}
-					
+
 					JSONObject jo = new JSONObject();
 					jo.put("用户较验码", checkCode);
 					jo.put("编号", teacherInfo.getId() + "");
@@ -465,9 +473,9 @@ public class Alarmreceiver extends BroadcastReceiver {
 
 	/**
 	 * 功能描述:加工需要修改的学生数据
-	 * 
+	 *
 	 * @author yanzy 2013-12-5 上午10:17:27
-	 * 
+	 *
 	 * @param studentList
 	 * @return
 	 */
@@ -500,9 +508,9 @@ public class Alarmreceiver extends BroadcastReceiver {
 
 	/**
 	 * 功能描述:加工需要修改的教师信息
-	 * 
+	 *
 	 * @author zhuliang 2013-12-6 下午4:31:06
-	 * 
+	 *
 	 * @param userInfo
 	 * @return
 	 */
@@ -523,14 +531,14 @@ public class Alarmreceiver extends BroadcastReceiver {
 			}
 		}
 		return null;
-		
+
 	}
 	/**
 	 * 功能描述:加工需要修改的班级通知信息
 	 *
 	 * @author linrr  2013-12-16 下午5:57:23
-	 * 
-	 * @param suggestion
+	 *
+	 * @param
 	 * @return
 	 */
 	public String getChangeNoticeClassInfo(NoticeClass notices) {
@@ -549,14 +557,14 @@ public class Alarmreceiver extends BroadcastReceiver {
 			}
 		}
 		return null;
-		
+
 	}
 	/***
 	 * 功能描述:加工需要修改的意见反馈信息
 	 *
 	 * @author linrr  2013-12-16 上午11:14:57
-	 * 
-	 * @param userInfo
+	 *
+	 * @param
 	 * @return
 	 */
 	public String getChangeSuggestInfo(Suggestions suggestion) {
@@ -574,7 +582,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 			}
 		}
 		return null;
-		
+
 	}
 	private String getChangeceyanStatus(List<TeacherInfo> teacherInfoList) {
 		if (teacherInfoList != null && teacherInfoList.size() > 0) {
@@ -595,11 +603,11 @@ public class Alarmreceiver extends BroadcastReceiver {
 		return null;
 	}
 	/**
-	 * 
+	 *
 	 * 功能描述:提交班级通知
 	 *
 	 * @author linrr  2013-12-16 下午5:52:47
-	 * 
+	 *
 	 * @param base64Str
 	 * @param action
 	 */
@@ -617,30 +625,30 @@ public class Alarmreceiver extends BroadcastReceiver {
 				Message msg = new Message();
 				msg.what = 2;
 				msg.obj = bundle;
-				mHandler.sendMessage(msg);	
-				
+				mHandler.sendMessage(msg);
+
 			}
 
 			@Override
 			public void onIOException(IOException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onError(CampusException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 	}
 	/**
 	 * 功能描述:上传文件
 	 *
 	 * @author linrr  2013-12-18 上午11:48:59
-	 * 
-	 * @param base64Str
+	 *
+	 * @param
 	 * @param action
 	 */
 	public void SubmitUploadFile(final String action){
@@ -659,29 +667,29 @@ public class Alarmreceiver extends BroadcastReceiver {
 				Message msg = new Message();
 				msg.what = 3;
 				msg.obj = bundle;
-				mHandler.sendMessage(msg);	
-				
+				mHandler.sendMessage(msg);
+
 			}
 
 			@Override
 			public void onIOException(IOException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onError(CampusException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 	}
 	/**
 	 * 功能描述:功能描述:提交服务器
 	 *
 	 * @author linrr  2013-12-16 下午2:18:41
-	 * 
+	 *
 	 * @param base64Str
 	 * @param action
 	 */
@@ -699,29 +707,29 @@ public class Alarmreceiver extends BroadcastReceiver {
 				Message msg = new Message();
 				msg.what = 1;
 				msg.obj = bundle;
-				mHandler.sendMessage(msg);	
-				
+				mHandler.sendMessage(msg);
+
 			}
 
 			@Override
 			public void onIOException(IOException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onError(CampusException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		});
 	}
 	/**
 	 * 功能描述:提交服务器
-	 * 
+	 *
 	 * @author yanzy 2013-12-4 上午10:10:42
-	 * 
+	 *
 	 * @param base64Str
 	 */
 	public void SubmitChangeinfo(String base64Str, final String action) {
@@ -739,7 +747,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 			@Override
 			public void onError(CampusException e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -771,7 +779,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 				Log.d(TAG, "action:" + action);
 				Log.d(TAG, "result"+result);
 				Log.d(TAG, "resultStr:" + resultStr);
-				
+
 				try {
 					JSONObject jo = new JSONObject(resultStr);
 					System.out.println("jo.optString(成功):"+jo.optString("成功"));
@@ -781,7 +789,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 							PreparedUpdate<TeacherInfo> preparedUpdateStudentSubject = (PreparedUpdate<TeacherInfo>) teacherInfoDao.updateBuilder().updateColumnValue("isModify", 0).where().eq("isModify", 1).prepare();
 							teacherInfoDao.update(preparedUpdateStudentSubject);
 						}
-						
+
 						if("changeceyanzhuangtai".equals(action)){
 							// 将标识更新为isModify=0
 							PreparedUpdate<TeacherInfo> preparedUpdateStudentSubject = (PreparedUpdate<TeacherInfo>) teacherInfoDao.updateBuilder().updateColumnValue("isModify", 0).where().eq("isModify", 1).prepare();
@@ -794,7 +802,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 									.where().eq("isModify", 1).prepare();
 							userDao.update(preparedUpdateUser);
 						}
-						
+
 						if ("submitdata".equals(actionName)) {
 							DialogUtility.showMsg(context, "保存成功！");
 						}
@@ -806,7 +814,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				break;
 			case 1:
 				bundle = (Bundle) msg.obj;
@@ -871,7 +879,7 @@ public class Alarmreceiver extends BroadcastReceiver {
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
-				}	
+				}
 				break;
 			case 4:
 				result = msg.obj.toString();
@@ -880,26 +888,26 @@ public class Alarmreceiver extends BroadcastReceiver {
 					try {
 						resultStr = new String(Base64.decode(result.getBytes("GBK")));
 						Log.d(TAG, "----resultStr:"+resultStr);
-						
+
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
 					JSONObject jo = null;
 					try {
 						jo = new JSONObject(resultStr);
-						
+
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 					if(jo!=null){
-						
-						
+
+
 					}
 				}
 				break;
 			case 5:
 				resultStr = msg.obj.toString();
-				
+
 				resultStr=resultStr.substring(resultStr.indexOf("({")+1);
 				resultStr=resultStr.substring(0, resultStr.length()-1);
 				String cityStr="";
@@ -907,11 +915,11 @@ public class Alarmreceiver extends BroadcastReceiver {
 				Bundle bdl=msg.getData();
 				double lat=bdl.getDouble("lat");
 				double lon=bdl.getDouble("lon");
-				
+
 				JSONObject jo = null;
 				try {
 					jo = new JSONObject(resultStr);
-					
+
 					if(jo!=null && jo.getInt("status")==0)
 					{
 						jo=jo.getJSONObject("result");
@@ -931,98 +939,166 @@ public class Alarmreceiver extends BroadcastReceiver {
 						if(user!=null)
 							user.setLatestAddress(addressStr);
 					}
-					
+
 				}
 				catch (JSONException e) {
 					e.printStackTrace();
 				}
-				
-				break;
 
+				break;
+			case 6:// 获取消息列表
+					resultStr = msg.obj.toString(); // 服务器返回的base64加密后的字符串
+
+					try {
+						JSONObject jowasr = new JSONObject(resultStr);
+						if(jowasr!=null && jowasr.optString("结果").equals("成功"))
+						{
+							JSONArray ja=jowasr.optJSONArray("消息数组");
+							if (ja != null && ja.length() > 0) {
+								Dao<ChatFriend, Integer> chatFriendDao = database.getChatFriendDao();
+								String hostid=PrefUtility.get(Constants.PREF_CHECK_HOSTID,"");
+								ArrayList<String> toidList=new ArrayList<String>();
+								for (int i = 0; i < ja.length(); i++) {
+									JSONObject jo1 = ja.getJSONObject(i);
+									String toid = jo1.optString("fromUserId"); //唯一码 toid
+									String type = jo1.optString("contentType");
+									String content = jo1.optString("content"); //消息内容
+									String toname = jo1.optString("fromUserName");
+									String userImage = jo1.optString("fromUserAvatar");
+									String fromTime=jo1.optString("sendTime");
+									String msg_type = "";
+									String msg_id = jo1.optString("id");
+									String linkUrl = jo1.optString("linkUrl");
+									String linkUrlStr="";
+									if(linkUrl!=null && linkUrl.length()>0)
+									{
+										try {
+											linkUrl=Base64.safeUrlbase64dec(linkUrl);
+											linkUrlStr = new String(Base64
+													.decode(linkUrl.getBytes("GBK")));
+										} catch (UnsupportedEncodingException e) {
+											e.printStackTrace();
+										}
+									}
+									ChatFriend chatFriend = chatFriendDao.queryBuilder().where().eq("toid", toid).and().eq("hostid", hostid).queryForFirst();
+									if (chatFriend != null)
+										chatFriend.setUnreadCnt(chatFriend.getUnreadCnt() + 1);
+									InitData initData = new InitData(context, database, null, null,null);
+									initData.sendChatToDatabase(type,toid, toname, 0, content, chatFriend,msg_type,userImage,msg_id,fromTime,linkUrlStr);
+									toidList.add(toid);
+								}
+								Intent intentChat = new Intent("ChatInteract");
+								context.sendBroadcast(intentChat);
+
+								if(!AppUtility.isApplicationBroughtToBackground(context))
+								{
+									if (ChatMsgActivity.isruning && toidList.contains(ChatMsgActivity.toid))
+										AppUtility.playSounds(R.raw.tw_touch, context);
+									else
+										AppUtility.playSounds(R.raw.tweet_sent, context);
+								}
+
+
+							}
+						}
+					}
+					catch (JSONException e) {
+						e.printStackTrace();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					break;
 			}
 		};
 	};
-	
+
 	@SuppressWarnings("unused")
-	private class cancelStudentPicListener implements DialogInterface.OnClickListener{  
-		   
-        @Override  
-        public void onClick(DialogInterface dialog, int which) {  
+	private class cancelStudentPicListener implements DialogInterface.OnClickListener{
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
         	dialog.dismiss();
-        }  
+        }
     }
-	
+
 	LocationListener locationListener = new LocationListener() {
-		
+
 		// Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			
+
 		}
-		
+
 		// Provider被enable时触发此函数，比如GPS被打开
 		@Override
 		public void onProviderEnabled(String provider) {
-			
+
 		}
-		
+
 		// Provider被disable时触发此函数，比如GPS被关闭 
 		@Override
 		public void onProviderDisabled(String provider) {
-			
+
 		}
-		
+
 		//当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发 
 		@Override
 		public void onLocationChanged(Location location) {
-			if (location != null) {   
-				
+			if (location != null) {
+
 				myLocation=location;
 				locationManager.removeUpdates(locationListener);
 		    	getRealAddress();
-				
-				Log.d("Map", "Location changed : Lat: "  
-				+ location.getLatitude() + " Lng: "  
-				+ location.getLongitude());   
-				
+
+				Log.d("Map", "Location changed : Lat: "
+				+ location.getLatitude() + " Lng: "
+				+ location.getLongitude());
+
 			}
 		}
 	};
-	
+
 	private void getGPSLocation()
 	{
 		myLocation=null;
 		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
  		{
 			locationManager.removeUpdates(locationListener);
+			if (ActivityCompat.checkSelfPermission(AppUtility.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AppUtility.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+				return;
+			}
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0,locationListener);
-			
-			new Handler().postDelayed(new Runnable(){  
-				public void run() {  
+			new Handler().postDelayed(new Runnable(){
+				@SuppressLint("MissingPermission")
+				public void run() {
 					locationManager.removeUpdates(locationListener);
 					if(myLocation==null)
 					{
 						myLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 						if(myLocation!=null)
 							getRealAddress();
-					}	
-					
-				}  
+					}
+
+				}
 			}, 10000);
  		}
-		
+
 	}
-	
+
 	private void getNetLocation()
 	{
 		myLocation=null;
 		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
  		{
 			locationManager.removeUpdates(locationListener);
+			if (ActivityCompat.checkSelfPermission(AppUtility.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AppUtility.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+				return;
+			}
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0, 0,locationListener);
-			
-			new Handler().postDelayed(new Runnable(){  
-				public void run() {  
+
+			new Handler().postDelayed(new Runnable(){
+				@SuppressLint("MissingPermission")
+				public void run() {
 					locationManager.removeUpdates(locationListener);
 					if(myLocation==null)
 					{
@@ -1140,7 +1216,18 @@ public class Alarmreceiver extends BroadcastReceiver {
         }  
         */
 	}
-	
-	
+
+	private void getMsgFromServer() {
+
+		JSONObject jsonObj = new JSONObject();
+		try {
+			jsonObj.put("function", "getMsgList");
+			jsonObj.put("用户较验码", checkCode);
+
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		CampusAPI.httpPost(jsonObj, mHandler, 6);
+	}
 	
 }

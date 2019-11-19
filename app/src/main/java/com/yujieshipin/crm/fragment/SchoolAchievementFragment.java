@@ -76,12 +76,9 @@ public class SchoolAchievementFragment extends Fragment {
 			case 0:
 				showProgress(false);
 				String result = msg.obj.toString();
-				String resultStr = "";
 				if (AppUtility.isNotEmpty(result)) {
 					try {
-						resultStr = new String(Base64.decode(result
-								.getBytes("GBK")));
-						JSONObject jo = new JSONObject(resultStr);
+						JSONObject jo = new JSONObject(result);
 						String res = jo.optString("结果");
 						if(AppUtility.isNotEmpty(res)){
 							AppUtility.showToastMsg(getActivity(), res);
@@ -123,16 +120,12 @@ public class SchoolAchievementFragment extends Fragment {
 								
 						}
 					} 
-					catch (UnsupportedEncodingException e) {
+					catch (Exception e) {
 
 						e.printStackTrace();
 						AppUtility.showErrorToast(getActivity(),e.getLocalizedMessage());
 					}
-					catch (JSONException e) {
-						
-						e.printStackTrace();
-						AppUtility.showErrorToast(getActivity(), e.getLocalizedMessage());
-					}
+
 				}else{
 					showFetchFailedView();
 					
@@ -244,40 +237,12 @@ public class SchoolAchievementFragment extends Fragment {
 		JSONObject jo = new JSONObject();
 		try {
 			jo.put("用户较验码", checkCode);
-			jo.put("DATETIME", datatime);
+			String functionName=interfaceName.substring(0, interfaceName.length()-4);
+			jo.put("function", functionName);
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		String base64Str = Base64.encode(jo.toString().getBytes());
-		Log.d(TAG, "------->base64Str:" + base64Str);
-		CampusParameters params = new CampusParameters();
-		params.add(Constants.PARAMS_DATA, base64Str);
-		CampusAPI.getSchoolItem(params, interfaceName, new RequestListener() {
-
-			@Override
-			public void onIOException(IOException e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(CampusException e) {
-				Log.d(TAG, "----response" + e.getMessage());
-				Message msg = new Message();
-				msg.what = -1;
-				msg.obj = e.getMessage();
-				mHandler.sendMessage(msg);
-			}
-
-			@Override
-			public void onComplete(String response) {
-				Log.d(TAG, "----response" + response);
-				Message msg = new Message();
-				msg.what = 0;
-				msg.obj = response;
-				mHandler.sendMessage(msg);
-			}
-		});
+		CampusAPI.httpPost(jo, mHandler, 0);
 	}
 
 	

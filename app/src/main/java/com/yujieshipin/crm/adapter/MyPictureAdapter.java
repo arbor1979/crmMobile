@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import com.androidquery.AQuery;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.activity.ImagesActivity;
+import com.yujieshipin.crm.activity.ShowPersonInfo;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.util.AppUtility;
 import com.yujieshipin.crm.util.FileUtility;
@@ -32,6 +33,12 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	private String TAG = "MyPictureAdapter";
 	private Context mContext;
 	private List<String> picPaths;
+
+	public void setPicNames(List<String> picNames) {
+		this.picNames = picNames;
+	}
+
+	private List<String> picNames;
 	private LayoutInflater inflater;
 	private boolean isCanAdd = true;
 	private int size = 9;//最大图片数量
@@ -45,20 +52,22 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 		this.size = size;
 		this.imagetype=imagetype;
 		this.position=position;
+		this.picNames=new ArrayList<String>();
 		inflater = LayoutInflater.from(context);
 		Log.d(TAG, "isCanAdd"+isCanAdd);
-		if(isCanAdd){
+
 			initData();
-		}
+
 	}
+
 
 	private void initData() {
 		if(picPaths != null && picPaths.size() >size && picPaths.contains(""))
 			picPaths.remove("");
 		if(picPaths != null && picPaths.size() < size && !picPaths.contains("loading")){
 			picPaths.remove("");
+		if(isCanAdd)
 			picPaths.add("");
-			
 		}
 	}
 
@@ -69,9 +78,7 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	public void setPicPaths(List<String> picPaths) {
 		//picPaths.add("http://qd.baidupcs.com/file/43fd14d79e77ef636980d7792d5e3b00?fid=253833689-250528-1069475648697006&time=1400308734&sign=FDTAXER-DCb740ccc5511e5e8fedcff06b081203-0y%2BFbiDw0mcYK1qMntKx0%2BAz7P8%3D&to=qb&fm=Q,B,T,t&newver=1&expires=1400309334&rt=sh&r=505173609&logid=3777274181&sh=1&vuk=253833689&fn=20140517_141008-736098600.jpg");
 		this.picPaths = picPaths;
-		if(isCanAdd){
-			initData();
-		}
+		initData();
 		notifyDataSetChanged();
 	}
 
@@ -149,11 +156,16 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 			public void onClick(View v) {
 				final String imgPath = v.getTag().toString();
 				Log.d(TAG, "----imgPath:"+imgPath);
-				if (imgPath.equals("")) {
-					Intent intent=new Intent(Constants.GET_PICTURE);
-					intent.putExtra("TAG", from);
-					intent.putExtra("imagetype", imagetype);
-					mContext.sendBroadcast(intent);
+				if (imgPath.equals("") ) {
+					if(isCanAdd) {
+						Intent intent = new Intent(Constants.GET_PICTURE);
+						intent.putExtra("TAG", from);
+						intent.putExtra("imagetype", imagetype);
+						intent.putExtra("position", position);
+						mContext.sendBroadcast(intent);
+					}
+					else
+						AppUtility.showErrorToast(mContext,"当前处于不可编辑状态");
 				} else {
 					Log.d(TAG, "---------------------------------");
 					if(isCanAdd)
@@ -162,6 +174,7 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 						intent.putExtra("imagePath", imgPath);
 						intent.putExtra("TAG", from);
 						intent.putExtra("imagetype", imagetype);
+						intent.putExtra("position", position);
 						mContext.sendBroadcast(intent);
 					}
 					else
@@ -170,6 +183,8 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 						Intent intent = new Intent(mContext,ImagesActivity.class);
 						intent.putStringArrayListExtra("pics",
 								(ArrayList<String>) picPaths);
+						intent.putStringArrayListExtra("txts",
+								(ArrayList<String>) picNames);
 						for (int i = 0; i < picPaths.size(); i++) {
 							if(picPaths.get(i).equals(imgPath)){
 								intent.putExtra("position", i);

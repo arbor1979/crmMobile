@@ -12,9 +12,11 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -40,6 +42,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.ImageOptions;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedDelete;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.api.CampusAPI;
@@ -50,6 +53,7 @@ import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.base.ExitApplication;
 import com.yujieshipin.crm.db.DatabaseHelper;
 import com.yujieshipin.crm.entity.ChatFriend;
+import com.yujieshipin.crm.entity.ChatMsg;
 import com.yujieshipin.crm.entity.ContactsMember;
 import com.yujieshipin.crm.util.AppUtility;
 import com.yujieshipin.crm.util.Base64;
@@ -81,6 +85,7 @@ public class ChatFriendActivity extends Activity implements OnItemClickListener 
 	private TextView title,content_none;
 	private DatabaseHelper database;
 	private Dao<ChatFriend, Integer> chatFriendDao;
+	private Dao<ChatMsg, Integer> chatMsgDao;
 	private String ACTION_NAME = "ChatInteract";
 
 	private List<ChatFriend> chatFriendList;
@@ -97,6 +102,41 @@ public class ChatFriendActivity extends Activity implements OnItemClickListener 
 		registerBoradcastReceiver();
 		initTitle();
 		initContent();
+		//listView长按事件
+		mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+										   final int position, long id) {
+				//定义AlertDialog.Builder对象，当长按列表项的时候弹出确认删除对话框
+				AlertDialog.Builder builder=new AlertDialog.Builder(ChatFriendActivity.this);
+				builder.setMessage("确定删除此消息?");
+				builder.setTitle("提示");
+				//添加AlertDialog.Builder对象的setPositiveButton()方法
+				builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ChatFriend item=chatFriendList.get(position);
+						try {
+							chatMsgDao.delete((PreparedDelete<ChatMsg>)chatMsgDao.deleteBuilder().where().eq("toid", item.getToid()).prepare());
+							chatFriendDao.delete((PreparedDelete<ChatFriend>)chatFriendDao.deleteBuilder().where().eq("id", item.getId()).prepare());
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+						chatFriendList.remove(position);
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+				//添加AlertDialog.Builder对象的setNegativeButton()方法
+				builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+				builder.create().show();
+				return true;
+			}
+		});
 	}
 
 	private void initTitle() {
@@ -106,7 +146,7 @@ public class ChatFriendActivity extends Activity implements OnItemClickListener 
 		menu.setBackgroundResource(R.drawable.bg_title_homepage_back);
 		title.setText("消息");
 		LinearLayout lygoto=(LinearLayout) findViewById(R.id.layout_goto);
-		lygoto.setVisibility(View.VISIBLE);
+		lygoto.setVisibility(View.INVISIBLE);
 		Button btgoto=(Button) findViewById(R.id.btn_goto);
 		btgoto.setText("群发");
 		btgoto.setOnClickListener(new OnClickListener(){
@@ -146,6 +186,7 @@ public class ChatFriendActivity extends Activity implements OnItemClickListener 
 		mList = (ListView) findViewById(R.id.message_list);
 		content_none = (TextView)findViewById(R.id.chat_msg_none);
 		try {
+			chatMsgDao = getHelper().getChatMsgDao();
 			chatFriendDao = getHelper().getChatFriendDao();
 			String hostid = PrefUtility.get(Constants.PREF_CHECK_HOSTID, "");
 			chatFriendList=chatFriendDao.queryBuilder().orderBy("lastTime", false).where().eq("hostid", hostid).query();
@@ -291,23 +332,12 @@ public class ChatFriendActivity extends Activity implements OnItemClickListener 
 						toid=chatFriend.getToid().split(",")[0];
 					else
 						toid=chatFriend.getToid();
-					ContactsMember contactsMember=((CampusApplication)getApplicationContext()).getLinkManDic().get(toid);
-					
-					if(userType.equals("老师") && contactsMember!=null && contactsMember.getUserType().equals("学生"))
-					{
-						Intent intent = new Intent(ChatFriendActivity.this,StudentInfoActivity.class);
-						intent.putExtra("studentId", contactsMember.getStudentID());
-						intent.putExtra("userImage", contactsMember.getUserImage());
-						startActivity(intent);
-					}
-					else
-					{
-						Intent intent = new Intent(ChatFriendActivity.this,
-								ShowPersonInfo.class);
-						intent.putExtra("studentId", toid);
-						intent.putExtra("userImage",chatFriend.getUserImage());
-						startActivity(intent);
-					}
+					Intent intent = new Intent(ChatFriendActivity.this,
+							ShowPersonInfo.class);
+					intent.putExtra("userId", toid);
+					intent.putExtra("userType", "1");
+					intent.putExtra("userImage",chatFriend.getUserImage());
+					startActivity(intent);
 				}
 				
 			});

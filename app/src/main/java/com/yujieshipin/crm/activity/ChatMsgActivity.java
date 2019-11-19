@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,6 +29,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,6 +37,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -42,10 +45,12 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -84,6 +89,7 @@ import com.example.androidgifdemo.MyTextViewEx;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedDelete;
+import com.yujieshipin.crm.BuildConfig;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.adapter.ExpressionGvAdapter;
@@ -118,6 +124,8 @@ import com.yujieshipin.crm.widget.XListView.IXListViewListener;
 public class ChatMsgActivity extends FragmentActivity implements IXListViewListener{
 	private static final int PIC_REQUEST_CODE_SELECT_CAMERA = 1;// 拍照
 	private static final int PIC_Select_CODE_ImageFromLoacal = 2;// 从本地获取图片
+    private static final int MY_PERMISSIONS_REQUEST_Camera= 6;
+    private static final int MY_PERMISSIONS_REQUEST_Album = 7;
 	private static final String TAG = "ChatMsgActivity";
 	private TextView mBtnSend;
 	private EditText mEditTextContent;
@@ -187,14 +195,13 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 		sendBroadcast(i);
 		initListener();
 		registerBoradcastReceiver();// 注册广播
-		
 		timer = new Timer();
 		timer.schedule(task,1000,10000);
 	}
 
 	TimerTask task = new TimerTask( ) {
 		public void run ( ) {
-			//getMsgState();
+			getMsgState();
 		}
 	};
 		
@@ -330,12 +337,24 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				switch(position){
 				case 0:
 					Log.d(TAG, "get_pic_from_camera");
-					getPicByCamera();
+                    if (Build.VERSION.SDK_INT >= 23)
+                    {
+                        if(AppUtility.checkPermission(ChatMsgActivity.this, MY_PERMISSIONS_REQUEST_Camera, Manifest.permission.CAMERA))
+                            getPictureByCamera();
+                    }
+                    else
+                        getPictureByCamera();
 					dialog.dismiss();
 					break;
 				case 1:
 					Log.d(TAG, "get_pic_from_location");
-					getPicFromLocation();
+                    if (Build.VERSION.SDK_INT >= 23)
+                    {
+                        if(AppUtility.checkPermission(ChatMsgActivity.this,MY_PERMISSIONS_REQUEST_Album,Manifest.permission.READ_EXTERNAL_STORAGE))
+                            getPictureFromLocation();
+                    }
+                    else
+                        getPictureFromLocation();
 					dialog.dismiss();
 					break;
 					default:
@@ -355,7 +374,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 		dialog.show();
 	}
 	// 照相获取头像
-	public void getPicByCamera() {
+	public void getPictureByCamera() {
 
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -367,13 +386,17 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 		myPicPath =FileUtility.getRandomSDFileName("jpg");
 		
 		File mCurrentPhotoFile = new File(myPicPath);
-		Uri uri = Uri.fromFile(mCurrentPhotoFile);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(getParent(), BuildConfig.APPLICATION_ID + ".fileProvider", mCurrentPhotoFile)); //Uri.fromFile(tempFile)
+        else {
+            Uri uri = Uri.fromFile(mCurrentPhotoFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
 		startActivityForResult(intent, PIC_REQUEST_CODE_SELECT_CAMERA);
 		
 	}
 	//hu
-	public void getPicFromLocation() {
+	public void getPictureFromLocation() {
 		String status = Environment.getExternalStorageState();
 		if (status.equals(Environment.MEDIA_MOUNTED)) {// 判断是否有SD卡
 			/*
@@ -465,38 +488,15 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 			String user_code = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 			try {
 				String datetime = String.valueOf(new Date().getTime());
-				jo.put("ACTION", "SetInfo");
+				jo.put("action", "SetMsgState");
+				jo.put("function", "getMsgList");
 				jo.put("用户较验码", user_code);
-				jo.put("DATETIME", datetime);
-				jo.put("MSG_ID_LIST", msg_ids);
+				jo.put("msgidstr", msg_ids);
 				
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 			}
-			CampusParameters params = new CampusParameters();
-			params.add(Constants.PARAMS_DATA,
-					Base64.encode(jo.toString().getBytes()));
-			CampusAPI.updatesmsState(params, new RequestListener() {
-
-				@Override
-				public void onIOException(IOException e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onError(CampusException e) {
-					
-				}
-
-				@Override
-				public void onComplete(String response) {
-					Message msg = new Message();
-					msg.what = 6;
-					msg.obj = response;
-					mHandler.sendMessage(msg);
-				}
-			});
+			CampusAPI.httpPost(jo,mHandler,6);
 		}
 	}
 	//获取已读状态
@@ -508,20 +508,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 		{
 			if(item.getMsgFlag()==1 && AppUtility.isNotEmpty(item.getMsg_id()) && item.getSendstate().equals("送达"))
 			{
-				if(item.getToid().split(",").length>1)
-				{
-					try {
-						List<ChatMsgDetail> detailList=chatMsgDetailDao.queryBuilder().where().eq("mainid", item.getId()).and().eq("sendstate", "送达").query();
-						for(ChatMsgDetail detail:detailList)
-							msgidList.add(detail.getMsg_id());
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-				else
-					msgidList.add(item.getMsg_id());
+				msgidList.add(item.getMsg_id());
 			}
 		}
 		String msg_ids="";
@@ -538,38 +525,15 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 			String user_code = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 			try {
 				String datetime = String.valueOf(new Date().getTime());
-				jo.put("ACTION", "GetInfo");
+				jo.put("action", "getMsgState");
 				jo.put("用户较验码", user_code);
-				jo.put("DATETIME", datetime);
-				jo.put("MSG_ID_LIST", msg_ids);
+				jo.put("function", "getMsgList");
+				jo.put("msgidstr", msg_ids);
 				
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 			}
-			CampusParameters params = new CampusParameters();
-			params.add(Constants.PARAMS_DATA,
-					Base64.encode(jo.toString().getBytes()));
-			CampusAPI.updatesmsState(params, new RequestListener() {
-
-				@Override
-				public void onIOException(IOException e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onError(CampusException e) {
-					
-				}
-
-				@Override
-				public void onComplete(String response) {
-					Message msg = new Message();
-					msg.what = 6;
-					msg.obj = response;
-					mHandler.sendMessage(msg);
-				}
-			});
+			CampusAPI.httpPost(jo, mHandler, 6);
 		}
 	}
 	public class MyListener implements OnClickListener {
@@ -641,7 +605,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 					contString = imgpath;
 				}
 				ChatMsg entity = initData.sendChatToDatabase(type,toid, toname, 1,
-						contString, chatList,msg_type,userImage,"");
+						contString, chatList,msg_type,userImage,"","","");
 				
 				if ("txt".equals(type)) {
 					//initData();
@@ -654,7 +618,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				}
 				
 				String datetime = String.valueOf(new Date().getTime());
-				//sendSMS(content, toid, datetime,type,msgid,msg_type);
+				sendSMS(content, toid, datetime,type,msgid,msg_type);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -671,51 +635,24 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 	 * @param toid
 	 * @param time
 	 */
-	public void sendSMS(String content, String toid, String time,String type,final int msgId,String msg_type) {
+	public void sendSMS(String content, String toid, String time,String type,int msgId,String msg_type) {
 		JSONObject jo = new JSONObject();
 		String user_code = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		try {
 			jo.put("CONTENT", content);
 			jo.put("CONTENT_TYPE", type);
-			jo.put("action", "DataDeal");
+			jo.put("action", "send");
+			jo.put("function", "getMsgList");
 			jo.put("用户较验码", user_code);
-			jo.put("DATETIME", time);
 			jo.put("TOID", toid);
 			if(msg_type.equals("群消息")){
 				jo.put("MSG_TYPE", "群消息");
 			}
+			jo.put("localId", msgId);
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		CampusParameters params = new CampusParameters();
-		params.add(Constants.PARAMS_DATA,
-				Base64.encode(jo.toString().getBytes()));
-		CampusAPI.smsSend(params, new RequestListener() {
-
-			@Override
-			public void onIOException(IOException e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(CampusException e) {
-				Message msg = new Message();
-				msg.what = 5;
-				msg.obj = e.getMessage();
-				msg.arg1 = msgId;
-				mHandler.sendMessage(msg);
-			}
-
-			@Override
-			public void onComplete(String response) {
-				Message msg = new Message();
-				msg.what = 0;
-				msg.obj = response;
-				msg.arg1 = msgId;
-				mHandler.sendMessage(msg);
-			}
-		});
+		CampusAPI.httpPost(jo,mHandler,0);
 	}
 
 	@SuppressLint("HandlerLeak")
@@ -725,21 +662,13 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 			switch (msg.what) {
 			case 0:
 				String result = msg.obj.toString();
-				int msgId = msg.arg1;
 				Log.d(TAG, "------->result:" + result);
-				String sendResult="";
-				
 				try {
-					sendResult = new String(Base64.decode(result.getBytes("ISO-8859-1")));
-					Log.d(TAG, "---------------->result:" + sendResult);
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
-				}
-				try {
-					JSONObject jo = new JSONObject(sendResult);
-					
-					if (jo.optString("MSG_STATUS").equals("成功") && msgId > 0) {
-						String msgIdStr = String.valueOf(msgId);
+					JSONObject jo = new JSONObject(result);
+					String jieguo=jo.optString("结果");
+					int localId=jo.optInt("localId");
+					if (jieguo.equals("成功") && localId > 0) {
+						String msgIdStr = String.valueOf(localId);
 						ProgressBar progressBar = imageProgressBars.get(msgIdStr);
 						if(progressBar!=null)
 						{
@@ -747,29 +676,25 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 							msgIds.remove(msgIdStr);
 							imageProgressBars.remove(msgIdStr);
 						}
-						ChatMsg cm=chatMsgDao.queryForId(msgId);
+						ChatMsg cm=chatMsgDao.queryForId(localId);
 						
 						if(cm.getType().equals("img"))
 						{
-							
-							String newPath=jo.optJSONObject("CONTENT").optString("description");
+							String newPath=jo.optString("filepath");
 							cm.setRemoteimage(newPath);
-							
 						}
 						cm.setSendstate("送达");
-						String msg_id=(String)jo.optJSONArray("MSG_ID").get(0);
+						String msg_id=jo.optString("MSG_ID");
 						cm.setMsg_id(msg_id);
 						chatMsgDao.update(cm);
 						
-						JSONArray toidArray=jo.optJSONArray("TO_USERID_UNIQUE");
+						JSONArray toidArray=jo.optJSONArray("toUserArr");
 						if(toidArray.length()>1)
 						{
-							JSONArray msgidArray=jo.optJSONArray("MSG_ID");
 							for(int i=0;i<toidArray.length();i++)
 							{
 								String toid=(String)toidArray.get(i);
-								String msgid=(String)msgidArray.get(i);
-								ChatMsgDetail cmd=new ChatMsgDetail(cm.getId(),toid,msgid,"送达");
+								ChatMsgDetail cmd=new ChatMsgDetail(cm.getId(),toid,msg_id,"送达");
 								chatMsgDetailDao.create(cmd);
 							}
 						}
@@ -849,78 +774,31 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 						sendImage(pathStr,msgidInt);
 					}
 				}).start();
-				//sendImage(pathStr);
+
 				break;
-			case 5 :
-				AppUtility.showErrorToast(ChatMsgActivity.this,
-						msg.obj.toString());
-				
-				msgId = msg.arg1;
-				String msgIdStr = String.valueOf(msgId);
-				ProgressBar progressBar = imageProgressBars.get(msgIdStr);
-				if(progressBar!=null)
-				{
-					progressBar.setVisibility(View.INVISIBLE);
-					msgIds.remove(msgIdStr);
-					imageProgressBars.remove(msgIdStr);
-				}
-				
-				try {
-					ChatMsg cm = chatMsgDao.queryForId(msgId);
-					if(cm!=null)
-					{
-						cm.setSendstate("失败");
-						chatMsgDao.update(cm);
-						for(ChatMsg item:chatMsgList)
-						{
-							if(item.getId()==cm.getId())
-							{
-								item.setSendstate(cm.getSendstate());
-								break;
-							}
-						}
-						mAdapter.notifyDataSetChanged();
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-				
-				break;
+
 			case 6:
 				result = msg.obj.toString();
 				Log.d(TAG, "------->result:" + result);
-				sendResult="";
-				try {
-					sendResult = new String(Base64.decode(result.getBytes("ISO-8859-1")));
-					Log.d(TAG, "---------------->result:" + sendResult);
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
-				}
-				try {
-					JSONObject jo1 = new JSONObject(sendResult);
-					@SuppressWarnings("unchecked")
-					Iterator<String> keyIter=jo1.keys();
-					while (keyIter.hasNext()) 
-					{ 
 
-				        String key = (String) keyIter.next(); 
-				        if(jo1.get(key)==JSONObject.NULL) continue;
-				        String value = (String) jo1.get(key); 
-				        if(value.equals("成功"))
-				        	value="送达";
+				try {
+					JSONArray ja=new JSONArray(result);
+					for(int i=0;i<ja.length();i++)
+					{
+						JSONObject jo=ja.optJSONObject(i);
+						String msg_id=jo.optString("id");
+						String toUserId=jo.optString("toUserId");
+						String readTime=jo.optString("readTime");
 						for(ChatMsg item:chatMsgList)
 						{
 							if(item.getMsg_id()!=null)
 							{
-								if(item.getToid().split(",").length>1 && value.equals("已读"))
+								if(item.getToid().split(",").length>1)
 								{
-									ChatMsgDetail detail=chatMsgDetailDao.queryBuilder().where().eq("mainid", item.getId()).and().eq("msg_id", key).queryForFirst();
+									ChatMsgDetail detail=chatMsgDetailDao.queryBuilder().where().eq("mainid", item.getId()).and().eq("msg_id", msg_id).queryForFirst();
 									if(detail!=null)
 									{
-										detail.setSendstate(value);
+										detail.setSendstate("已读");
 										chatMsgDetailDao.update(detail);
 										detail=chatMsgDetailDao.queryBuilder().where().eq("mainid", item.getId()).and().eq("sendstate", "送达").queryForFirst();
 										if(detail==null)
@@ -930,23 +808,23 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 										}
 										break;
 									}
-									
+
 								}
 								else
 								{
-									if(item.getMsg_id().equals(key))
+									if(item.getMsg_id().equals(msg_id))
 									{
-										item.setSendstate(value);
+										item.setSendstate("已读");
 										chatMsgDao.update(item);
 										break;
 									}
 								}
-								
+
 							}
 						}
-					    
 
 					}
+
 					mAdapter.notifyDataSetChanged();
 					
 					
@@ -1168,6 +1046,52 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				*/
 				viewHolder.tvContent.setText("");
 				viewHolder.tvContent.insertGif(entity.getContent());
+				if(entity.getLinkUrl().length()>0) {
+					viewHolder.tvContent.append(Html.fromHtml("<br><font color='#33b5e5'>[点击查看]</font>"));
+					viewHolder.tvContent.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							String jumpurl = entity.getLinkUrl();
+							String template = AppUtility.findUrlQueryString(jumpurl, "template");
+							String templategrade = AppUtility.findUrlQueryString(jumpurl, "templategrade");
+							String targettitle = AppUtility.findUrlQueryString(jumpurl, "targettitle");
+							if (template.length() == 0)
+								template = "浏览器";
+							if (jumpurl.indexOf("?") > 0)
+								jumpurl += "&";
+							else
+								jumpurl += "?";
+							if (template.equals("浏览器")) {
+								Intent contractIntent = new Intent(ChatMsgActivity.this, WebSiteActivity.class);
+								String jiaoyanma = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+								JSONObject obj = new JSONObject();
+								try {
+									obj.put("用户较验码", jiaoyanma);
+									jiaoyanma = Base64.encode(obj.toString().getBytes());
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+								jumpurl = jumpurl + "jiaoyanma=" + jiaoyanma;
+								contractIntent.putExtra("url", jumpurl);
+								contractIntent.putExtra("title", targettitle);
+								startActivity(contractIntent);
+							} else {
+								if (template.equals("公告通知"))
+									template = "通知";
+								Intent intent;
+								if (templategrade.equals("main"))
+									intent = new Intent(ChatMsgActivity.this, SchoolActivity.class);
+								else
+									intent = new Intent(ChatMsgActivity.this, SchoolDetailActivity.class);
+								intent.putExtra("title", targettitle);
+								intent.putExtra("interfaceName", jumpurl);
+								intent.putExtra("templateName", template);
+								startActivity(intent);
+							}
+
+						}
+					});
+				}
 			}
 			
 			if (entity.getMsgFlag()==1) {
@@ -1195,7 +1119,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				viewHolder.imgUser.setTag(toid);
 			} else {
 				path = myHeadPic;
-				viewHolder.imgUser.setTag(user.getUserNumber());
+				viewHolder.imgUser.setTag(user.getUsername());
 			}
 			Log.d(TAG, "------------------------->path:"+path);
 //			ImageOptions options = new ImageOptions();
@@ -1279,12 +1203,11 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 		Intent intent = new Intent(ChatMsgActivity.this,
 				ShowPersonInfo.class);
 		if (flag== 0) {
-			String[] weiyima=toid.split("_");
-			intent.putExtra("studentId", weiyima[1]);
+			intent.putExtra("userId", toid);
 			intent.putExtra("userImage", userImage);
-			intent.putExtra("userType", weiyima[0]);
+			intent.putExtra("userType", "1");
 		} else {
-			intent.putExtra("studentId", user.getId());
+			intent.putExtra("userId", user.getUsername());
 			String myPic = user.getUserImage();
 			intent.putExtra("userImage", myPic);
 			intent.putExtra("userType", user.getUserType());
@@ -1338,7 +1261,7 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 	/**
 	 * 显示表情对话框
 	 * 
-	 * @param view
+	 * @param
 	 */
 	@SuppressWarnings("deprecation")
 	public void showExpressionWindow(View v) {
@@ -1541,13 +1464,13 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				mHandler.sendMessage(msg);
 				break;
 			case PIC_Select_CODE_ImageFromLoacal://从文件获取图片
-				Uri uri = Uri.parse(data.getData().toString());
-				ContentResolver cr = this.getContentResolver();
-	        	Cursor cursor = cr.query(uri, null, null, null, null);
-	        	cursor.moveToFirst();
-	        	String path = cursor.getString(1);
-	        	
-	        	
+                Uri uri = data.getData();
+                String[] pojo  = { MediaStore.Images.Media.DATA };
+                CursorLoader cursorLoader = new CursorLoader(ChatMsgActivity.this, uri, pojo, null,null, null);
+                Cursor cursor = cursorLoader.loadInBackground();
+                cursor.moveToFirst();
+                String path = cursor.getString(cursor.getColumnIndex(pojo[0]));
+
 				String tempPath =FileUtility.getRandomSDFileName("jpg");
 				if(FileUtility.copyFile(path,tempPath))
 				{
@@ -1655,4 +1578,31 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
         
         myPicPath=savedInstanceState.getString("myPicPath");
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        AppUtility.permissionResult(requestCode,grantResults,this,callBack);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+    public AppUtility.CallBackInterface callBack=new AppUtility.CallBackInterface()
+    {
+        @Override
+        public void getLocation1() {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void getPictureByCamera1() {
+            // TODO Auto-generated method stub
+            getPictureByCamera();
+
+        }
+
+        @Override
+        public void getPictureFromLocation1() {
+            // TODO Auto-generated method stub
+            getPictureFromLocation();
+        }
+
+    };
 }

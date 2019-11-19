@@ -10,7 +10,32 @@ public class BillDetailItem {
 		private String title;
 		private String detail;
 		private int num;
-		private String prodImage;
+		private int zhekou;
+		private boolean isShowzhekou;
+		private boolean isEditzhekou;
+        private double jine;
+        private boolean isShowJine;
+        private boolean isEditJine;
+        private boolean isEditNum;
+
+	public boolean isEditNum() {
+		return isEditNum;
+	}
+
+	public JSONObject getColorNum() {
+		return colorNum;
+	}
+
+	private JSONObject colorNum;
+	public int getZhekou() {
+		return zhekou;
+	}
+
+	public void setZhekou(int zhekou) {
+		this.zhekou = zhekou;
+	}
+
+	private String prodImage;
 		private String hiddenBtn;
 		private String hiddenBtnUrl;
 		private String opertype;
@@ -19,18 +44,46 @@ public class BillDetailItem {
 		{
 			
 		}
-		
-		public BillDetailItem(JSONObject jo) {
+
+	public boolean isShowzhekou() {
+		return isShowzhekou;
+	}
+
+	public boolean isEditzhekou() {
+		return isEditzhekou;
+	}
+
+    public double getJine() {
+        return jine;
+    }
+
+    public boolean isShowJine() {
+        return isShowJine;
+    }
+
+    public boolean isEditJine() {
+        return isEditJine;
+    }
+
+    public BillDetailItem(JSONObject jo) {
 			
 			id=jo.optInt("id");
 			title=jo.optString("title");
 			detail=jo.optString("detail");
 			prodImage=jo.optString("prodImage");
 			num=jo.optInt("num");
+			zhekou=jo.optInt("zhekou");
 			hiddenBtn=jo.optString("hiddenBtn");
 			hiddenBtnUrl=jo.optString("hiddenBtnUrl");
 			opertype=jo.optString("opertype");
 			prodid=jo.optString("prodid");
+			isShowzhekou=jo.optBoolean("showzhekou");
+            isEditzhekou=jo.optBoolean("editzhekou");
+            jine=jo.optDouble("jine");
+            isShowJine=jo.optBoolean("showjine");
+            isEditJine=jo.optBoolean("editjine");
+			isEditNum=jo.optBoolean("editnum");
+			colorNum=jo.optJSONObject("colornum");
 		}
 
 

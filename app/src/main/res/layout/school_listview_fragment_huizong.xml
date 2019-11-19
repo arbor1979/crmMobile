@@ -21,7 +21,6 @@
         </ListView>
 
         <include
-            
             layout="@layout/list_empty" />
 
         <LinearLayout

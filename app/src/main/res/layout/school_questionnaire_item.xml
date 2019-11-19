@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -7,6 +9,7 @@
     <!-- 调查问卷选择题模板 -->
 
     <LinearLayout
+        android:id="@+id/lv_parentlayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6.0dip"
@@ -19,8 +22,73 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="6.0dip" />
+        <LinearLayout
+            android:id="@+id/lv_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6.0dip"
+            android:orientation="vertical">
 
-        <RadioGroup
+            <LinearLayout
+                android:id="@+id/lv_imagecolornum"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="6.0dip">
+
+                    <ImageView
+                        android:id="@+id/iv_coloradd"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/pic_add_more" />
+
+                    <ProgressBar
+                        android:id="@+id/pb_colorimage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="invisible" />
+
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/et_colorname"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="6.0dip"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="left|top"
+                    android:hint="款式名称"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <EditText
+                    android:id="@+id/et_colornum"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="6.0dip"
+                    android:background="@drawable/edittext_bg"
+                    android:gravity="left|top"
+                    android:hint="数量"
+                    android:inputType="numberSigned|number"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_size_normal" />
+            </LinearLayout>
+
+            <RadioGroup
             android:id="@+id/rg_choose"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
@@ -47,6 +115,19 @@
             android:textSize="@dimen/text_size_normal"
             android:visibility="gone" />
 
+        <AutoCompleteTextView
+            android:id="@+id/et_autotext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="6.0dip"
+            android:background="@drawable/edittext_bg"
+            android:gravity="left|top"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:textSize="@dimen/text_size_normal"
+            android:completionThreshold="1"
+            android:visibility="gone"
+            />
         <Spinner
             android:id="@+id/sp_select"
             android:layout_width="match_parent"
@@ -86,13 +167,18 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="2.0dip"
             android:layout_margin="6.0dip"
-            android:visibility="gone" />
-          <TextView
+            android:visibility="gone" >
+
+        </com.yujieshipin.crm.widget.NonScrollableGridView>
+
+        </LinearLayout>
+        <TextView
             android:id="@+id/tv_remark"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="6.0dip"
             android:visibility="gone"
+            android:textSize="@dimen/text_size_normal"
             android:textColor="@color/title_color"/>
     </LinearLayout>
 

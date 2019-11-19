@@ -28,7 +28,8 @@ public class BillDetail {
 	private List<BillDetailItem> items;
 	private String huizong1;
 	private String huizong2;
-	
+	private boolean shouzhekouall;
+	private JSONObject allColor;
 	public String getOpertionType() {
 		return opertionType;
 	}
@@ -63,6 +64,14 @@ public class BillDetail {
 		return rightbottomBtn;
 	}
 
+	public boolean isShouzhekouall() {
+		return shouzhekouall;
+	}
+
+	public JSONObject getAllColor() {
+		return allColor;
+	}
+
 	public BillDetail(JSONObject jo) {
 		title = jo.optString("标题显示");
 		opertionType=jo.optString("操作类型");
@@ -77,7 +86,10 @@ public class BillDetail {
 		}
 		huizong1= jo.optString("汇总1");
 		huizong2= jo.optString("汇总2");
+		shouzhekouall=jo.optBoolean("showzhekouall");
+		allColor=jo.optJSONObject("allcolor");
 	}
+
 
 
 	public String getHuizong1() {

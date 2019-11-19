@@ -57,6 +57,7 @@ import com.yujieshipin.crm.entity.ChatFriend;
 import com.yujieshipin.crm.entity.Notice;
 import com.yujieshipin.crm.entity.User;
 import com.yujieshipin.crm.lib.SlidingMenu;
+import com.yujieshipin.crm.service.Alarmreceiver;
 import com.yujieshipin.crm.util.AppUtility;
 import com.yujieshipin.crm.util.AppUtility.CallBackInterface;
 import com.yujieshipin.crm.util.BaiduPushUtility;
@@ -249,17 +250,12 @@ public class TabHostActivity extends TabActivity   {
 		String toTag = getIntent().getStringExtra("tab");
 		if(toTag==null)
 			findView();
-		/*
 		else if(toTag.equals("2"))
 		{
 			tabHost.setCurrentTabByTag(TAB_TAG_MESSAGE);
 			View nearBtn = mainTab.findViewById(R.id.bottom_tab_message);
 			nearBtn.setSelected(true);
-			
 		}
-		*/
-		
-		
 		Log.d(TAG,"生命周期:onCreate");
 	}
 
@@ -269,7 +265,7 @@ public class TabHostActivity extends TabActivity   {
 		
 
 		showUnreadCnt();
-		updateUnreadCount();
+		//updateUnreadCount();
 		if(isIntoBack)
 		{
 			isIntoBack=false;
@@ -277,6 +273,9 @@ public class TabHostActivity extends TabActivity   {
 			Intent intentChat = new Intent("reloadNotice");
 			TabHostActivity.this.sendBroadcast(intentChat);
 			//getNetLocation();
+			Intent intent = new Intent(AppUtility.getContext(), Alarmreceiver.class);
+			intent.setAction("getMsgList");
+			sendBroadcast(intent);
 		}
 		/*
 		//上次登录时间并非当前周则重新获取课表
@@ -407,7 +406,7 @@ public class TabHostActivity extends TabActivity   {
 	 */
 	private void prepareIntent() {
 		//workIntent = new Intent(this, SubjectActivity.class);
-		//messageIntent = new Intent(this, ChatFriendActivity.class);
+		messageIntent = new Intent(this, ChatFriendActivity.class);
 		communicationIntent = new Intent(this, ContactsActivity.class);
 		// summaryIntent = new Intent(this, SummaryActivity.class);
 		schoolIntent = new Intent(this, TabSchoolActivtiy.class);
@@ -421,7 +420,7 @@ public class TabHostActivity extends TabActivity   {
 		localTabHost.addTab(buildTabSpec(TAB_TAG_SCHOOL, R.string.school,
 				R.drawable.ic_launcher1, schoolIntent));
 		//localTabHost.addTab(buildTabSpec(TAB_TAG_WORK, R.string.study,R.drawable.ic_launcher1, workIntent));
-		//localTabHost.addTab(buildTabSpec(TAB_TAG_MESSAGE, R.string.message,R.drawable.ic_launcher1, messageIntent));
+		localTabHost.addTab(buildTabSpec(TAB_TAG_MESSAGE, R.string.message,R.drawable.ic_launcher1, messageIntent));
 		localTabHost.addTab(buildTabSpec(TAB_TAG_COMMUNICATION,
 				R.string.curriculum, R.drawable.ic_launcher1,
 				communicationIntent));

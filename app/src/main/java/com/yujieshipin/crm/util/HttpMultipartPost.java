@@ -27,7 +27,7 @@ import com.yujieshipin.crm.entity.CustomMultipartEntity.ProgressListener;
 
 public class HttpMultipartPost extends AsyncTask<String, Integer, String> {
 	private Context context;  
-    public ProgressDialog pd;  
+    public ProgressDialog pd;
     private long totalSize;
     private CampusParameters myParams;
     HttpClient httpClient;
@@ -64,6 +64,7 @@ public class HttpMultipartPost extends AsyncTask<String, Integer, String> {
         HttpContext httpContext = new BasicHttpContext();  
         String siteUrl = PrefUtility.get(Constants.PREF_LOGIN_URL, "");
         siteUrl="http://119.29.6.239:"+siteUrl;
+
 		String url=siteUrl+"/general/ERP/Interface/mobile/service.php";
         HttpPost httpPost = new HttpPost(url);  
         

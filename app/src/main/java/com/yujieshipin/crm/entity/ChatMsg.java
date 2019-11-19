@@ -55,7 +55,10 @@ public class ChatMsg {
 	
 	@DatabaseField
 	private String msg_id;
-	
+
+	@DatabaseField
+	private String linkUrl;
+
 	public String getMsg_id() {
 		return msg_id;
 	}
@@ -81,7 +84,13 @@ public class ChatMsg {
 		remoteimage="";
 		msg_id="";
 	}
-	
+	public String getLinkUrl() {
+		return linkUrl;
+	}
+
+	public void setLinkUrl(String linkUrl) {
+		this.linkUrl = linkUrl;
+	}
 //	public static List<ChatMsg> toList(JSONArray ja) {
 //		List<ChatMsg> result = new ArrayList<ChatMsg>();
 //		ChatMsg info = null;

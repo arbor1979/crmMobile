@@ -73,7 +73,7 @@ public class SchoolDetailActivity extends FragmentActivity {
 			fragment = new SchoolWorkAttendanceDetailFragment(title,interfaceName);
 			break;
 		case 2:
-			fragment = new SchoolAchievementDetailFragment(title, interfaceName);
+			fragment = SchoolAchievementDetailFragment.newInstance(title, interfaceName);
 			break;
 		case 3:
 			fragment = new SchoolQuestionnaireDetailFragment(title,status,interfaceName,autoClose);

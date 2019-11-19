@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:singleLine="true"
-                    android:text="￥:119.9 折扣:0.98" />
+                    android:text="￥:119.9" />
 
                 <TextView
                     android:id="@+id/tv_operSign"
@@ -93,7 +93,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="X" />
+                    android:text="%"/>
+
 
             </LinearLayout>
 
@@ -105,6 +106,26 @@
             android:layout_height="match_parent">
 
             <EditText
+                android:id="@+id/et_zhekou"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="numberSigned"
+                android:lines="1"
+                android:maxLength="10"
+                android:selectAllOnFocus="true"
+                android:gravity="center"
+                android:text="100"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="X" />
+            <EditText
                 android:id="@+id/et_num"
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
@@ -115,33 +136,9 @@
                 android:lines="1"
                 android:maxLength="10"
                 android:selectAllOnFocus="true"
-                android:text="100"
+                android:text="1"
                 android:textSize="@dimen/text_size_small" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/iv_up"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/absence"
-                    android:padding="5dp"
-                    android:src="@drawable/course_top" />
-
-                <ImageView
-                    android:id="@+id/iv_down"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="string/absence"
-                    android:padding="5dp"
-                    android:src="@drawable/course_botton" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

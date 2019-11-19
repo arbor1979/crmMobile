@@ -36,10 +36,17 @@ import com.yujieshipin.crm.util.FileUtility;
 public class ImagesActivity extends Activity {
 	private static String TAG = "InteractImagesActivity";
 	private static List<String> imagePaths = new ArrayList<String>();
+	private List<String> imageComments = new ArrayList<String>();
 	private int index = 0;// 当前图片的下标
 	private ViewPager mViewPager;
 	private TextView textView;
+	private TextView textComment;
 	private SamplePagerAdapter samplePagerAdapter;
+
+	public void setImageComments(List<String> imageComments) {
+		this.imageComments = imageComments;
+	}
+
 	private ImageButton ibtnLeft;
 	private static Map<String, Bitmap> images = new HashMap<String, Bitmap>();
 
@@ -54,9 +61,10 @@ public class ImagesActivity extends Activity {
 		ibtnLeft = (ImageButton) findViewById(R.id.ib_left);
 		mViewPager = ((ViewPager) findViewById(R.id.zoom_imags));
 		textView = ((TextView) findViewById(R.id.imags_index));
-
+		textComment= ((TextView) findViewById(R.id.imags_comment));
 		Intent intent = getIntent();
 		imagePaths = intent.getStringArrayListExtra("pics");
+		imageComments = intent.getStringArrayListExtra("txts");
 		index = intent.getIntExtra("position", 0);
 		Log.d(TAG, "------index:" + index);
 		initListener();
@@ -84,7 +92,14 @@ public class ImagesActivity extends Activity {
 					public void onPageScrolled(int position, float paramFloat,
 							int paramInt2) {
 						index = position;
-						textView.setText(position + 1 + "/" + imagePaths.size());
+						String comment="";
+						if(imageComments!=null && imageComments.size()>position)
+							comment=imageComments.get(position);
+						if(comment!=null && comment.length()>0)
+							textComment.setText(comment);
+						else
+							textComment.setText("");
+						textView.setText((position + 1) + "/" + imagePaths.size());
 					}
 
 					public void onPageSelected(int paramInt) {

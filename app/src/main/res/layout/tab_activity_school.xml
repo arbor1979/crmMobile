@@ -10,16 +10,14 @@
         android:id="@+id/content_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" 
-        android:background="#E6FFFF">
+        android:orientation="vertical"
+        android:background="@color/white">
 
-        <GridView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/mygridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:numColumns="4"
-            android:scrollbars="none" />
+         />
 
         <include layout="@layout/list_empty" />
     </LinearLayout>

@@ -6,6 +6,7 @@
     android:background="@color/list_empty_background"
     android:gravity="center"
     android:orientation="vertical"
+    android:layout_weight="1"
     android:padding="10.0dip" >
 
     <TextView

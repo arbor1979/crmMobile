@@ -3,6 +3,8 @@ package com.yujieshipin.crm.activity;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.json.JSONException;
@@ -46,9 +48,11 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.ImageOptions;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yujieshipin.crm.BuildConfig;
 import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.R;
+import com.yujieshipin.crm.adapter.MyPictureAdapter;
 import com.yujieshipin.crm.api.CampusAPI;
 import com.yujieshipin.crm.api.CampusParameters;
 import com.yujieshipin.crm.base.Constants;
@@ -62,6 +66,7 @@ import com.yujieshipin.crm.util.HttpMultipartPost;
 import com.yujieshipin.crm.util.ImageUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.TimeUtility;
+import com.yujieshipin.crm.widget.NonScrollableGridView;
 
 public class ShowPersonInfo extends Activity {
 
@@ -70,6 +75,7 @@ public class ShowPersonInfo extends Activity {
 	private static final int GETUSERINFO_CODE=1,CHANGEUSERINFO_CODE=2;
 	private String picturePath;
 	private String studentId;
+	private String userId;
 	private String userImage;
 	private int userType;
 	AQuery aq;
@@ -90,6 +96,11 @@ public class ShowPersonInfo extends Activity {
 		if(color!=0)
 			headerlayout.setBackgroundColor(color);
 		studentId = getIntent().getStringExtra("studentId");
+		if(studentId==null)
+			studentId="";
+		userId=getIntent().getStringExtra("userId");
+		if(userId==null)
+			userId="";
 		userImage = getIntent().getStringExtra("userImage");
 		userType = Integer.parseInt(getIntent().getStringExtra("userType"));
 		try {
@@ -100,7 +111,7 @@ public class ShowPersonInfo extends Activity {
 		}
 		user=((CampusApplication)getApplicationContext()).getLoginUserObj();
 		
-		if(userType>0 && studentId.equals(user.getId()))
+		if(userType>0 && studentId.equals(user.getId()))//用户
 		{
 			changeheader= (Button) findViewById(R.id.bt_changeHeader);
 			changeheader.setVisibility(View.VISIBLE);
@@ -112,7 +123,19 @@ public class ShowPersonInfo extends Activity {
 				
 			});
 		}
-		
+		else if(userType==-1)//产品
+		{
+			changeheader= (Button) findViewById(R.id.bt_changeHeader);
+			changeheader.setVisibility(View.VISIBLE);
+			changeheader.setText("更换图片");
+			changeheader.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					showGetPictureDiaLog();
+				}
+
+			});
+		}
 		aq = new AQuery(this);
 		userObj=new JSONObject();
 		getPrivateAlbum();
@@ -150,6 +173,8 @@ public class ShowPersonInfo extends Activity {
 		}
 		else if(userType==-1)
 			aq.id(R.id.setting_tv_title).text("产品资料");
+		else if(userType==-2)
+			aq.id(R.id.setting_tv_title).text("供应商资料");
 		aq.id(R.id.back).clicked(new OnClickListener(){
 
 			@Override
@@ -162,7 +187,23 @@ public class ShowPersonInfo extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				DialogUtility.showImageDialog(ShowPersonInfo.this,userImage);
+				//DialogUtility.showImageDialog(ShowPersonInfo.this,userImage);
+				Intent intent = new Intent(ShowPersonInfo.this,
+						ImagesActivity.class);
+				ArrayList<String> picturePaths=new ArrayList<String>();
+				picturePaths.add(userImage);
+				intent.putStringArrayListExtra("pics",
+						(ArrayList<String>) picturePaths);
+				if(userObj.optString("图片描述").length()>0)
+				{
+					ArrayList<String> pictureNames=new ArrayList<String>();
+					pictureNames.add(userObj.optString("图片描述"));
+					intent.putStringArrayListExtra("txts",
+							(ArrayList<String>) pictureNames);
+				}
+				//intent.putExtra("position", i);
+
+				startActivity(intent);
 				
 			}
 			
@@ -208,7 +249,7 @@ public class ShowPersonInfo extends Activity {
         }
  
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
              
             ViewHolder holder = null;
             
@@ -219,12 +260,7 @@ public class ShowPersonInfo extends Activity {
                 convertView = mInflater.inflate(R.layout.list_left_right, null);
                 holder.title = (TextView)convertView.findViewById(R.id.left_title);
                 holder.info = (TextView)convertView.findViewById(R.id.right_detail);
-                holder.private_album = (LinearLayout)convertView.findViewById(R.id.private_album);
-                holder.imageViews=new ImageView[4];
-                holder.imageViews[0]= (ImageView)convertView.findViewById(R.id.theImage);
-                holder.imageViews[1] = (ImageView)convertView.findViewById(R.id.imageView2);
-                holder.imageViews[2] = (ImageView)convertView.findViewById(R.id.imageView3);
-                holder.imageViews[3] = (ImageView)convertView.findViewById(R.id.imageView4);
+                holder.grid_picture= (NonScrollableGridView)convertView.findViewById(R.id.grid_picture);
                 holder.bt_changeNumber= (Button)convertView.findViewById(R.id.bt_changeNumber);
                 convertView.setTag(holder);
                  
@@ -234,7 +270,38 @@ public class ShowPersonInfo extends Activity {
             }
             String key=keyList[position];
             holder.title.setText(key);
-            holder.info.setText(userObj.optString(key));
+			if(userObj.optJSONArray(key)!=null)
+			{
+				holder.info.setVisibility(View.GONE);
+				holder.grid_picture.setVisibility(View.VISIBLE);
+				ArrayList<String> picturePaths=new ArrayList<String>();
+				ArrayList<String> pictureNames=new ArrayList<String>();
+				for(int j=0;j<userObj.optJSONArray(key).length();j++)
+				{
+					JSONObject imageobj=userObj.optJSONArray(key).optJSONObject(j);
+					picturePaths.add(imageobj.optString("url"));
+					pictureNames.add(imageobj.optString("name"));
+				}
+				if(holder.grid_picture.getAdapter()==null)
+				{
+					MyPictureAdapter myPictureAdapter = new MyPictureAdapter(ShowPersonInfo.this,
+							false,picturePaths,10,"课堂笔记",position);
+					myPictureAdapter.setPicNames(pictureNames);
+					holder.grid_picture.setAdapter(myPictureAdapter);
+				}
+				else
+				{
+					MyPictureAdapter myPictureAdapter=(MyPictureAdapter) holder.grid_picture.getAdapter();
+					myPictureAdapter.setPicPaths(picturePaths);
+				}
+
+
+			}
+			else {
+				holder.info.setText(userObj.optString(key));
+				holder.grid_picture.setVisibility(View.GONE);
+				holder.info.setVisibility(View.VISIBLE);
+			}
 
             if(key.equals("手机") && studentId.equals(user.getId()))
             {
@@ -286,16 +353,17 @@ public class ShowPersonInfo extends Activity {
 					}
 				}, Linkify.sPhoneNumberTransformFilter);
 			}
-            holder.private_album.setVisibility(View.GONE);
+
+
             return convertView;
         }
         public final class ViewHolder{
           
             public TextView title;
             public TextView info;
-            public LinearLayout private_album;
-            public ImageView[] imageViews;
+            public NonScrollableGridView grid_picture;
             public Button bt_changeNumber;
+
         }
          
     }
@@ -324,6 +392,7 @@ public class ShowPersonInfo extends Activity {
 			jsonObj.put("function", "getUserInfo");
 			jsonObj.put("用户较验码", checkCode);
 			jsonObj.put("uid", studentId);
+			jsonObj.put("userId", userId);
 			jsonObj.put("userType", userType);
 			
 		} catch (JSONException e1) {
@@ -403,7 +472,10 @@ public class ShowPersonInfo extends Activity {
 					
 					if("成功".equals(jo.optString("result"))){
 						DialogUtility.showMsg(ShowPersonInfo.this, "上传成功！");
-						userImage=jo.optString("avatar");
+						if(userType==-1)
+							userImage=jo.optString("文件地址");
+						else
+							userImage=jo.optString("avatar");
 						user.setUserImage(userImage);
 						userDao.update(user);
 						initContent();
@@ -570,11 +642,14 @@ public class ShowPersonInfo extends Activity {
 		if(AppUtility.formetFileSize(file.length()) > 5242880*4){
 			AppUtility.showToastMsg(this, "对不起，您上传的文件太大了，请选择小于20M的文件！");
 		}else{
-			
 			ImageUtility.rotatingImageIfNeed(file.getAbsolutePath());
-			Intent intent=new Intent(this,CutImageActivity.class);
-			intent.putExtra("picPath", file.getAbsolutePath());
-			startActivityForResult(intent,3);
+			if(userType==-1)//如果是产品则不必裁切
+				SubmitUploadFile(file.getAbsolutePath());
+			else {
+				Intent intent = new Intent(this, CutImageActivity.class);
+				intent.putExtra("picPath", file.getAbsolutePath());
+				startActivityForResult(intent, 3);
+			}
 		}
 	}
 	
@@ -590,7 +665,12 @@ public class ShowPersonInfo extends Activity {
 		params.add("token", checkCode);
 		params.add("pic", picPath);
 		params.add("function","uploadAvatar");
-		params.add("action","user");
+		if(userType==-1) {
+			params.add("action", "product");
+			params.add("productid", studentId);
+		}
+		else
+			params.add("action","user");
 		HttpMultipartPost post = new HttpMultipartPost(this, params){
 			@Override  
 		    protected void onPostExecute(String result) {  

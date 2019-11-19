@@ -28,8 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:ems="10"
-        android:singleLine="true"
-        android:hint="输入商品名称" />
+        android:hint="输入商品名称或类别名称"
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/et_supplyid"

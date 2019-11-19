@@ -15,6 +15,7 @@ import org.android.agoo.mezu.MeizuRegister;
 import org.android.agoo.xiaomi.MiPushRegistar;
 import org.apache.http.client.HttpClient;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
@@ -23,6 +24,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -32,6 +34,7 @@ import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
@@ -39,6 +42,7 @@ import com.umeng.message.PushAgent;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.entity.UMessage;
 import com.yujieshipin.crm.activity.LoginActivity;
+import com.yujieshipin.crm.activity.TabHostActivity;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.db.DatabaseHelper;
 import com.yujieshipin.crm.db.InitData;
@@ -205,6 +209,7 @@ public class CampusApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		CrashReport.initCrashReport(getApplicationContext(), "676b741b10", false);
 		AppUtility.setContext(this);
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -303,6 +308,7 @@ public class CampusApplication extends Application {
 		updateColumn(getHelper().getWritableDatabase(), "Student", "liveSchool", "varchar", "''");
 		updateColumn(getHelper().getWritableDatabase(), "Student", "zuohao", "varchar", "''");
 		updateColumn(getHelper().getWritableDatabase(), "AccountInfo", "siteUrl", "varchar", "''");
+		updateColumn(getHelper().getWritableDatabase(), "ChatMsg", "linkUrl", "varchar", "''");
 		/*
 		try {
 			TableUtils.createTable(getHelper().getConnectionSource(), ChatMsgDetail.class);

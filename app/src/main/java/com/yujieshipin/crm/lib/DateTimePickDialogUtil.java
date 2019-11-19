@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 
 import com.yujieshipin.crm.R;
-import com.yujieshipin.crm.entity.QuestionnaireList.Question;
+import com.yujieshipin.crm.entity.Question;
 import com.yujieshipin.crm.util.DateHelper;
 
 import android.app.Activity;  

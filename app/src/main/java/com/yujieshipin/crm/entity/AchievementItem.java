@@ -29,6 +29,15 @@ public class AchievementItem {
 	private String huizong;
 	private int page;
 	private int allnum;
+	private JSONArray filterArr;
+
+	public JSONArray getFilterArr() {
+		return filterArr;
+	}
+
+	public void setFilterArr(JSONArray filterArr) {
+		this.filterArr = filterArr;
+	}
 
 	public List<String> getFilterParams1() {
 		return filterParams1;
@@ -74,6 +83,7 @@ public class AchievementItem {
 				filterParams2.add(joa.optString(i));
 			}
 		}
+		filterArr=jo.optJSONArray("过滤条件");
 	}
 
 	public int getAllnum() {

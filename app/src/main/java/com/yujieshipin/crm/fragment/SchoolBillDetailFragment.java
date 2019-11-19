@@ -1,6 +1,8 @@
 package com.yujieshipin.crm.fragment;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
@@ -16,14 +18,27 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +47,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -42,6 +58,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -51,16 +68,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.yujieshipin.crm.BuildConfig;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.activity.CallClassActivity;
 import com.yujieshipin.crm.activity.CaptureActivity;
+import com.yujieshipin.crm.activity.ImagesActivity;
+import com.yujieshipin.crm.activity.SchoolDetailActivity;
 import com.yujieshipin.crm.activity.ShowPersonInfo;
+import com.yujieshipin.crm.adapter.PopColorListAdapter;
 import com.yujieshipin.crm.api.CampusAPI;
+import com.yujieshipin.crm.api.CampusParameters;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.entity.BillDetail;
 import com.yujieshipin.crm.entity.BillDetailItem;
+import com.yujieshipin.crm.entity.Question;
 import com.yujieshipin.crm.util.AppUtility;
 import com.yujieshipin.crm.util.DialogUtility;
+import com.yujieshipin.crm.util.FileUtility;
+import com.yujieshipin.crm.util.HttpMultipartPost;
+import com.yujieshipin.crm.util.ImageUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.TimeUtility;
 import com.yujieshipin.crm.widget.XListView;
@@ -85,15 +111,18 @@ public class SchoolBillDetailFragment extends Fragment{
 	private String title, interfaceName;
 	private LayoutInflater inflater;
 	private AchieveAdapter adapter;
-	private Dialog dialog;
+	private Dialog dialog,searchDialog;
+	private AlertDialog popColorDialog;
 	private List<BillDetailItem> details = new ArrayList<BillDetailItem>();
 	private int opertype=1;
-	private Dialog searchDialog;
 	private final static int SCANNIN_GREQUEST_CODE = 2;
 	private EditText et_quling,et_shoukuan;
 	private RadioButton rb_ifpay0,rb_ifpay1;
 	private Spinner spinner;
-
+	private int billzhekou=0;
+	private static final int REQUEST_CODE_TAKE_PICTURE = 3;// //设置图片操作的标志
+	private static final int REQUEST_CODE_TAKE_CAMERA = 1;// //设置拍照操作的标志
+	PopColorListAdapter colorAdapter;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -115,7 +144,7 @@ public class SchoolBillDetailFragment extends Fragment{
 							AppUtility.showToastMsg(getActivity(), jo.optString("errorMsg"));
 						}else{
 							billDetail = new BillDetail(jo);
-							initDate(msg.arg1);
+							initDate(msg.arg1,msg.arg2);
 						}
 					} catch (JSONException e) {
 						//showFetchFailedView();
@@ -234,6 +263,7 @@ public class SchoolBillDetailFragment extends Fragment{
 							msg1.what = 0;
 							msg1.obj = jo.optJSONObject("detailList");
 							msg1.arg1=jo.optInt("toBottom");
+							msg1.arg2=jo.optInt("popcolor");
 							mHandler.sendMessage(msg1);   
 						}
 					}
@@ -294,6 +324,67 @@ public class SchoolBillDetailFragment extends Fragment{
 				}
 				
 				break;
+			case 9://获取某一条明细记录的颜色库存
+				result = msg.obj.toString();
+				if (AppUtility.isNotEmpty(result)) {
+					try {
+						JSONObject jo = new JSONObject(result);
+						String res = jo.optString("result");
+						if(res.equals("失败")){
+							AppUtility.showToastMsg(getActivity(), jo.optString("errorMsg"));
+							//adapter.notifyDataSetChanged();
+						}
+						else {
+							popColorSelect(jo.optInt("detailid"), jo.optString("prodid"),jo.optJSONArray("colorlist"),jo.optBoolean("edit"));
+						}
+					}
+					catch (JSONException e) {
+						e.printStackTrace();
+						AppUtility.showErrorToast(getActivity(), e.getLocalizedMessage());
+					}
+				}
+
+				break;
+			case 10://颜色图片上传
+				result = msg.obj.toString();
+				if (AppUtility.isNotEmpty(result)) {
+
+					try {
+						JSONObject jo = new JSONObject(result);
+						if ("成功".equals(jo.optString("result"))) {
+							int positon=jo.optInt("position");
+							if(popColorDialog.isShowing()) {
+								JSONObject obj = (JSONObject) colorAdapter.getMlist().get(positon);
+								obj.put("colorimage", jo.optString("文件地址"));
+								colorAdapter.notifyDataSetChanged();
+							}
+
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
+			case 11://颜色图片删除
+				result = msg.obj.toString();
+				if (AppUtility.isNotEmpty(result)) {
+
+					try {
+						JSONObject jo = new JSONObject(result);
+						if ("成功".equals(jo.optString("result"))) {
+							int positon=jo.optInt("position");
+							colorAdapter.clearCacheFile(jo.optString("imageName"));
+							if(popColorDialog.isShowing()) {
+								JSONObject obj = (JSONObject) colorAdapter.getMlist().get(positon);
+								obj.put("colorimage", "");
+								colorAdapter.notifyDataSetChanged();
+							}
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				break;
 			}
 			
 				
@@ -319,6 +410,24 @@ public class SchoolBillDetailFragment extends Fragment{
 				//mImageView.setImageBitmap((Bitmap) data.getParcelableExtra("bitmap"));
 			}
 			break;
+		case REQUEST_CODE_TAKE_CAMERA: // 拍照返回
+			uploadFile(new File(colorAdapter.getPicturePath()));
+			break;
+		case REQUEST_CODE_TAKE_PICTURE:
+			if (data != null) {
+				Uri uri = data.getData();
+				String[] pojo  = { MediaStore.Images.Media.DATA };
+				CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, pojo, null,null, null);
+				Cursor cursor = cursorLoader.loadInBackground();
+				cursor.moveToFirst();
+				String picturePath = cursor.getString(cursor.getColumnIndex(pojo[0]));
+				String tempPath =FileUtility.getRandomSDFileName("jpg");
+				if(FileUtility.copyFile(picturePath,tempPath))
+					uploadFile(new File(tempPath));
+				else
+					AppUtility.showErrorToast(getActivity(), "向SD卡复制文件出错");
+			}
+				break;
 		default:
 		    break;
 		}
@@ -332,6 +441,8 @@ public class SchoolBillDetailFragment extends Fragment{
 		fragment.setArguments(bundle);
 		return fragment;
 	}
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -376,7 +487,7 @@ public class SchoolBillDetailFragment extends Fragment{
 				getActivity().finish();
 			}
 		});
-		
+
 		// 重新加载
 		failedLayout.setOnClickListener(new OnClickListener() {
 
@@ -385,6 +496,7 @@ public class SchoolBillDetailFragment extends Fragment{
 				getAchievesItem();
 			}
 		});
+
 		getAchievesItem();
 		return view;
 	}
@@ -402,16 +514,15 @@ public class SchoolBillDetailFragment extends Fragment{
 	 * @author shengguo 2014-4-17 下午5:18:06
 	 * 
 	 */
-	private void initDate(int ifBottom) {
+	private void initDate(int ifBottom,int hascolor) {
 		tvTitle.setText(billDetail.getTitle());
 		details = billDetail.getItems();
 		
 		if(billDetail.getOpertionType().equals("edit"))
 		{
 		    if(myListview.getFooterViewsCount()==0) {
-                Button bottomBtn = new Button(getActivity());
-                bottomBtn.setBackground(null);
-                bottomBtn.setText("开启扫码");
+				View ll_foot = inflater.inflate(R.layout.bill_detail_bottom,null);
+		    	Button bottomBtn=ll_foot.findViewById(R.id.btn_startscan);
                 bottomBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -422,7 +533,24 @@ public class SchoolBillDetailFragment extends Fragment{
                             openScanCode();
                     }
                 });
-                myListview.addFooterView(bottomBtn);
+                EditText et_zhekouall=ll_foot.findViewById(R.id.et_zhekouall);
+                if(billDetail.isShouzhekouall())
+				{
+					et_zhekouall.setVisibility(View.VISIBLE);
+					et_zhekouall.setOnTouchListener(new OnTouchListener() {
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							v.setOnFocusChangeListener(zhekouChangeListener);
+							return false;
+						}
+					});
+				}
+                else {
+					et_zhekouall.setVisibility(View.GONE);
+					ll_foot.findViewById(R.id.tx_percent).setVisibility(View.GONE);
+				}
+
+                myListview.addFooterView(ll_foot);
             }
 			tvRight.setText("新增");
 			tvRight.setVisibility(View.VISIBLE);
@@ -442,7 +570,7 @@ public class SchoolBillDetailFragment extends Fragment{
 					public void onClick(View v) {
 						if(details.size()==0)
 						{
-							AppUtility.showToastMsg(getContext(), "请先添加销售明细");
+							AppUtility.showToastMsg(getContext(), "请先添加明细");
 							return;
 						}
 						else {
@@ -453,6 +581,36 @@ public class SchoolBillDetailFragment extends Fragment{
 						}
 					}
 				});
+		}
+		else if(billDetail.getOpertionType().equals("caigouedit"))
+		{
+			tvRight.setText("新增");
+			tvRight.setVisibility(View.VISIBLE);
+			lyRight.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					Intent intent =new Intent(getActivity(), SchoolDetailActivity.class);
+					intent.putExtra("templateName", "调查问卷");
+					intent.putExtra("interfaceName", billDetail.getNewUrl());
+					intent.putExtra("title", title);
+					startActivityForResult(intent,101);
+				}
+			});
+			bt_gotopay.setVisibility(View.VISIBLE);
+			tv_huizong1.setText(billDetail.getHuizong1());
+			if(AppUtility.isNotEmpty(billDetail.getHuizong2()))
+				tv_huizong2.setText(billDetail.getHuizong2());
+			else
+				tv_huizong2.setVisibility(View.GONE);
+			bt_gotopay.setText(billDetail.getRightbottomBtn());
+			bt_gotopay.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					savebill();
+				}
+			});
 		}
 		else
 		{
@@ -465,9 +623,10 @@ public class SchoolBillDetailFragment extends Fragment{
 		adapter.notifyDataSetChanged();
 		if(ifBottom==1)
 			myListview.setSelection(myListview.getCount()-1);
-		
-		
-		
+		if(hascolor==1)//弹出颜色选择列表
+		{
+			getDetailColorKucun(adapter.getCount()-1);
+		}
 	}
 	public void getBillPayInfo() {
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
@@ -489,6 +648,28 @@ public class SchoolBillDetailFragment extends Fragment{
 		
 		CampusAPI.httpPost(jo, mHandler, 7);
 	}
+	public void getDetailColorKucun(int position) {
+		BillDetailItem detailItem=billDetail.getItems().get(position);
+		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+		JSONObject jo = new JSONObject();
+		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+
+		try {
+			jo.put("用户较验码", checkCode);
+			Iterator it = queryJson.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = queryJson.getString(key);
+				jo.put(key, value);
+			}
+			jo.put("action", "detailColorKucun");
+			jo.put("detailId",detailItem.getId());
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+
+		CampusAPI.httpPost(jo, mHandler, 9);
+	}
 	private OnFocusChangeListener editChangeListener=new OnFocusChangeListener(){
        
         @Override
@@ -504,6 +685,33 @@ public class SchoolBillDetailFragment extends Fragment{
         }
          
     };
+	private OnFocusChangeListener zhekouChangeListener=new OnFocusChangeListener(){
+
+		@Override
+		public void onFocusChange(View arg0, boolean arg1) {
+			EditText et = (EditText) arg0;
+			if(arg1) {
+				//Log.e("", "获得焦点"+detailItem.getId());
+			} else {
+				try {
+					if(et.getText().toString().length()>0) {
+						int zhekou = Integer.parseInt(et.getText().toString());
+						if(zhekou!=billzhekou) {
+							updateZhekouAll(zhekou);
+							billzhekou=zhekou;
+							et.setOnFocusChangeListener(null);
+						}
+					}
+				}
+				catch(NumberFormatException e)
+				{
+					AppUtility.showToastMsg(getActivity(), "请输入整型数字");
+				}
+				//Log.e("", "失去焦点"+detailItem.getId());
+			}
+		}
+
+	};
     private boolean updateQuling(EditText et,Boolean forsubmit)
     {
     	if(et.getText().toString().length()>0)
@@ -533,13 +741,19 @@ public class SchoolBillDetailFragment extends Fragment{
 	    	{
 	    		quling=Double.parseDouble(qulingStr);
 	    	}
-	    	if(Math.abs(quling)>maxOdd)
+	    	if(maxOdd>0 && Math.abs(quling)>maxOdd)
 			{
 				AppUtility.showToastMsg(getActivity(), "最大去零不能超过"+maxOdd);
 				et_quling.setText("");
 				return false;
 			}
-	    	tv_yingshou.setText("(应收:￥"+String.valueOf(totalmoney-quling)+")");
+			else if(maxOdd==0 && Math.abs(quling)>Math.abs(totalmoney/10))
+			{
+				AppUtility.showToastMsg(getActivity(), "最大去零不能超过总金额的十分之一");
+				et_quling.setText("");
+				return false;
+			}
+	    	tv_yingshou.setText("(应收:￥"+AppUtility.formatNumber(totalmoney-quling)+")");
 	    	String shoukuanStr=et_shoukuan.getText().toString();
 	    	double shoukuan=0;
 	    	if(shoukuanStr.length()>0)
@@ -798,6 +1012,55 @@ public class SchoolBillDetailFragment extends Fragment{
 		//TimeUtility.popSoftKeyBoard(getActivity(),et);
 		
 	}
+	private void popColorSelect(final int detailid,String prodid,JSONArray list,Boolean bedit)
+	{
+		LayoutInflater inflater = LayoutInflater.from(getActivity());
+		View layout = inflater.inflate(R.layout.dialog_listview_single, null);
+		final ListView myListView = (ListView) layout.findViewById(R.id.colorselectlist);
+		colorAdapter = new PopColorListAdapter(this, list,prodid,bedit);
+		myListView.setAdapter(colorAdapter);
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setView(layout).setPositiveButton("确定",null).setNegativeButton("取消", null);
+		popColorDialog=builder.create();
+		//searchDialog = builder.create();
+		popColorDialog.show();
+		popColorDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				View view = myListView.findFocus();
+				if (view != null && view instanceof EditText) {
+					view.clearFocus();
+					//return;
+				}
+				new Handler().postDelayed(new Runnable(){
+					public void run() {
+						String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+						JSONObject queryJson = AppUtility.parseQueryStrToJson(interfaceName);
+						JSONObject jsonObj = new JSONObject();
+						try {
+							jsonObj.put("用户较验码", checkCode);
+							Iterator it = queryJson.keys();
+							while (it.hasNext()) {
+								String key = (String) it.next();
+								String value = queryJson.getString(key);
+								jsonObj.put(key, value);
+							}
+							jsonObj.put("颜色数组", colorAdapter.getMlist().toString());
+							jsonObj.put("action", "updateAmountColor");
+							jsonObj.put("detailid", detailid);
+						} catch (JSONException e1) {
+							e1.printStackTrace();
+						}
+						CampusAPI.httpPost(jsonObj, mHandler, 6);
+						popColorDialog.dismiss();
+					}
+				}, 500);
+				;
+			}
+		});
+	}
+
+
 	private void openScanCode()
 	{
 		Intent intent = new Intent();
@@ -958,7 +1221,7 @@ public class SchoolBillDetailFragment extends Fragment{
 	@SuppressLint("NewApi")
 	class AchieveAdapter extends BaseAdapter {
 
-		
+		private HashMap<Integer, AchieveAdapter.OnFocusChangeListenerImpl> listenerhm=new HashMap();
 		@Override
 		public int getCount() {
 			return details.size();
@@ -975,7 +1238,7 @@ public class SchoolBillDetailFragment extends Fragment{
 		}
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			ViewHolder holder = null;
 
 			if (null == convertView) {
@@ -989,16 +1252,15 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.hiddenBtn=(ImageView)convertView.findViewById(R.id.hiddenBtn);
 				holder.ly_hidden=(LinearLayout)convertView.findViewById(R.id.ly_hidden);
 				holder.et_num=(EditText)convertView.findViewById(R.id.et_num);
-				holder.iv_up=(ImageView)convertView.findViewById(R.id.iv_up);
-				holder.iv_down=(ImageView)convertView.findViewById(R.id.iv_down);
+				holder.et_zhekou=(EditText)convertView.findViewById(R.id.et_zhekou);
 				holder.ll_editSection=(LinearLayout)convertView.findViewById(R.id.ll_editSection);
 				holder.tv_operSign = (TextView) convertView.findViewById(R.id.tv_operSign);
 				convertView.setTag(holder);
-				
 				convertView.setOnTouchListener(touchListener);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
+
 			AQuery aq = new AQuery(convertView);
 			final BillDetailItem detailItem = (BillDetailItem) getItem(position);
 			
@@ -1023,7 +1285,7 @@ public class SchoolBillDetailFragment extends Fragment{
 			{
 				holder.tv_opertype.setVisibility(View.VISIBLE);
 				holder.tv_opertype.setText(detailItem.getOpertype());
-				if(detailItem.getOpertype().equals("退") || detailItem.getOpertype().equals("亏"))
+				if(detailItem.getOpertype().equals("退") || detailItem.getOpertype().equals("亏") || detailItem.getOpertype().equals("返"))
 				{
 					holder.tv_opertype.setBackground(getResources().getDrawable(R.drawable.school_achievement_red));
 				}
@@ -1040,12 +1302,55 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.tv_opertype.setVisibility(View.GONE);
 			holder.tv_bottom.setText(detailItem.getDetail());
 			
-			if(billDetail.getOpertionType().equals("edit"))
-			{
+			if(billDetail.getOpertionType().equals("edit") || billDetail.getOpertionType().equals("caigouedit")) {
 				holder.ll_editSection.setVisibility(View.VISIBLE);
+				if (detailItem.isShowzhekou()) {
+					holder.et_zhekou.setVisibility(View.VISIBLE);
+					holder.tv_operSign.setText("%");
+				} else {
+					holder.tv_operSign.setText("");
+					holder.et_zhekou.setVisibility(View.GONE);
+				}
+				holder.et_zhekou.setEnabled(detailItem.isEditzhekou());
+				holder.et_zhekou.setText(String.valueOf(detailItem.getZhekou()));
 				holder.et_num.setText(String.valueOf(detailItem.getNum()));
-				holder.et_num.setOnFocusChangeListener(new OnFocusChangeListenerImpl(position));
-				
+				OnFocusChangeListenerImpl listener = listenerhm.get(position);
+				if (listener == null) {
+					listener = new OnFocusChangeListenerImpl(position);
+					listenerhm.put(position, listener);
+				}
+				holder.et_num.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						v.setOnFocusChangeListener(listenerhm.get(position));
+						return false;
+					}
+				});
+				holder.et_zhekou.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						v.setOnFocusChangeListener(listenerhm.get(position));
+						return false;
+					}
+				});
+				holder.et_num.setCursorVisible(detailItem.isEditNum());      //设置输入框中的光标不可见
+				holder.et_num.setFocusable(detailItem.isEditNum());           //无焦点
+				holder.et_num.setFocusableInTouchMode(detailItem.isEditNum());
+				if(!detailItem.isEditNum()) {
+					holder.et_num.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							getDetailColorKucun(position);
+						}
+					});
+					holder.et_num.setTextColor(Color.RED);
+				}
+				else {
+					holder.et_num.setOnClickListener(null);
+					holder.et_num.setTextColor(Color.BLACK);
+				}
+				holder.et_num.setGravity(Gravity.CENTER);
+
 				if(detailItem.getHiddenBtnUrl()!=null && detailItem.getHiddenBtnUrl().length()>0)
 				{
 					
@@ -1085,54 +1390,7 @@ public class SchoolBillDetailFragment extends Fragment{
 					}
 					
 				});
-				/*
-				holder.iv_up.setTag(holder);
-				holder.iv_up.setOnTouchListener(touchListener);
-				holder.iv_up.setOnClickListener(new OnClickListener(){
 
-					@Override
-					public void onClick(View v) {
-						
-					    
-						ViewHolder holder=(ViewHolder) v.getTag();
-						try
-						{
-							int num=Integer.parseInt(holder.et_num.getText().toString());
-							//holder.et_num.setText(String.valueOf(num+1));
-							updateAmount(detailItem.getId(),num+1);
-						}
-						catch(NumberFormatException e)
-						{
-							AppUtility.showToastMsg(getActivity(), "数量必须是整数");
-						}
-						
-					}
-					
-				});
-				holder.iv_down.setTag(holder);
-				holder.iv_down.setOnTouchListener(touchListener);
-				holder.iv_down.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View v) {
-						
-					    closeInputMethod(v);
-						ViewHolder holder=(ViewHolder) v.getTag();
-						try
-						{
-							int num=Integer.parseInt(holder.et_num.getText().toString());
-							//holder.et_num.setText(String.valueOf(num-1));
-							updateAmount(detailItem.getId(),num-1);
-						}
-						catch(NumberFormatException e)
-						{
-							AppUtility.showToastMsg(getActivity(), "数量必须是整数");
-						}
-						
-					}
-					
-				});
-				*/
 			}
 			else
 			{
@@ -1167,6 +1425,7 @@ public class SchoolBillDetailFragment extends Fragment{
 			ImageView hiddenBtn;
 			LinearLayout ly_hidden;
 			EditText et_num;
+			EditText et_zhekou;
 			ImageView iv_up;
 			ImageView iv_down;
 			LinearLayout ll_editSection;
@@ -1182,18 +1441,26 @@ public class SchoolBillDetailFragment extends Fragment{
 	            EditText et = (EditText) arg0;
 	            BillDetailItem detailItem = (BillDetailItem) getItem(position);
 	            if(arg1) {
-	                //Log.e("", "获得焦点"+detailItem.getId());
+	                Log.d("", "获得焦点"+position);
 	            } else {
-	            	
-	                //Log.e("", "失去焦点"+detailItem.getId());
+	                Log.d("", "失去焦点"+position);
 	                try
 	                {
-	                	int num=Integer.parseInt(et.getText().toString());
-	                	if(detailItem.getNum()!=num)
-	                	{
-	                		updateAmount(detailItem.getId(),num);
-	                		//detailItem.setNum(num);
-	                	}
+	                	if(et.getId()==R.id.et_num) {
+							int num = Integer.parseInt(et.getText().toString());
+							if (detailItem.getNum() != num) {
+								updateAmount(detailItem.getId(), num);
+								et.setOnFocusChangeListener(null);
+							}
+						}
+						else if(et.getId()==R.id.et_zhekou)
+						{
+							float zhekou = Float.parseFloat(et.getText().toString());
+							if (detailItem.getZhekou() != zhekou) {
+								updateZhekou(detailItem.getId(), zhekou);
+								et.setOnFocusChangeListener(null);
+							}
+						}
 	                }
 	                catch(NumberFormatException e)
 	                {
@@ -1203,10 +1470,8 @@ public class SchoolBillDetailFragment extends Fragment{
 	                
 	            }
 	        }
-	         
 	    }
 	}
-	
 	private void updateAmount(int id,int num)
 	{
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
@@ -1223,6 +1488,47 @@ public class SchoolBillDetailFragment extends Fragment{
 			jo.put("action", "updateAmount");
 			jo.put("detailId", id);
 			jo.put("num", num);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		CampusAPI.httpPost(jo, mHandler, 6);
+	}
+	private void updateZhekou(int id,float zhekou)
+	{
+		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+		JSONObject jo = new JSONObject();
+		try {
+			jo.put("用户较验码", checkCode);
+			Iterator it = queryJson.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = queryJson.getString(key);
+				jo.put(key, value);
+			}
+			jo.put("action", "updateZhekou");
+			jo.put("detailId", id);
+			jo.put("zhekou", zhekou);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		CampusAPI.httpPost(jo, mHandler, 6);
+	}
+	private void updateZhekouAll(int zhekou)
+	{
+		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+		JSONObject jo = new JSONObject();
+		try {
+			jo.put("用户较验码", checkCode);
+			Iterator it = queryJson.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = queryJson.getString(key);
+				jo.put(key, value);
+			}
+			jo.put("action", "updateZhekouAll");
+			jo.put("zhekou", zhekou);
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
@@ -1249,6 +1555,58 @@ public class SchoolBillDetailFragment extends Fragment{
 		}
 		CampusAPI.httpPost(jo, mHandler, 1);
 	}
+	public void uploadFile(File file)  {
+		if(!file.exists()) return;
+		if(AppUtility.formetFileSize(file.length()) > 5242880*2){
+			AppUtility.showToastMsg(getActivity(), "对不起，您上传的文件太大了，请选择小于10M的文件！");
+		}else{
+			ImageUtility.rotatingImageIfNeed(file.getAbsolutePath());
+			CampusParameters params = new CampusParameters();
+			String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");// 获取用户校验码
+			params.add("token", checkCode);
+			params.add("pic", file.getAbsolutePath());
+			params.add("function","uploadAvatar");
+			params.add("action","productcolortmp");
+			params.add("position",colorAdapter.getCurPosition());
+			params.add("prodid",colorAdapter.getProdid());
+			JSONObject jo= (JSONObject) colorAdapter.getItem(colorAdapter.getCurPosition());
+			params.add("colorid",jo.optInt("id"));
+			HttpMultipartPost post = new HttpMultipartPost(getActivity(), params){
+				@Override
+				protected void onPostExecute(String result) {
+					Message msg = new Message();
+					msg.what = 10;
+					msg.obj = result;
+					mHandler.sendMessage(msg);
+					this.pd.dismiss();
+				}
+			};
+			post.execute();
+
+		}
+	}
+	public void SubmitDeleteinfo(String imageName,int position) {
+
+		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+		JSONObject jsonObj = new JSONObject();
+		try {
+			jsonObj.put("用户较验码", checkCode);
+			Iterator it = queryJson.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = queryJson.getString(key);
+				jsonObj.put(key, value);
+			}
+			jsonObj.put("action", "deleteImage");
+			jsonObj.put("picFilename", imageName);
+			jsonObj.put("position", position);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		CampusAPI.httpPost(jsonObj, mHandler, 11);
+	}
+
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
 	{
 		AppUtility.permissionResult(requestCode,grantResults,getActivity(),callBack);
@@ -1256,8 +1614,6 @@ public class SchoolBillDetailFragment extends Fragment{
 	}
 	public AppUtility.CallBackInterface callBack=new AppUtility.CallBackInterface()
 	{
-
-
 		@Override
 		public void getLocation1() {
 
@@ -1265,15 +1621,17 @@ public class SchoolBillDetailFragment extends Fragment{
 
 		@Override
 		public void getPictureByCamera1() {
-			openScanCode();
+			if(popColorDialog.isShowing() && colorAdapter!=null)
+				colorAdapter.getPictureByCamera();
+			else
+				openScanCode();
 			if(searchDialog.isShowing())
 				searchDialog.dismiss();
 		}
 
 		@Override
 		public void getPictureFromLocation1() {
-			// TODO Auto-generated method stub
-
+			colorAdapter.getPictureFromLocation();
 		}
 
 

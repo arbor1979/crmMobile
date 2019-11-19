@@ -813,15 +813,19 @@ public class InitData {
 	 * @return
 	 */
 	public ChatMsg sendChatToDatabase(String type, String toid, String toname,
-			int msgFlag, String content, ChatFriend chatFriend, String msg_type,String userImage,String msg_id) {
+			int msgFlag, String content, ChatFriend chatFriend, String msg_type,String userImage,String msg_id,String fromTime,String linkUrl) {
 		try {
 			chatMsgDao = getHelper().getChatMsgDao();
 			chatFriendDao = getHelper().getChatFriendDao();
 			String hostid=PrefUtility.get(Constants.PREF_CHECK_HOSTID,"");
-
+			Date sendTime;
+			if(fromTime==null || fromTime.length()==0)
+				sendTime=new Date();
+			else
+				sendTime=DateHelper.getStringDate(fromTime,"");
 			// 判断用户是否在聊天列表中
 			if (chatFriend != null) { // 在聊天列表中，更新最后聊天内容，最后聊天时间
-				chatFriend.setLastTime(new Date());
+				chatFriend.setLastTime(sendTime);
 				chatFriend.setLastContent(content);
 				chatFriend.setType(type);
 				chatFriend.setMsgType(msg_type);
@@ -832,7 +836,7 @@ public class InitData {
 				chatFriend = new ChatFriend();
 				chatFriend.setHostid(hostid);
 				chatFriend.setToid(toid);
-				chatFriend.setLastTime(new Date());
+				chatFriend.setLastTime(sendTime);
 				chatFriend.setLastContent(content);
 				if(msgFlag==0)
 					chatFriend.setUnreadCnt(1);
@@ -851,10 +855,11 @@ public class InitData {
 				entity.setHostid(hostid);
 				entity.setToid(toid);
 				entity.setToname(toname);
-				entity.setTime(new Date());
+				entity.setTime(sendTime);
 				entity.setMsgFlag(msgFlag);
 				entity.setContent(content);
 				entity.setMsg_id(msg_id);
+				entity.setLinkUrl(linkUrl);
 				chatMsgDao.create(entity);
 			}
 			return entity;

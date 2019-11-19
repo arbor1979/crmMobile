@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -82,6 +84,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	private final static int SCANNIN_GREQUEST_CODE = 2;
 	private Dialog searchDialog;
 	private boolean isLoading=false;
+	private FloatingActionButton mFab;
+	private int mPreviousVisibleItem;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -109,7 +113,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								myListview.setPullLoadEnable(true);
 							else
 								myListview.setPullLoadEnable(false);
-							
+
 							achievements = achievementItem.getAchievements();
 							adapter.notifyDataSetChanged();
 							tvTitle.setText(achievementItem.getTitle());
@@ -134,7 +138,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 										JSONObject queryObj=AppUtility.parseQueryStrToJson(achievementItem.getRightButtonURL());
 										if(queryObj.optString("search").length()>0)
 										{
-											if(queryObj.optString("search").equals("customer"))
+											if(queryObj.optString("search").equals("customer") || queryObj.optString("search").equals("supply"))
 												popSearchDlg(queryObj.optString("search"));
 											else if(queryObj.optString("search").equals("bill"))
 												popBillFilterDlg();
@@ -142,6 +146,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 												popProductFilterDlg();
 											else if(queryObj.optString("search").equals("rukubill"))
 												popRukuBillFilterDlg();
+
 										}
 										else
 											gotoWenJuan("");
@@ -154,6 +159,11 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								tvRight.setVisibility(View.GONE);
 								lyRight.setOnClickListener(null);
 							}
+							if(achievementItem.getFilterArr()!=null && achievementItem.getFilterArr().length()>0) {
+								mFab.show();
+							}
+							else
+								mFab.hide();
 								
 						}
 					} 
@@ -232,7 +242,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) { //resultCode为回传的标记，我在B中回传的是RESULT_OK
 		case 101:
-			getAchievesItem(true);
+			if(resultCode==1)
+				getAchievesItem(true);
 		    break;
 		case SCANNIN_GREQUEST_CODE:
 			if(resultCode == Activity.RESULT_OK){
@@ -292,6 +303,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		myListview.setPullRefreshEnable(true);
 		myListview.setPullLoadEnable(false);
 		myListview.setXListViewListener(this);
+		mFab = (FloatingActionButton) view.findViewById(R.id.fab);
 		btnLeft.setVisibility(View.VISIBLE);
 		btnLeft.setCompoundDrawablesWithIntrinsicBounds(
 				R.drawable.bg_btn_left_nor, 0, 0, 0);
@@ -315,6 +327,27 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			}
 		});
 		getAchievesItem(true);
+		mFab.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				popFilterDlg();
+			}
+		});
+		myListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if (firstVisibleItem > mPreviousVisibleItem) {
+					mFab.hide();
+				} else if (firstVisibleItem < mPreviousVisibleItem && achievementItem!=null && achievementItem.getFilterArr()!=null && achievementItem.getFilterArr().length()>0)  {
+					mFab.show();
+				}
+				mPreviousVisibleItem = firstVisibleItem;
+			}
+		});
 		return view;
 	}
 
@@ -363,7 +396,13 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	                String value = filterObject.getString(key); 
 	                jo.put(key, value);
 				}
-			
+			if(achievementItem!=null && achievementItem.getFilterArr()!=null) {
+				for (int i=0;i<achievementItem.getFilterArr().length();i++)
+				{
+					JSONObject joitem=achievementItem.getFilterArr().optJSONObject(i);
+					jo.put(joitem.optString("标题"), joitem.optString("值"));
+				}
+			}
 			
 		} catch (JSONException e1) {
 			e1.printStackTrace();
@@ -433,7 +472,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		        options.fileCache=false;
 		        options.fallback=R.drawable.ic_launcher1;
 				options.targetWidth=200;
-				options.round = 100;
+				if(!achievement.getHeadtype().equals("-1"))
+					options.round = 100;
 				aq.id(holder.icon).image(imagurl,options);
 			}
 			else
@@ -960,8 +1000,15 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	{
 		String title="";
 		final EditText et=new EditText(getActivity());
-		title="搜索客户";
-		et.setHint("输入客户名称或会员卡");
+		if(searchType.equals("customer")) {
+			title = "搜索客户";
+			et.setHint("输入名称或电话或会员卡");
+		}
+		else
+		{
+			title="搜索供应商";
+			et.setHint("输入名称或拼音缩写");
+		}
 		new AlertDialog.Builder(getActivity()).setTitle(title).setView(et)
 		.setPositiveButton("确定", new DialogInterface.OnClickListener()
 		{
@@ -979,6 +1026,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		TimeUtility.popSoftKeyBoard(getActivity(),et);
 		
 	}
+
 	private void searchForValue(String searchType,String searchValue) {
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		JSONObject jo = new JSONObject();
@@ -1086,4 +1134,87 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		}
 
 	};
+	private void popFilterDlg()
+	{
+		final LinearLayout layout=new LinearLayout(getActivity());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setPadding(10,10,10,10);
+		for(int i=0;i<achievementItem.getFilterArr().length();i++)
+		{
+			JSONObject filterObj=achievementItem.getFilterArr().optJSONObject(i);
+			if(filterObj!=null)
+			{
+				if(filterObj.optString("类型").equals("文本框"))
+				{
+					final EditText et_billid=new EditText(getActivity());
+					et_billid.setContentDescription(filterObj.optString("标题"));
+					et_billid.setHint(filterObj.optString("标题"));
+					if(filterObj.optString("输入法").equals("数字"))
+						et_billid.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_SIGNED);
+					et_billid.setSingleLine();
+					et_billid.setText(filterObj.optString("值"));
+					layout.addView(et_billid);
+				}
+				else if(filterObj.optString("类型").equals("下拉框"))
+				{
+					Spinner sp_filter1 = new Spinner(getActivity());
+					sp_filter1.setContentDescription(filterObj.optString("标题"));
+					String[] mItems1 = new String[filterObj.optJSONArray("选项").length()];
+					int selection=0;
+					for (int j = 0; j < filterObj.optJSONArray("选项").length();j++) {
+						mItems1[j] = filterObj.optJSONArray("选项").optString(j);
+						if(filterObj.optString("值").equals(filterObj.optJSONArray("选项").optString(j)))
+							selection=j;
+					}
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
+					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					sp_filter1.setAdapter(adapter);
+					sp_filter1.setSelection(selection);
+					layout.addView(sp_filter1);
+					sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,100));
+				}
+			}
+		}
+
+		new AlertDialog.Builder(getActivity()).setTitle("过滤条件").setView(layout)
+				.setPositiveButton("确定", new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						for(int i=0;i<layout.getChildCount();i++)
+						{
+							View view=layout.getChildAt(i);
+							String key="";
+							String value="";
+							if(view instanceof EditText)
+							{
+								EditText editText=(EditText)view;
+								key= (String) editText.getContentDescription();
+								value=editText.getText().toString();
+							}
+							else if(view instanceof Spinner)
+							{
+								Spinner spinner=(Spinner)view;
+								key= (String) spinner.getContentDescription();
+								value=spinner.getSelectedItem().toString();
+							}
+							for(int j=0;j<achievementItem.getFilterArr().length();j++)
+							{
+								JSONObject item=achievementItem.getFilterArr().optJSONObject(j);
+								if(item.optString("标题").equals(key))
+								{
+									try {
+										item.put("值",value);
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						}
+						getAchievesItem(true);
+					}
+				}).setNegativeButton("取消", null).show();
+
+	}
 }

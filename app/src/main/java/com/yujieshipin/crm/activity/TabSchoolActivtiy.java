@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +40,7 @@ import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.CampusApplication;
 import com.yujieshipin.crm.activity.TabHostActivity.MenuListener;
 import com.yujieshipin.crm.adapter.SchoolWorkAdapter;
+import com.yujieshipin.crm.adapter.SectionedSpanSizeLookup;
 import com.yujieshipin.crm.api.CampusAPI;
 import com.yujieshipin.crm.api.CampusException;
 import com.yujieshipin.crm.api.CampusParameters;
@@ -60,7 +63,7 @@ public class TabSchoolActivtiy extends FragmentActivity {
 	private LinearLayout emptyLayout;
 	private Button btnLeft;
 	private AQuery aq;
-	private GridView myGridView;
+	private RecyclerView myGridView;
 	private SchoolWorkAdapter adapter;
 	private List<SchoolWorkItem> schoolWorkItems = new ArrayList<SchoolWorkItem>();
 	private List<Notice> notices = new ArrayList<Notice>();
@@ -110,16 +113,16 @@ public class TabSchoolActivtiy extends FragmentActivity {
 							for(int i=0;i<schoolWorkItems.size();i++)
 							{
 								SchoolWorkItem item=(SchoolWorkItem)schoolWorkItems.get(i);
-								if(item.getTemplateName().equals("浏览器"))
+								if(item.isHasBadge())
 								{
 									needCount=true;
 									break;
 								}
 							}
-							/*
+
 							if(needCount)
 								getUnreadCount();
-							*/
+
 							for(SchoolWorkItem item:schoolWorkItems)
 							{
 								if(item.getTemplateName().equals("通知"))
@@ -192,13 +195,19 @@ public class TabSchoolActivtiy extends FragmentActivity {
 						JSONObject jo = new JSONObject(result);
 						if(jo!=null)
 						{
-								for(SchoolWorkItem item:schoolWorkItems)
+							boolean bfind=false;
+							for(SchoolWorkItem item:schoolWorkItems)
+							{
+								if(item.isHasBadge())
 								{
-									if(item.getTemplateName().equals("浏览器"))
-										item.setUnread(jo.optInt(item.getWorkText()));
-									
+									item.setUnread(jo.optInt(item.getWorkText()));
+									bfind=true;
 								}
+							}
+							if(bfind) {
+								//adapter.setSchoolWorkItems(schoolWorkItems);
 								adapter.notifyDataSetChanged();
+							}
 							
 						}
 					} catch (JSONException e) {
@@ -219,20 +228,25 @@ public class TabSchoolActivtiy extends FragmentActivity {
 		Log.d(TAG, "----------------onCreate-----------------------");
 		setContentView(R.layout.tab_activity_school);
 		aq = new AQuery(this);
-		myGridView = (GridView) findViewById(R.id.mygridview);
+		myGridView = (RecyclerView) findViewById(R.id.mygridview);
 		btnLeft = (Button) findViewById(R.id.btn_left);
 		layout_menu = (LinearLayout) findViewById(R.id.layout_btn_left);
 		loadingLayout = (LinearLayout) findViewById(R.id.data_load);
 		contentLayout = (LinearLayout) findViewById(R.id.content_layout);
 		failedLayout = (LinearLayout) findViewById(R.id.empty_error);
 		emptyLayout = (LinearLayout) findViewById(R.id.empty);
-		myGridView.setEmptyView(emptyLayout);
 		aq.id(R.id.tv_title).text(getString(R.string.school));
 		btnLeft.setBackgroundResource(R.drawable.bg_title_homepage_back);
 		btnLeft.setVisibility(View.VISIBLE);
 		adapter=new SchoolWorkAdapter(TabSchoolActivtiy.this, schoolWorkItems);
+		int screenWidth=AppUtility.getAndroiodScreenProperty(this);
+		int spancount= (int) Math.floor(screenWidth / 75);
+		GridLayoutManager manager = new GridLayoutManager(this,spancount);
+		//设置header
+		manager.setSpanSizeLookup(new SectionedSpanSizeLookup(adapter,manager));
+		myGridView.setLayoutManager(manager);
 		myGridView.setAdapter(adapter);
-		getSchool();
+		//getSchool();
 		//重新加载
 		failedLayout.setOnClickListener(new OnClickListener() {
 			
@@ -391,42 +405,15 @@ public class TabSchoolActivtiy extends FragmentActivity {
 		JSONObject jo = new JSONObject();
 		try {
 			jo.put("用户较验码", checkCode);
-			jo.put("DATETIME", datatime);
+			jo.put("function","getModules" );
+			jo.put("action", "getCount");
 	
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String base64Str = Base64.encode(jo.toString().getBytes());
-		Log.d(TAG, "------->base64Str:" + base64Str);
-		CampusParameters params = new CampusParameters();
-		params.add(Constants.PARAMS_DATA, base64Str);
-		CampusAPI.getSchoolItem(params, "count.php", new RequestListener() {
+		CampusAPI.httpPost(jo, mHandler, 2);
 
-			@Override
-			public void onIOException(IOException e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(CampusException e) {
-				Log.d(TAG, "----response" + e.getMessage());
-				Message msg = new Message();
-				msg.what = -1;
-				msg.obj = e.getMessage();
-				mHandler.sendMessage(msg);
-			}
-
-			@Override
-			public void onComplete(String response) {
-				Log.d(TAG, "----response" + response);
-				Message msg = new Message();
-				msg.what = 2;
-				msg.obj = response;
-				mHandler.sendMessage(msg);
-			}
-		});
 	}
 	@Override
 	protected void onStart() {

@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.security.MessageDigest;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,10 +51,12 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListAdapter;
@@ -213,14 +216,15 @@ public class AppUtility {
 	public static boolean isDecimal(String str) {
 		if(str==null || "".equals(str))
 			return false;
-		java.util.regex.Pattern pattern = Pattern.compile("[0-9]*(\\.?)[0-9]*");
+		Pattern pattern = Pattern.compile("^[-\\+]?[.\\d]*$");
+		//java.util.regex.Pattern pattern = Pattern.compile("[0-9]*(\\.?)[0-9]*");
 		return pattern.matcher(str).matches();
 	}
 	//是否整形
 	public static boolean isInteger(String str){
 		if(str==null )
 			return false;
-		Pattern pattern = Pattern.compile("[0-9]+");
+		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
 		return pattern.matcher(str).matches();
 	}
 	public static void report(Throwable e) {
@@ -1012,7 +1016,7 @@ public class AppUtility {
 		for(int i=0;i<temp.length;i++)
 		{
 			String item[]=temp[i].split("=");
-			if(item[1]!=null)
+			if(item.length==2 && item[1]!=null)
 			{
 				try {
 					obj.put(item[0], item[1]);
@@ -1039,5 +1043,51 @@ public class AppUtility {
 		else
 			return false;
 	}
+	public static String formatNumber(double number){
+		String result = "";
+		try {
+			DecimalFormat decimalFormat =new DecimalFormat("0.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+			result = decimalFormat.format(number);//format 返回的是四舍五入后的字符串
+		} catch (Exception e){
 
+		}
+		return result;
+	}
+	public static int getDaoHangHeight(Context context) {
+		int result = 0;
+		int resourceId=0;
+		int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+		if (rid!=0){
+			resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+			return context.getResources().getDimensionPixelSize(resourceId);
+		}else
+			return 0;
+	}
+	public static int getAndroiodScreenProperty(Context context) {
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		DisplayMetrics dm = new DisplayMetrics();
+		wm.getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;         // 屏幕宽度（像素）
+		int height = dm.heightPixels;       // 屏幕高度（像素）
+		float density = dm.density;         // 屏幕密度（0.75 / 1.0 / 1.5）
+		int densityDpi = dm.densityDpi;     // 屏幕密度dpi（120 / 160 / 240）
+		// 屏幕宽度算法:屏幕宽度（像素）/屏幕密度
+		int screenWidth = (int) (width / density);  // 屏幕宽度(dp)
+		return screenWidth;
+	}
+	public static String findUrlQueryString(String jumpurl,String template)
+	{
+		String templatevalue="";
+		String[] urlarr=jumpurl.split("\\?");
+		urlarr=urlarr[urlarr.length-1].split("&");
+		for(String item : urlarr)
+		{
+			String[] itemarr=item.split("=");
+			if(itemarr[0].equals(template)) {
+				templatevalue = itemarr[1];
+				break;
+			}
+		}
+		return templatevalue;
+	}
 }

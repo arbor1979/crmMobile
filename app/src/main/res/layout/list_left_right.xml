@@ -45,42 +45,21 @@
                 android:layout_margin="6dp"
                 android:paddingRight="8.0dip"
                 android:text="Detail" />
-
-            <LinearLayout
-                android:id="@+id/private_album"
-                android:layout_width="match_parent"
+            <com.yujieshipin.crm.widget.NonScrollableGridView
+                android:id="@+id/grid_picture"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" >
-
-                <ImageView
-                    android:id="@+id/theImage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    android:scaleType="matrix" />
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    android:scaleType="matrix" />
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    android:scaleType="matrix" />
-
-                <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="5dp"
-                    android:scaleType="matrix" />
-
-            </LinearLayout>
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:columnWidth="@dimen/gridView_image_child_width"
+                android:horizontalSpacing="2.0dip"
+                android:listSelector="@color/white"
+                android:numColumns="auto_fit"
+                android:scrollingCache="false"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2.0dip"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>
