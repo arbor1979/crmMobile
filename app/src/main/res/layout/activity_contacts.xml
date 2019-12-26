@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <include layout="@layout/head" />
+        <include layout="@layout/topbar_contacts" />
 
         <include
             android:id="@+id/search_head"

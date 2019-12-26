@@ -49,6 +49,12 @@ public class AchievementItem {
 
 	private List<String> filterParams1;
 	private List<String> filterParams2;
+	private JSONArray MutiSelArr;
+
+
+	public JSONArray getMutiSelArr() {
+		return MutiSelArr;
+	}
 
 	public AchievementItem(JSONObject jo) {
 		
@@ -84,6 +90,11 @@ public class AchievementItem {
 			}
 		}
 		filterArr=jo.optJSONArray("过滤条件");
+		MutiSelArr=jo.optJSONArray("显示复选");
+		if(filterArr==null)
+			filterArr=new JSONArray();
+		if(MutiSelArr==null)
+			MutiSelArr=new JSONArray();
 	}
 
 	public int getAllnum() {
@@ -141,6 +152,7 @@ public class AchievementItem {
 	    private String customerId;
 		private String headtype;
 	    private String thirdline;
+	    private boolean ifChecked;
 		public String getThirdline() {
 			return thirdline;
 		}
@@ -173,6 +185,14 @@ public class AchievementItem {
 			this.headtype = headtype;
 		}
 
+		public boolean isIfChecked() {
+			return ifChecked;
+		}
+
+		public void setIfChecked(boolean ifChecked) {
+			this.ifChecked = ifChecked;
+		}
+
 		public Achievement(JSONObject jo) {
 			id = jo.optString("编号");
 			icon = jo.optString("图标");
@@ -187,7 +207,7 @@ public class AchievementItem {
 			templateGrade = jo.optString("模板级别");
 			extraMenu= jo.optJSONObject("附加菜单");
 			thirdline = jo.optString("第三行");
-			
+
 		}
 
 		

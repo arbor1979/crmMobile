@@ -6,6 +6,13 @@
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
+    <CheckBox
+        android:id="@+id/cb_checkitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="46.0dip"
@@ -73,10 +80,11 @@
 
     <ImageView
         android:id="@+id/iv_right"
-        android:layout_width="25dp"
+        android:layout_width="55dp"
         android:layout_height="match_parent"
-        android:layout_marginRight="6dp"
         android:contentDescription="@null"
+        android:paddingLeft="15dp"
+        android:paddingRight="10dp"
         android:src="@drawable/pop_menu" />
 
 </LinearLayout>

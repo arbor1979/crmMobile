@@ -75,8 +75,9 @@
     
     <color name="field_text_color">#33a7ff</color>
     <color name="button_ok">#078347</color>
+    <color name="button_warn">#E38876</color>
 	<!--radio_button-->
-	 <color name="radio_button_selected_color">#27ae62</color>
+	 <color name="radio_button_selected_color">#444444</color>
     <!-- <color name="radio_button_selected_color">#ff33b5e5</color> -->
     <color name="radio_button_unselected_color">@android:color/transparent</color>
      <color name="dialog_textColor">#444444</color>

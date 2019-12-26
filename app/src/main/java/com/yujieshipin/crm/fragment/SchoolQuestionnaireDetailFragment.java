@@ -119,7 +119,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 	private MyPictureAdapter myPictureAdapter;
 	private List<String> picturePaths = new ArrayList<String>();// 选中的图片路径
 	private ArrayList<Question> questions = new ArrayList<Question>();
-	private List<ImageItem> images = new ArrayList<ImageItem>();
+	//private List<ImageItem> images = new ArrayList<ImageItem>();
 	private static final int REQUEST_CODE_TAKE_PICTURE = 2;// //设置图片操作的标志
 	private static final int REQUEST_CODE_TAKE_CAMERA = 1;// //设置拍照操作的标志
 	private AQuery aq;
@@ -220,12 +220,13 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 									adapter.notifyDataSetChanged();
 								}
 								else {
-									images = questions.get(myPictureAdapter.getPosition()).getImages();
+									List<ImageItem> images = questions.get(myPictureAdapter.getPosition()).getImages();
 									for (int i = 0; i < images.size(); i++) {
 										if (images.get(i).getDownAddress().equals(delImagePath)) {
 											images.remove(i);
 										}
 									}
+									questions.get(myPictureAdapter.getPosition()).setImages(images);
 									File cacheFile = FileUtility.getCacheFile(delImagePath);
 									if (cacheFile.exists())
 										cacheFile.delete();
@@ -250,7 +251,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 							if ("成功".equals(jo.optString("result"))) {
 
 								ImageItem ds = new ImageItem(jo);
-								images.add(ds);
+								questions.get(myPictureAdapter.getPosition()).getImages().add(ds);
 								picturePaths.add(ds.getDownAddress());
 								myPictureAdapter.setPicPaths(picturePaths);
 								//myPictureAdapter.notifyDataSetChanged();
@@ -756,7 +757,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			ImageUtility.rotatingImageIfNeed(file.getAbsolutePath());
 			Question question=questions.get(curPositon);
 			if(question.getStatus().equals("图片"))
-				SubmitUploadFile(file.getAbsolutePath());
+				SubmitUploadFile(file.getAbsolutePath(),curPositon);
 			else if(question.getStatus().equals("图片颜色数量"))
 				SubmitUploadFile_productcolor(file.getAbsolutePath(),curPositon);
 	       
@@ -770,16 +771,20 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 	 * @param
 	 * @param
 	 */
-	public void SubmitUploadFile(String filePath){
+	public void SubmitUploadFile(String filePath,int position){
 		CampusParameters params = new CampusParameters();
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");// 获取用户校验码
-		
+		Question question=questions.get(position);
 		params.add("token", checkCode);
 		params.add("pic", filePath);
 		params.add("function","uploadAvatar");
-		params.add("action","product");
+		if(question.getImageFolder()!=null && question.getImageFolder().length()>0)
+			params.add("action",question.getImageFolder());
+		else
+			params.add("action","product");
 		JSONObject queryJson=AppUtility.parseQueryStrToJson(questionnaireList.getSubmitTo());
 		params.add("productid",queryJson.optString("productid"));
+		params.add("ID",queryJson.optString("ID"));
 		picturePaths.remove("");
 		picturePaths.add("loading");
 		myPictureAdapter.setPicPaths(picturePaths);
@@ -837,9 +842,11 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				String usersAnswer = questions.get(i).getUsersAnswer();
 				String isRequired = questions.get(i).getIsRequired();//是否必填
 				String validate=questions.get(i).getValidate();
+				List<ImageItem> images=questions.get(i).getImages();
 				if(mStatus.equals("图片")){
 					if(AppUtility.isNotEmpty(isRequired)){
 						if(isRequired.equals("是")) {
+
 							if (images.isEmpty()) {
 								AppUtility.showToastMsg(getActivity(), "请填写:" + title);
 								myListview.setSelection(i);
@@ -866,19 +873,23 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					}
 					joarr.put(title,joimages);
 				}
+				else if (mStatus.equals("图片颜色数量")) {
+					if (isRequired.equals("是") && !AppUtility.isNotEmpty(usersAnswer)) {
+						AppUtility.showToastMsg(getActivity(), "请填写:" + title);
+						myListview.setSelection(i);
+						return null;
+					}
+					JSONObject obj=new JSONObject();
+					obj.put("颜色图片",questions.get(i).getColorImage());
+					obj.put("颜色名称",questions.get(i).getColorName());
+					obj.put("颜色数量",questions.get(i).getUsersAnswer());
+					joarr.put(title,obj);
+				}
 				else {
-					if (AppUtility.isNotEmpty(isRequired)) {
-						if (isRequired.equals("是")) {
-							if (AppUtility.isNotEmpty(usersAnswer)) {
-								joarr.put(title, usersAnswer);
-							} else {
-								AppUtility.showToastMsg(getActivity(), "请填写:" + title);
-								myListview.setSelection(i);
-								return null;
-							}
-						} else {
-							joarr.put(title, usersAnswer);
-						}
+					if (isRequired.equals("是") && !AppUtility.isNotEmpty(usersAnswer)) {
+						AppUtility.showToastMsg(getActivity(), "请填写:" + title);
+						myListview.setSelection(i);
+						return null;
 					}
 					if (AppUtility.isNotEmpty(validate) && AppUtility.isNotEmpty(usersAnswer)) {
 						if (validate.equals("手机号") && !AppUtility.checkPhone(usersAnswer)) {
@@ -899,13 +910,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 							return null;
 						}
 					}
-					if (mStatus.equals("图片颜色数量")) {
-						JSONObject obj=new JSONObject();
-						obj.put("颜色图片",questions.get(i).getColorImage());
-						obj.put("颜色名称",questions.get(i).getColorName());
-						obj.put("颜色数量",questions.get(i).getUsersAnswer());
-						joarr.put(title,obj);
-					}
+					joarr.put(title, usersAnswer);
 				}
 			}
 		} catch (JSONException e) {
@@ -1341,7 +1346,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.bt_datetime.setEnabled(!question.isIfRead());
 				if(!AppUtility.isNotEmpty(question.getUsersAnswer()))
 				{
-					question.setUsersAnswer(DateHelper.getToday());
+					question.setUsersAnswer(DateHelper.getToday("yyyy-MM-dd HH:mm"));
 				}
 				holder.bt_datetime.setText(question.getUsersAnswer());
 

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navibar"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/topbar_layout_height"
+    android:background="@color/topbar_background"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/layout_back"
+        android:layout_width="50dip"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/title_layout_selector"
+        android:clickable="true"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_marginLeft="10dp"
+            android:background="#27ae62"
+            android:clickable="false"
+            android:focusable="false" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_goto"
+        android:layout_width="50dip"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:clickable="true"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/btn_goto"
+            android:layout_width="wrap_content"
+            android:layout_height="30dip"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@color/transparent"
+            android:clickable="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_normal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/contactlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_toLeftOf="@id/layout_goto"
+        android:layout_toRightOf="@id/layout_back"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <com.yujieshipin.crm.widget.SegmentedGroup
+            android:id="@+id/segmentedGroup2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/button21"
+                style="@style/RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="客户" />
+
+            <RadioButton
+                android:id="@+id/button22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="供应商"
+                style="@style/RadioButton" />
+            <RadioButton
+                android:id="@+id/button23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="员工"
+                style="@style/RadioButton" />
+        </com.yujieshipin.crm.widget.SegmentedGroup>
+    </RelativeLayout>
+
+</RelativeLayout>

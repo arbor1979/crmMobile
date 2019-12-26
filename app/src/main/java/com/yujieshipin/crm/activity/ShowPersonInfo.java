@@ -110,10 +110,10 @@ public class ShowPersonInfo extends Activity {
 			e.printStackTrace();
 		}
 		user=((CampusApplication)getApplicationContext()).getLoginUserObj();
-		
+		changeheader= (Button) findViewById(R.id.bt_changeHeader);
+		changeheader.setVisibility(View.GONE);
 		if(userType>0 && studentId.equals(user.getId()))//用户
 		{
-			changeheader= (Button) findViewById(R.id.bt_changeHeader);
 			changeheader.setVisibility(View.VISIBLE);
 			changeheader.setOnClickListener(new OnClickListener(){
 				@Override
@@ -125,7 +125,6 @@ public class ShowPersonInfo extends Activity {
 		}
 		else if(userType==-1)//产品
 		{
-			changeheader= (Button) findViewById(R.id.bt_changeHeader);
 			changeheader.setVisibility(View.VISIBLE);
 			changeheader.setText("更换图片");
 			changeheader.setOnClickListener(new OnClickListener(){
@@ -302,8 +301,7 @@ public class ShowPersonInfo extends Activity {
 				holder.grid_picture.setVisibility(View.GONE);
 				holder.info.setVisibility(View.VISIBLE);
 			}
-
-            if(key.equals("手机") && studentId.equals(user.getId()))
+            if(key.equals("手机") && userType>0 && studentId.equals(user.getId()))
             {
             	holder.bt_changeNumber.setVisibility(View.VISIBLE);
             	holder.bt_changeNumber.setOnClickListener(new OnClickListener(){

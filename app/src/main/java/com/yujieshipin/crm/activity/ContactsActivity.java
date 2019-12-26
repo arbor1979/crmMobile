@@ -39,6 +39,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -56,6 +58,7 @@ import com.yujieshipin.crm.util.DialogUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.SerializableMap;
 import com.yujieshipin.crm.util.AppUtility.CallBackInterface;
+import com.yujieshipin.crm.widget.SegmentedGroup;
 
 /**
  * 
@@ -72,16 +75,15 @@ import com.yujieshipin.crm.util.AppUtility.CallBackInterface;
  * 
  */
 @SuppressLint({ "NewApi", "HandlerLeak" })
-public class ContactsActivity extends FragmentActivity {
+public class ContactsActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener{
 	static Button menu;
 	static LinearLayout layout_menu;
 	public static LinearLayout layout_refresh;
-	private TextView title,cancel,friends, group;
+	private TextView cancel;
 	private ViewGroup search_head;
 	private DatabaseHelper database;
 	public static EditText search;
 	private LinearLayout contacts;
-	private LinearLayout titleGroup;
 	private static int currentId = 0;
 	public static int STATUS = 0;
 	private static final String TAG = "ContactsActivity";
@@ -92,10 +94,10 @@ public class ContactsActivity extends FragmentActivity {
 	private List<ContactsFragment> contactsFragmentList;
 	private DisplayMetrics dm;
 	public static Dialog mLoadingDialog;
-	
+	private RadioButton btn21,btn22,btn23;
 	RelativeLayout contactlayout;
 	LinearLayout initlayout;
-	
+	int linktype=1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -113,7 +115,7 @@ public class ContactsActivity extends FragmentActivity {
 		registerBoradcastReceiver();
 		
 		/*
-		if(AppUtility.isInitContactData())
+		if(AppUtility.isInitContactData())setVisibility
 		{
 			Message msg = new Message();
 			msg.what = 3;
@@ -197,23 +199,21 @@ public class ContactsActivity extends FragmentActivity {
 		refresh.setBackgroundResource(R.drawable.bg_title_homepage_go);
 		layout_refresh.setOnClickListener(new TabListener());
 		*/
-		title = (TextView) findViewById(R.id.tv_title);
-		title.setVisibility(View.VISIBLE);
-		title.setText("客户");
+
 		search_head = (ViewGroup) findViewById(R.id.search_head);
 		
 		//search_head.getBackground().setAlpha(50);
 		cancel = (TextView) findViewById(R.id.chat_btn_cancel);
 		cancel.setVisibility(View.GONE);
 		menu.setBackgroundResource(R.drawable.bg_title_homepage_back);
-		titleGroup = (LinearLayout)findViewById(R.id.title_group);
-		titleGroup.setVisibility(View.GONE);
-		friends = (TextView)findViewById(R.id.friends);
-		group = (TextView)findViewById(R.id.group);
+		SegmentedGroup segmented2 = (SegmentedGroup) findViewById(R.id.segmentedGroup2);
+		segmented2.setTintColor(Color.DKGRAY);
+		segmented2.setOnCheckedChangeListener(this);
+		btn21 = (RadioButton) findViewById(R.id.button21);
+		btn22 = (RadioButton) findViewById(R.id.button22);
+		btn23 = (RadioButton) findViewById(R.id.button23);
+
 		viewPager = (ViewPager)findViewById(R.id.contacts_pager);
-		viewPager.setOnPageChangeListener(new PagerChangeListener());
-		friends.setOnClickListener(new TabListener());
-		group.setOnClickListener(new TabListener());
 		layout_menu.setOnClickListener(TabHostActivity.menuListener);
 		User user=((CampusApplication)getApplicationContext()).getLoginUserObj();
 		int userType=0;
@@ -237,7 +237,12 @@ public class ContactsActivity extends FragmentActivity {
 					
 					Intent intent =new Intent(ContactsActivity.this,SchoolDetailActivity.class);
 					intent.putExtra("templateName", "调查问卷");
-					intent.putExtra("interfaceName", "?function=getContracts&action=add");
+					int linktype=1;
+					if(btn22.isChecked())
+						linktype=2;
+					else if(btn23.isChecked())
+						linktype=3;
+					intent.putExtra("interfaceName", "?function=getContracts&action=add&linktype="+linktype);
 					intent.putExtra("title", "新增客户");
 					startActivityForResult(intent,101);
 				}
@@ -247,10 +252,13 @@ public class ContactsActivity extends FragmentActivity {
 	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) { //resultCode为回传的标记，我在B中回传的是RESULT_OK
 		case 101:
-			ContactsFragment friendContacts=contactsFragmentList.get(0);
-			friendContacts.getContracts();
+			if(resultCode==1) {
+				ContactsFragment friendContacts = contactsFragmentList.get(0);
+				friendContacts.getContracts();
+			}
 		    break;
 		default:
 		    break;
@@ -262,8 +270,8 @@ public class ContactsActivity extends FragmentActivity {
 		
 		contactsFragmentList = new ArrayList<ContactsFragment>();
 		ContactsFragment friendContacts = new ContactsFragment();
-		
 		contactsFragmentList.add(friendContacts);
+
 		/*
 		ContactsFragment groupContacts = new ContactsFragment();
 		Bundle localBundle1 = new Bundle();
@@ -273,65 +281,29 @@ public class ContactsActivity extends FragmentActivity {
 		*/
 		adapter = new ContactsPageAdapter(getSupportFragmentManager(), contactsFragmentList);
 		viewPager.setAdapter(adapter);
+
 	}
-	
-	class PagerChangeListener implements OnPageChangeListener{
 
-		@Override
-		public void onPageScrollStateChanged(int arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onPageSelected(int arg0) {
-			currentId = arg0;
-			switch(arg0){
-			case 0 :
-				friends.setBackgroundResource(R.drawable.chat_msg_bg_sel);
-				group.setBackgroundResource(R.drawable.chat_group_bg_nor);
-				friends.setTextColor(Color.parseColor("#27ae62"));
-				group.setTextColor(Color.WHITE);
+	@Override
+	public void onCheckedChanged(RadioGroup radioGroup, int i) {
+		switch (i) {
+			case R.id.button21:
+				linktype=1;
 				break;
-			case 1 :
-				friends.setBackgroundResource(R.drawable.chat_msg_bg_nor);
-				group.setBackgroundResource(R.drawable.chat_group_bg_sel);
-				friends.setTextColor(Color.WHITE);
-				group.setTextColor(Color.parseColor("#27ae62"));
+			case R.id.button22:
+				linktype=2;
 				break;
-				default :
-					break;
-			}
+			case R.id.button23:
+				linktype=3;
+				break;
+		}
+		ContactsFragment friendContacts = contactsFragmentList.get(0);
+		if(linktype!=friendContacts.linktype) {
+			friendContacts.linktype = linktype;
+			friendContacts.getContracts();
 		}
 	}
-	class TabListener implements OnClickListener{
 
-		@Override
-		public void onClick(View v) {
-			switch(v.getId()){
-			case R.id.friends :
-				viewPager.setCurrentItem(0);
-				break;
-			case R.id.group :
-				viewPager.setCurrentItem(1);
-				break;
-			case R.id.layout_goto:
-				mLoadingDialog.show();
-				mHandler.sendEmptyMessage(2);
-				
-				break;
-				default :
-					break;
-			}
-		}
-		
-	}
 	class ContactsPageAdapter extends FragmentPagerAdapter{
 		List<ContactsFragment> fragmentList ;
 		public ContactsPageAdapter(FragmentManager fm,List<ContactsFragment> fragmentList) {

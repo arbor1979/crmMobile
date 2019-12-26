@@ -16,6 +16,7 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,10 +34,14 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -73,7 +78,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	private LinearLayout loadingLayout;
 	private LinearLayout contentLayout;
 	private LinearLayout failedLayout;
-	private LinearLayout emptyLayout;
+	private LinearLayout emptyLayout,ll_multisel;
 	private AchievementItem achievementItem;
 	private String interfaceName,title;
 	private LayoutInflater inflater;
@@ -86,6 +91,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	private boolean isLoading=false;
 	private FloatingActionButton mFab;
 	private int mPreviousVisibleItem;
+	private boolean bShowMutiSel=false;
+	private CheckBox cb_selAll;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -159,11 +166,20 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								tvRight.setVisibility(View.GONE);
 								lyRight.setOnClickListener(null);
 							}
-							if(achievementItem.getFilterArr()!=null && achievementItem.getFilterArr().length()>0) {
+							if(achievementItem.getFilterArr().length()>0 || achievementItem.getMutiSelArr().length()>0) {
+
+								if(achievementItem.getMutiSelArr().length()>0) {
+									mFab.setImageResource(R.drawable.multiselwhite);
+								}
+								else {
+									mFab.setImageResource(R.drawable.filterwhite);
+								}
+								mFab.hide();
 								mFab.show();
 							}
 							else
 								mFab.hide();
+
 								
 						}
 					} 
@@ -299,6 +315,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		contentLayout = (LinearLayout) view.findViewById(R.id.content_layout);
 		failedLayout = (LinearLayout) view.findViewById(R.id.empty_error);
 		emptyLayout = (LinearLayout) view.findViewById(R.id.empty);
+		ll_multisel= (LinearLayout) view.findViewById(R.id.ll_multisel);
+		cb_selAll=(CheckBox) view.findViewById(R.id.cb_selAll);
 		myListview.setEmptyView(emptyLayout);
 		myListview.setPullRefreshEnable(true);
 		myListview.setPullLoadEnable(false);
@@ -454,7 +472,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 						.findViewById(R.id.theShopper);
 				holder.moreMenu = (ImageView) convertView
 						.findViewById(R.id.iv_right);
-				
+				holder.cb_checkitem=(CheckBox)convertView.findViewById(R.id.cb_checkitem);
 				
 				convertView.setTag(holder);
 			} else {
@@ -521,11 +539,27 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					holder.total.setBackground(getResources().getDrawable(R.drawable.school_achievement_bg));
 				holder.total.setTextColor(getActivity().getResources().getColor(R.color.white));
 			}
-			
+			if(bShowMutiSel) {
+				holder.cb_checkitem.setVisibility(View.VISIBLE);
+				holder.cb_checkitem.setChecked(achievement.isIfChecked());
+				holder.cb_checkitem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+					@Override
+					public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+						achievement.setIfChecked(b);
+					}
+				});
+			}
+			else
+				holder.cb_checkitem.setVisibility(View.GONE);
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
+					if(bShowMutiSel) {
+						CheckBox cb_checkitem=(CheckBox)v.findViewById(R.id.cb_checkitem);
+						cb_checkitem.setChecked(!cb_checkitem.isChecked());
+						return;
+					}
 					String DetailUrl = achievement.getDetailUrl();
 					if (AppUtility.isNotEmpty(DetailUrl)) {
 						Log.d(TAG,"----notice.getEndUrl():"+ achievement.getDetailUrl());
@@ -587,6 +621,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			TextView total;
 			TextView theShopper;
 			ImageView moreMenu;
+			CheckBox cb_checkitem;
 		}
 		
 	}
@@ -688,24 +723,42 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					{
 
 					}
-					else
-					{
-						String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
-						JSONObject queryObj=AppUtility.parseQueryStrToJson(achievement.getExtraMenu().optString(text));
-						JSONObject jo = new JSONObject();
-						try {
-							jo.put("用户较验码", checkCode);
-							Iterator it = queryObj.keys();
-							while (it.hasNext()) {
-								String key = (String) it.next();
-								String value = queryObj.getString(key);
-								jo.put(key, value);
-							}
+					else {
 
-						} catch (JSONException e1) {
-							e1.printStackTrace();
+						JSONObject queryObj = AppUtility.parseQueryStrToJson(achievement.getExtraMenu().optString(text));
+						String templateName = queryObj.optString("templateName");
+						String templateGrade = queryObj.optString("templateGrade");
+						if (templateName != null && templateName.length() > 0) {
+							Intent intent = null;
+							if (templateGrade != null && templateGrade.equals("main"))
+								intent = new Intent(getActivity(), SchoolActivity.class);
+							else
+								intent = new Intent(getActivity(), SchoolDetailActivity.class);
+							intent.putExtra("templateName", templateName);
+							int pos = interfaceName.indexOf("?");
+							String preUrl = interfaceName;
+							if (pos > -1)
+								preUrl = interfaceName.substring(0, pos);
+							intent.putExtra("interfaceName", preUrl + achievement.getExtraMenu().optString(text));
+							startActivityForResult(intent, 101);
+						} else {
+							String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+							JSONObject jo = new JSONObject();
+							try {
+								jo.put("用户较验码", checkCode);
+								Iterator it = queryObj.keys();
+								while (it.hasNext()) {
+									String key = (String) it.next();
+									String value = queryObj.getString(key);
+									jo.put(key, value);
+								}
+
+							} catch (JSONException e1) {
+								e1.printStackTrace();
+							}
+							CampusAPI.httpPost(jo, mHandler, 2);
 						}
-						CampusAPI.httpPost(jo, mHandler, 2);
+
 					}
 					userTypeDialog.dismiss();
 				}
@@ -720,7 +773,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	{
 		String title="产品过滤";
 		LayoutInflater inflater = LayoutInflater.from(getActivity());
-		final View textEntryView = inflater.inflate(R.layout.dialog_product_entry,
+		final LinearLayout textEntryView = (LinearLayout) inflater.inflate(R.layout.dialog_product_entry,
 			    null);
 		final Button bt_scanCode=(Button)textEntryView.findViewById(R.id.bt_scancode);
 		final EditText et_productid=(EditText)textEntryView.findViewById(R.id.et_productid);
@@ -735,17 +788,67 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			}
 		});
 		
-			String productid=filterObject.optString("productid");
-			if(productid!=null && productid.length()>0)
-				et_productid.setText(productid);
-			String producttype=filterObject.optString("producttype");
-			if(producttype!=null && producttype.length()>0)
-				et_producttype.setText(producttype);
-			String supplyid=filterObject.optString("supplyid");
-			if(supplyid!=null && supplyid.length()>0)
-				et_supplyid.setText(supplyid);
-			
-		
+		String productid=filterObject.optString("productid");
+		if(productid!=null && productid.length()>0)
+			et_productid.setText(productid);
+		String producttype=filterObject.optString("producttype");
+		if(producttype!=null && producttype.length()>0)
+			et_producttype.setText(producttype);
+		String supplyid=filterObject.optString("supplyid");
+		if(supplyid!=null && supplyid.length()>0)
+			et_supplyid.setText(supplyid);
+
+		Spinner sp_filter1 = null;
+		String mItems1[] = new String[0];
+		if(achievementItem.getFilterParams1()!=null && achievementItem.getFilterParams1().size()>0) {
+			sp_filter1 = new Spinner(getActivity());
+			mItems1 = new String[achievementItem.getFilterParams1().size()];
+			for (int i = 0; i < achievementItem.getFilterParams1().size(); i++) {
+				mItems1[i] = achievementItem.getFilterParams1().get(i);
+			}
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			sp_filter1.setAdapter(adapter);
+			sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,100));
+			textEntryView.addView(sp_filter1);
+
+		}
+		String filterparam1=filterObject.optString("过滤参数1");
+		if(filterparam1!=null && filterparam1.length()>0 && sp_filter1!=null) {
+			for (int i = 0; i < mItems1.length; i++) {
+				if (mItems1[i].equals(filterparam1)) {
+					sp_filter1.setSelection(i);
+					break;
+				}
+			}
+		}
+		Spinner sp_filter2= null;;
+		String mItems2[]= new String[0];;
+		if(achievementItem.getFilterParams2()!=null && achievementItem.getFilterParams2().size()>0) {
+			sp_filter2 = new Spinner(getActivity());
+			mItems2 = new String[achievementItem.getFilterParams2().size()];
+			for (int i = 0; i < achievementItem.getFilterParams2().size(); i++) {
+				mItems2[i] = achievementItem.getFilterParams2().get(i);
+			}
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems2);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			sp_filter2.setAdapter(adapter);
+			sp_filter2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,100));
+			textEntryView.addView(sp_filter2);
+
+		}
+
+		String filterparam2=filterObject.optString("过滤参数2");
+		if(filterparam2!=null && filterparam2.length()>0 && sp_filter2!=null) {
+			for (int i = 0; i < mItems2.length; i++) {
+				if (mItems2[i].equals(filterparam2)) {
+					sp_filter2.setSelection(i);
+					break;
+				}
+			}
+		}
+		final Spinner finalSp_filter1 = sp_filter1;
+		final Spinner finalSp_filter2 = sp_filter2;
 		AlertDialog.Builder builder = new Builder(getActivity());
 		builder.setTitle(title).setView(textEntryView)
 		.setPositiveButton("确定", new DialogInterface.OnClickListener()
@@ -756,11 +859,18 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 				String productid=et_productid.getText().toString();
 				String producttype=et_producttype.getText().toString();
 				String supplyid=et_supplyid.getText().toString();
-				
+				String filterparam1="";
+				if(finalSp_filter1!=null)
+					filterparam1= finalSp_filter1.getSelectedItem().toString();
+				String filterparam2="";
+				if(finalSp_filter2!=null)
+					filterparam2= finalSp_filter2.getSelectedItem().toString();
 				try {
 					filterObject.put("productid", productid);
 					filterObject.put("producttype", producttype);
 					filterObject.put("supplyid", supplyid);
+					filterObject.put("过滤参数1", filterparam1);
+					filterObject.put("过滤参数2", filterparam2);
 					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -1136,85 +1246,168 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	};
 	private void popFilterDlg()
 	{
-		final LinearLayout layout=new LinearLayout(getActivity());
-		layout.setOrientation(LinearLayout.VERTICAL);
-		layout.setPadding(10,10,10,10);
-		for(int i=0;i<achievementItem.getFilterArr().length();i++)
+		if(achievementItem.getMutiSelArr().length()>0)
 		{
-			JSONObject filterObj=achievementItem.getFilterArr().optJSONObject(i);
-			if(filterObj!=null)
-			{
-				if(filterObj.optString("类型").equals("文本框"))
-				{
-					final EditText et_billid=new EditText(getActivity());
-					et_billid.setContentDescription(filterObj.optString("标题"));
-					et_billid.setHint(filterObj.optString("标题"));
-					if(filterObj.optString("输入法").equals("数字"))
-						et_billid.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_SIGNED);
-					et_billid.setSingleLine();
-					et_billid.setText(filterObj.optString("值"));
-					layout.addView(et_billid);
-				}
-				else if(filterObj.optString("类型").equals("下拉框"))
-				{
-					Spinner sp_filter1 = new Spinner(getActivity());
-					sp_filter1.setContentDescription(filterObj.optString("标题"));
-					String[] mItems1 = new String[filterObj.optJSONArray("选项").length()];
-					int selection=0;
-					for (int j = 0; j < filterObj.optJSONArray("选项").length();j++) {
-						mItems1[j] = filterObj.optJSONArray("选项").optString(j);
-						if(filterObj.optString("值").equals(filterObj.optJSONArray("选项").optString(j)))
-							selection=j;
+			bShowMutiSel=!bShowMutiSel;
+			if(bShowMutiSel) {
+				LinearLayout ll_btns=null;
+				for(int i=0;i<ll_multisel.getChildCount();i++) {
+					View subview = ll_multisel.getChildAt(i);
+					if (subview instanceof LinearLayout) {
+						ll_btns=(LinearLayout)subview;
+						ll_btns.removeAllViews();
+						break;
 					}
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
-					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					sp_filter1.setAdapter(adapter);
-					sp_filter1.setSelection(selection);
-					layout.addView(sp_filter1);
-					sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,100));
+				}
+				cb_selAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+						for(int i=0;i<achievements.size();i++)
+						{
+							Achievement item=achievements.get(i);
+							item.setIfChecked(b);
+						}
+						adapter.notifyDataSetChanged();
+					}
+
+				});
+				for(int i=0;i<achievementItem.getMutiSelArr().length();i++)
+				{
+					final JSONObject jo=achievementItem.getMutiSelArr().optJSONObject(i);
+					if(jo!=null)
+					{
+						Button btn=new Button(getActivity());
+						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+						layoutParams.setMargins(10,0,10,0);//4个参数按顺序分别是左上右下
+						layoutParams.height=95;
+						btn.setLayoutParams(layoutParams);
+						btn.setText(jo.optString("name"));
+						ll_btns.addView(btn);
+						btn.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								String selIdStr="";
+								for(int i=0;i<achievements.size();i++)
+								{
+									Achievement item=achievements.get(i);
+									if(item.isIfChecked())
+									{
+										if(selIdStr.length()>0)
+											selIdStr+=item.getId()+",";
+										else
+											selIdStr=item.getId();
+									}
+								}
+								if(selIdStr.length()==0) {
+									AppUtility.showToastMsg(getActivity(),"请先勾选记录");
+									return;
+								}
+								String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+								JSONObject queryObj=AppUtility.parseQueryStrToJson(jo.optString("url"));
+								JSONObject jo = new JSONObject();
+								try {
+									jo.put("用户较验码", checkCode);
+									jo.put("selIdStr",selIdStr);
+									Iterator it = queryObj.keys();
+									while (it.hasNext()) {
+										String key = (String) it.next();
+										String value = queryObj.getString(key);
+										jo.put(key, value);
+									}
+
+								} catch (JSONException e1) {
+									e1.printStackTrace();
+								}
+								CampusAPI.httpPost(jo, mHandler, 2);
+							}
+						});
+						if(jo.optString("color").length()>0)
+						{
+							if(jo.optString("color").equals("orange"))
+								btn.setBackgroundResource(R.drawable.button_round_corner_orange);
+							else if(jo.optString("color").equals("blue"))
+								btn.setBackgroundResource(R.drawable.button_round_corner_blue);
+							else
+								btn.setBackgroundResource(R.drawable.button_round_corner_green);
+
+						}
+					}
+				}
+				ll_multisel.setVisibility(View.VISIBLE);
+			}
+			else
+				ll_multisel.setVisibility(View.GONE);
+			adapter.notifyDataSetChanged();
+		}
+		else {
+			final LinearLayout layout = new LinearLayout(getActivity());
+			layout.setOrientation(LinearLayout.VERTICAL);
+			layout.setPadding(10, 10, 10, 10);
+			for (int i = 0; i < achievementItem.getFilterArr().length(); i++) {
+				JSONObject filterObj = achievementItem.getFilterArr().optJSONObject(i);
+				if (filterObj != null) {
+					if (filterObj.optString("类型").equals("文本框")) {
+						final EditText et_billid = new EditText(getActivity());
+						et_billid.setContentDescription(filterObj.optString("标题"));
+						et_billid.setHint(filterObj.optString("标题"));
+						if (filterObj.optString("输入法").equals("数字"))
+							et_billid.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+						et_billid.setSingleLine();
+						et_billid.setText(filterObj.optString("值"));
+						layout.addView(et_billid);
+					} else if (filterObj.optString("类型").equals("下拉框")) {
+						Spinner sp_filter1 = new Spinner(getActivity());
+						sp_filter1.setContentDescription(filterObj.optString("标题"));
+						String[] mItems1 = new String[filterObj.optJSONArray("选项").length()];
+						int selection = 0;
+						for (int j = 0; j < filterObj.optJSONArray("选项").length(); j++) {
+							mItems1[j] = filterObj.optJSONArray("选项").optString(j);
+							if (filterObj.optString("值").equals(filterObj.optJSONArray("选项").optString(j)))
+								selection = j;
+						}
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
+						adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+						sp_filter1.setAdapter(adapter);
+						sp_filter1.setSelection(selection);
+						layout.addView(sp_filter1);
+						sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
+					}
 				}
 			}
-		}
 
-		new AlertDialog.Builder(getActivity()).setTitle("过滤条件").setView(layout)
-				.setPositiveButton("确定", new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+			new AlertDialog.Builder(getActivity()).setTitle("过滤条件").setView(layout)
+					.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
 
-						for(int i=0;i<layout.getChildCount();i++)
-						{
-							View view=layout.getChildAt(i);
-							String key="";
-							String value="";
-							if(view instanceof EditText)
-							{
-								EditText editText=(EditText)view;
-								key= (String) editText.getContentDescription();
-								value=editText.getText().toString();
-							}
-							else if(view instanceof Spinner)
-							{
-								Spinner spinner=(Spinner)view;
-								key= (String) spinner.getContentDescription();
-								value=spinner.getSelectedItem().toString();
-							}
-							for(int j=0;j<achievementItem.getFilterArr().length();j++)
-							{
-								JSONObject item=achievementItem.getFilterArr().optJSONObject(j);
-								if(item.optString("标题").equals(key))
-								{
-									try {
-										item.put("值",value);
-									} catch (JSONException e) {
-										e.printStackTrace();
+							for (int i = 0; i < layout.getChildCount(); i++) {
+								View view = layout.getChildAt(i);
+								String key = "";
+								String value = "";
+								if (view instanceof EditText) {
+									EditText editText = (EditText) view;
+									key = (String) editText.getContentDescription();
+									value = editText.getText().toString();
+								} else if (view instanceof Spinner) {
+									Spinner spinner = (Spinner) view;
+									key = (String) spinner.getContentDescription();
+									value = spinner.getSelectedItem().toString();
+								}
+								for (int j = 0; j < achievementItem.getFilterArr().length(); j++) {
+									JSONObject item = achievementItem.getFilterArr().optJSONObject(j);
+									if (item.optString("标题").equals(key)) {
+										try {
+											item.put("值", value);
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
 									}
 								}
 							}
+							getAchievesItem(true);
 						}
-						getAchievesItem(true);
-					}
-				}).setNegativeButton("取消", null).show();
-
+					}).setNegativeButton("取消", null).show();
+		}
 	}
 }

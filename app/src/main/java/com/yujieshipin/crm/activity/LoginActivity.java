@@ -695,7 +695,7 @@ public class LoginActivity extends UmengNotifyClickActivity implements OnClickLi
 	@Override
 	public void onMessage(Intent intent) {
 		super.onMessage(intent);  //此方法必须调用，否则无法统计打开数
-		String body = intent.getStringExtra(AgooConstants.MESSAGE_BODY);
-		Log.i(TAG, body);
+		//String body = intent.getStringExtra(AgooConstants.MESSAGE_BODY);
+		//Log.i(TAG, body);
 	}
 }

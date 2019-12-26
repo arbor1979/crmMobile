@@ -44,14 +44,14 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	private int size = 9;//最大图片数量
 	private String from;
 	private String imagetype;
-	private int position;
+	private int list_position;
 	public MyPictureAdapter(Context context,boolean flag, List<String> picPaths,int size,String imagetype,int position) {
 		this.mContext = context;
 		this.picPaths = picPaths;
 		this.isCanAdd= flag;
 		this.size = size;
 		this.imagetype=imagetype;
-		this.position=position;
+		this.list_position=position;
 		this.picNames=new ArrayList<String>();
 		inflater = LayoutInflater.from(context);
 		Log.d(TAG, "isCanAdd"+isCanAdd);
@@ -72,7 +72,7 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 	}
 
 	public int getPosition() {
-		return position;
+		return list_position;
 	}
 
 	public void setPicPaths(List<String> picPaths) {
@@ -161,7 +161,7 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 						Intent intent = new Intent(Constants.GET_PICTURE);
 						intent.putExtra("TAG", from);
 						intent.putExtra("imagetype", imagetype);
-						intent.putExtra("position", position);
+						intent.putExtra("position", list_position);
 						mContext.sendBroadcast(intent);
 					}
 					else
@@ -174,7 +174,7 @@ public class MyPictureAdapter extends BaseAdapter implements Serializable{
 						intent.putExtra("imagePath", imgPath);
 						intent.putExtra("TAG", from);
 						intent.putExtra("imagetype", imagetype);
-						intent.putExtra("position", position);
+						intent.putExtra("position", list_position);
 						mContext.sendBroadcast(intent);
 					}
 					else

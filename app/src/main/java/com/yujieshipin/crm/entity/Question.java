@@ -39,6 +39,7 @@ public class Question implements Serializable{
 	private String remardColor;
 	private String colorName;
 	private String colorImage;
+	private String imageFolder;
 	public String getValidate() {
 		return validate;
 	}
@@ -57,6 +58,10 @@ public class Question implements Serializable{
 
 	public String getColorImage() {
 		return colorImage;
+	}
+
+	public String getImageFolder() {
+		return imageFolder;
 	}
 
 	public Question(JSONObject jo) {
@@ -108,6 +113,7 @@ public class Question implements Serializable{
 		ifHide=jo.optBoolean("隐藏");
 		colorImage=jo.optString("颜色图片");
 		colorName=jo.optString("颜色名称");
+		imageFolder=jo.optString("图片目录");
 	}
 
 	public boolean isIfHide() {
