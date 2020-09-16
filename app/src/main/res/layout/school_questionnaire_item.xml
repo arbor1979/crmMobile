@@ -59,17 +59,18 @@
 
                 </FrameLayout>
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/et_colorname"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_margin="6.0dip"
                     android:background="@drawable/edittext_bg"
                     android:gravity="left|top"
-                    android:hint="款式名称"
+                    android:hint="名称"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
                     android:singleLine="true"
+                    android:completionThreshold="1"
                     android:textSize="@dimen/text_size_normal" />
 
                 <EditText

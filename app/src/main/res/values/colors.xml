@@ -99,4 +99,5 @@
   <color name="viewfinder_laser">#ffff0000</color>
     <color name="colorPrimary">#D44094</color>
     <color name="colorPrimaryDark">#D44094</color>
+    <color name="inside_color">#d1cdcd</color>
 </resources>

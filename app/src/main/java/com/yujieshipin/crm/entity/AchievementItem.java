@@ -153,6 +153,16 @@ public class AchievementItem {
 		private String headtype;
 	    private String thirdline;
 	    private boolean ifChecked;
+
+		public int getProgress() {
+			return progress;
+		}
+
+		public void setProgress(int progress) {
+			this.progress = progress;
+		}
+
+		private int progress;
 		public String getThirdline() {
 			return thirdline;
 		}
@@ -207,7 +217,10 @@ public class AchievementItem {
 			templateGrade = jo.optString("模板级别");
 			extraMenu= jo.optJSONObject("附加菜单");
 			thirdline = jo.optString("第三行");
-
+			if(jo.optString("进度条").length()>0)
+				progress=jo.optInt("进度条");
+			else
+				progress=-1;
 		}
 
 		

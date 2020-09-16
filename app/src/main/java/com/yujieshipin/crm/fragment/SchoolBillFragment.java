@@ -16,7 +16,11 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -40,6 +44,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
@@ -61,6 +66,7 @@ import com.yujieshipin.crm.entity.AchievementItem.Achievement;
 import com.yujieshipin.crm.util.AppUtility;
 import com.yujieshipin.crm.util.DialogUtility;
 import com.yujieshipin.crm.util.PrefUtility;
+import com.yujieshipin.crm.util.PrinterShareUtil;
 import com.yujieshipin.crm.util.TimeUtility;
 import com.yujieshipin.crm.widget.XListView;
 import com.yujieshipin.crm.widget.XListView.IXListViewListener;
@@ -405,15 +411,27 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		JSONObject jo = new JSONObject();
 		try {
 			jo.put("用户较验码", checkCode);
-			String functionName=interfaceName.substring(0, interfaceName.length()-4);
+			String[] tmpurlarr=interfaceName.split(".php");
+			String functionName=tmpurlarr[0];
 			jo.put("function", functionName);
-			
-				Iterator it = filterObject.keys();
+
+			JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+			try {
+				Iterator it = queryJson.keys();
 				while (it.hasNext()) {
-	                String key = (String) it.next();
-	                String value = filterObject.getString(key); 
-	                jo.put(key, value);
+					String key = (String) it.next();
+					String value = queryJson.getString(key);
+					jo.put(key, value);
 				}
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
+			Iterator it = filterObject.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = filterObject.getString(key);
+				jo.put(key, value);
+			}
 			if(achievementItem!=null && achievementItem.getFilterArr()!=null) {
 				for (int i=0;i<achievementItem.getFilterArr().length();i++)
 				{
@@ -473,7 +491,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 				holder.moreMenu = (ImageView) convertView
 						.findViewById(R.id.iv_right);
 				holder.cb_checkitem=(CheckBox)convertView.findViewById(R.id.cb_checkitem);
-				
+				holder.pb_bottom=(ProgressBar)convertView.findViewById(R.id.pb_bottom);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -490,7 +508,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		        options.fileCache=false;
 		        options.fallback=R.drawable.ic_launcher1;
 				options.targetWidth=200;
-				if(!achievement.getHeadtype().equals("-1"))
+				if(achievement.getHeadtype().equals("-1"))
 					options.round = 100;
 				aq.id(holder.icon).image(imagurl,options);
 			}
@@ -551,6 +569,13 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			}
 			else
 				holder.cb_checkitem.setVisibility(View.GONE);
+			if(achievement.getProgress()>-1)
+			{
+				holder.pb_bottom.setVisibility(View.VISIBLE);
+				holder.pb_bottom.setProgress(achievement.getProgress());
+			}
+			else
+				holder.pb_bottom.setVisibility(View.GONE);
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -622,6 +647,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			TextView theShopper;
 			ImageView moreMenu;
 			CheckBox cb_checkitem;
+			ProgressBar pb_bottom;
 		}
 		
 	}
@@ -713,7 +739,24 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					    		} catch (JSONException e1) {
 					    			e1.printStackTrace();
 					    		}
-					    		CampusAPI.httpPost(jo, mHandler, 2);
+					    		if(queryObj.optString("templateName").length()>0) {
+
+									Intent intent =null;
+									intent.putExtra("templateName", queryObj.optString("templateName"));
+									if(queryObj.optString("templateGrade").equals("main"))
+										intent=new Intent(getActivity(),SchoolActivity.class);
+									else
+										intent=new Intent(getActivity(),SchoolDetailActivity.class);
+									int pos=interfaceName.indexOf("?");
+									String preUrl=interfaceName;
+									if(pos>-1)
+										preUrl=interfaceName.substring(0, pos);
+									intent.putExtra("interfaceName", preUrl+achievement.getExtraMenu().optString(text));
+									//intent.putExtra("title", title);
+									startActivityForResult(intent,101);
+								}
+					    		else
+					    			CampusAPI.httpPost(jo, mHandler, 2);
 					    	}
 					    })
 					    .setNegativeButton("否", null)
@@ -728,6 +771,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 						JSONObject queryObj = AppUtility.parseQueryStrToJson(achievement.getExtraMenu().optString(text));
 						String templateName = queryObj.optString("templateName");
 						String templateGrade = queryObj.optString("templateGrade");
+						String printurl = queryObj.optString("printurl");
 						if (templateName != null && templateName.length() > 0) {
 							Intent intent = null;
 							if (templateGrade != null && templateGrade.equals("main"))
@@ -741,7 +785,34 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								preUrl = interfaceName.substring(0, pos);
 							intent.putExtra("interfaceName", preUrl + achievement.getExtraMenu().optString(text));
 							startActivityForResult(intent, 101);
-						} else {
+						}
+						else if(printurl!=null && printurl.length()>0)
+						{
+							if(PrinterShareUtil.isAppInstalled(getActivity()))
+							{
+								String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+								String siteUrl = PrefUtility.get(Constants.PREF_LOGIN_URL, "");
+								String urlstr="http://119.29.6.239:"+siteUrl+ Uri.decode(printurl)+"&token="+Uri.encode(checkCode);
+								PrinterShareUtil.startUrlPrinterShare(getActivity(),urlstr);
+							}
+							else {
+								new AlertDialog.Builder(getActivity())
+										.setIcon(android.R.drawable.ic_dialog_alert)
+										.setTitle("确认对话框")
+										.setMessage("是否安装打印工具PrinterShare?")
+										.setPositiveButton("是", new DialogInterface.OnClickListener()
+										{
+											@Override
+											public void onClick(DialogInterface dialog, int which)
+											{
+												PrinterShareUtil.startInstallApp(getActivity());
+											}
+										})
+										.setNegativeButton("否", null)
+										.show();
+							}
+						}
+						else {
 							String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 							JSONObject jo = new JSONObject();
 							try {
@@ -1112,7 +1183,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		final EditText et=new EditText(getActivity());
 		if(searchType.equals("customer")) {
 			title = "搜索客户";
-			et.setHint("输入名称或电话或会员卡");
+			et.setHint("输入名称或电话");
 		}
 		else
 		{
@@ -1294,7 +1365,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 									if(item.isIfChecked())
 									{
 										if(selIdStr.length()>0)
-											selIdStr+=item.getId()+",";
+											selIdStr+=","+item.getId();
 										else
 											selIdStr=item.getId();
 									}

@@ -326,7 +326,7 @@ public class LoginActivity extends UmengNotifyClickActivity implements OnClickLi
 					JSONObject obj=new JSONObject(result);
 					String loginStatus = obj.optString("result");
 					if (loginStatus.equals("失败")) {
-						AppUtility.showToastMsg(LoginActivity.this, obj.optString("errorMsg"),1);
+						AppUtility.showToastMsgLong(LoginActivity.this, obj.optString("errorMsg"));
 						if(mLoadingDialog!=null)
 							mLoadingDialog.dismiss();
 					} else {

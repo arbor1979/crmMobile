@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -22,13 +23,15 @@
             android:scaleType="centerInside" />
 
     </LinearLayout>
-
     <LinearLayout
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <LinearLayout
         android:id="@+id/cell_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
         android:layout_weight="1"
         android:background="@drawable/common_frame_selector"
         android:orientation="horizontal">
@@ -93,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="%"/>
+                    android:text="%" />
 
 
             </LinearLayout>
@@ -111,11 +114,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
+                android:gravity="center"
                 android:inputType="numberSigned"
                 android:lines="1"
                 android:maxLength="10"
                 android:selectAllOnFocus="true"
-                android:gravity="center"
                 android:text="100"
                 android:textSize="@dimen/text_size_small" />
 
@@ -125,6 +128,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="X" />
+
             <EditText
                 android:id="@+id/et_num"
                 android:layout_width="45dp"
@@ -141,6 +145,43 @@
 
 
         </LinearLayout>
+
+        <com.yujieshipin.crm.widget.CustomCircleProgressBar
+            android:id="@+id/pb_right"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3dp"
+            app:direction="bottom"
+            app:max_progress="100"
+            app:outside_radius="12dp"
+            app:progress="0"
+            app:progress_text_color="#000000"
+            app:progress_text_size="9dp"
+            app:progress_width="4dp" />
+        <TextView
+            android:id="@+id/tv_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:text="/100" />
+    </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:gravity="start"
+            android:hint="输入备注说明"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="3dp"
+            android:paddingRight="10dp"
+            android:singleLine="true"
+            android:textSize="@dimen/text_size_big"
+            android:visibility="gone" />
 
     </LinearLayout>
 </LinearLayout>

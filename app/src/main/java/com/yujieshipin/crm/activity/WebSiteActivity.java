@@ -504,7 +504,7 @@ public class WebSiteActivity extends Activity {
 	{
 		super.onPause();
 		mWebView.onPause();
-		mWebView.loadUrl("javascript:var v=document.getElementById('video1');if(v) v.pause();");
+		mWebView.loadUrl("javascript:var v=document.getElementById('video1');if(v) v.pause();var p=document.getElementById('ifpause');if(p) p.value='1';");
 		CookieSyncManager.getInstance().stopSync();
 	}
 	@Override
@@ -512,6 +512,7 @@ public class WebSiteActivity extends Activity {
 	{
 		super.onResume();
 		mWebView.onResume();
+		mWebView.loadUrl("javascript:var p=document.getElementById('ifpause');if(p) p.value='0';");
 		CookieSyncManager.getInstance().startSync();
 	}
 	 @Override

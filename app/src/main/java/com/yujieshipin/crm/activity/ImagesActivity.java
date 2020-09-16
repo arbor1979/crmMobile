@@ -99,7 +99,8 @@ public class ImagesActivity extends Activity {
 							textComment.setText(comment);
 						else
 							textComment.setText("");
-						textView.setText((position + 1) + "/" + imagePaths.size());
+						if(imagePaths.size()>1)
+							textView.setText((position + 1) + "/" + imagePaths.size());
 					}
 
 					public void onPageSelected(int paramInt) {

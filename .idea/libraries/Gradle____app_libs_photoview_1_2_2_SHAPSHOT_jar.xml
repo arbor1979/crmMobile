@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: ./app/libs/photoview-1.2.2-SHAPSHOT.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/photoview-1.2.2-SHAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

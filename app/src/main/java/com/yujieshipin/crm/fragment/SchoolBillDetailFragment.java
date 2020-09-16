@@ -2,9 +2,11 @@ package com.yujieshipin.crm.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +35,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
@@ -89,6 +93,8 @@ import com.yujieshipin.crm.util.HttpMultipartPost;
 import com.yujieshipin.crm.util.ImageUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.TimeUtility;
+import com.yujieshipin.crm.widget.CustomCircleProgressBar;
+import com.yujieshipin.crm.widget.SegmentedGroup;
 import com.yujieshipin.crm.widget.XListView;
 
 import static com.umeng.analytics.AnalyticsConfig.getLocation;
@@ -120,9 +126,12 @@ public class SchoolBillDetailFragment extends Fragment{
 	private RadioButton rb_ifpay0,rb_ifpay1;
 	private Spinner spinner;
 	private int billzhekou=0;
+    private List<RadioButton> radioBtnList;
+    private SegmentedGroup segmented2;
 	private static final int REQUEST_CODE_TAKE_PICTURE = 3;// //设置图片操作的标志
 	private static final int REQUEST_CODE_TAKE_CAMERA = 1;// //设置拍照操作的标志
 	PopColorListAdapter colorAdapter;
+	private EditText lastFocusEt;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -231,8 +240,13 @@ public class SchoolBillDetailFragment extends Fragment{
 							}
 							else
 							{
-								JSONArray userArray=jo.optJSONArray("value");
-								popSelectList(userArray);
+								if(billDetail.isAllowAddBatch()) {
+									popColorSelect(billDetail.getBillid(), "",jo.optJSONArray("value"),jo.optBoolean("edit"));
+								}
+								else {
+									JSONArray userArray = jo.optJSONArray("value");
+									popSelectList(userArray);
+								}
 							}
 						}
 					}
@@ -385,6 +399,17 @@ public class SchoolBillDetailFragment extends Fragment{
 					}
 				}
 				break;
+			case 12:
+				EditText v1=(EditText)msg.obj;
+				if(v1.isFocused())
+				{
+					Timer timer = new Timer();
+					timer.schedule(new Task(v1,12), 3 * 1000);
+				}
+				else if(v1.getText().length()==0)
+					v1.setVisibility(View.GONE);
+
+				break;
 			}
 			
 				
@@ -470,6 +495,20 @@ public class SchoolBillDetailFragment extends Fragment{
 		tv_huizong2=(TextView) view.findViewById(R.id.tv_huizong2);
 		bt_gotopay=(Button) view.findViewById(R.id.bt_gotopay);
 		myListview.setEmptyView(emptyLayout);
+        segmented2 = (SegmentedGroup) view.findViewById(R.id.segmentedGroup2);
+        segmented2.setTintColor(Color.DKGRAY);
+        segmented2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                getAchievesItem();
+            }
+        });
+		radioBtnList=new ArrayList<RadioButton>();
+        radioBtnList.add((RadioButton) view.findViewById(R.id.button21));
+		RadioButton btn22=(RadioButton) view.findViewById(R.id.button22);
+		btn22.setVisibility(View.GONE);
+        radioBtnList.add((RadioButton) view.findViewById(R.id.button23));
+        segmented2.setVisibility(View.GONE);
 
 		btnLeft.setVisibility(View.VISIBLE);
 		btnLeft.setCompoundDrawablesWithIntrinsicBounds(
@@ -496,7 +535,6 @@ public class SchoolBillDetailFragment extends Fragment{
 				getAchievesItem();
 			}
 		});
-
 		getAchievesItem();
 		return view;
 	}
@@ -508,6 +546,18 @@ public class SchoolBillDetailFragment extends Fragment{
 	    	imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	    }
 	}
+	private void popInputDelay(final EditText et)
+	{
+		new Handler().postDelayed(new Runnable(){
+			@Override
+			public void run(){
+				et.requestFocus();
+				//et.setSelection(et.getText().length());
+				//InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+				//imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+			}
+		},100);
+	}
 	/**
 	 * 功能描述:初始化数据
 	 * 
@@ -517,7 +567,31 @@ public class SchoolBillDetailFragment extends Fragment{
 	private void initDate(int ifBottom,int hascolor) {
 		tvTitle.setText(billDetail.getTitle());
 		details = billDetail.getItems();
-		
+		for(int i=0;i<radioBtnList.size();i++)
+        {
+            radioBtnList.get(i).setVisibility(View.GONE);
+        }
+		if(billDetail.getSegmentedArr()!=null) {
+            segmented2.setVisibility(View.VISIBLE);
+			tvTitle.setVisibility(View.GONE);
+            for(int i=0;i<billDetail.getSegmentedArr().length();i++)
+            {
+                if(i==2) break;
+                JSONObject obj=billDetail.getSegmentedArr().optJSONObject(i);
+                if(obj!=null) {
+                    radioBtnList.get(i).setText(obj.optString("title"));
+                    radioBtnList.get(i).setVisibility(View.VISIBLE);
+                    if(i==billDetail.getSegmentindex())
+						radioBtnList.get(i).setChecked(true);
+                    else
+						radioBtnList.get(i).setChecked(false);
+                }
+            }
+        }
+		else {
+			segmented2.setVisibility(View.GONE);
+			tvTitle.setVisibility(View.VISIBLE);
+		}
 		if(billDetail.getOpertionType().equals("edit"))
 		{
 		    if(myListview.getFooterViewsCount()==0) {
@@ -558,6 +632,10 @@ public class SchoolBillDetailFragment extends Fragment{
 
 				@Override
 				public void onClick(View v) {
+					JSONObject queryJson=AppUtility.parseQueryStrToJson(billDetail.getNewUrl());
+					if(queryJson.optString("searchValueDefault").length()>0)
+						searchProdId(queryJson.optString("searchValueDefault"));
+					else
 						popSearchDlg();
 				}
 			});
@@ -612,6 +690,46 @@ public class SchoolBillDetailFragment extends Fragment{
 				}
 			});
 		}
+		else if(billDetail.getOpertionType().equals("shoukuan"))
+		{
+			tv_huizong1.setText(billDetail.getHuizong1());
+			tv_huizong2.setText(billDetail.getHuizong2());
+			bt_gotopay.setVisibility(View.VISIBLE);
+			bt_gotopay.setText(billDetail.getRightbottomBtn());
+			bt_gotopay.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(details.size()==0)
+					{
+						AppUtility.showToastMsg(getContext(), "请先添加明细");
+						return;
+					}
+					else {
+						getBillPayInfo();
+					}
+				}
+			});
+		}
+		else if(billDetail.getOpertionType().equals("chuku"))
+		{
+			tv_huizong1.setText(billDetail.getHuizong1());
+			tv_huizong2.setText(billDetail.getHuizong2());
+			bt_gotopay.setVisibility(View.VISIBLE);
+			bt_gotopay.setText(billDetail.getRightbottomBtn());
+			bt_gotopay.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if(details.size()==0)
+					{
+						AppUtility.showToastMsg(getContext(), "请先添加明细");
+						return;
+					}
+					else {
+						savebill();
+					}
+				}
+			});
+		}
 		else
 		{
 			tvRight.setVisibility(View.GONE);
@@ -628,6 +746,7 @@ public class SchoolBillDetailFragment extends Fragment{
 			getDetailColorKucun(adapter.getCount()-1);
 		}
 	}
+
 	public void getBillPayInfo() {
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		JSONObject jo = new JSONObject();
@@ -990,7 +1109,9 @@ public class SchoolBillDetailFragment extends Fragment{
 		{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				searchProdId(textEntryView);
+				EditText et=(EditText)textEntryView.findViewById(R.id.et_prodid);
+				String searchValue=et.getText().toString();
+				searchProdId(searchValue);
 			}
 			
 		}).setNegativeButton("取消", null);
@@ -1048,6 +1169,8 @@ public class SchoolBillDetailFragment extends Fragment{
 							jsonObj.put("颜色数组", colorAdapter.getMlist().toString());
 							jsonObj.put("action", "updateAmountColor");
 							jsonObj.put("detailid", detailid);
+							jsonObj.put("segmentindex",billDetail.getSegmentindex());
+							jsonObj.put("opertype", opertype);
 						} catch (JSONException e1) {
 							e1.printStackTrace();
 						}
@@ -1068,10 +1191,8 @@ public class SchoolBillDetailFragment extends Fragment{
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivityForResult(intent, SCANNIN_GREQUEST_CODE);
 	}
-	private void searchProdId(View textEntryView)
+	private void searchProdId(String searchValue)
 	{
-		EditText et=(EditText)textEntryView.findViewById(R.id.et_prodid);
-		String searchValue=et.getText().toString();
 		if(AppUtility.isNotEmpty(searchValue))
 		{
 			String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
@@ -1081,6 +1202,8 @@ public class SchoolBillDetailFragment extends Fragment{
 				jo.put("function", "searchForValue");
 				jo.put("searchType", "product");
 				jo.put("searchValue", searchValue);
+				jo.put("supplyid",billDetail.getLimitSupplyId());
+				jo.put("allowAddBatch",billDetail.isAllowAddBatch()?1:0);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 			}
@@ -1102,6 +1225,7 @@ public class SchoolBillDetailFragment extends Fragment{
 			}
 			jo.put("searchValue", searchValue);
 			jo.put("opertype", opertype);
+			jo.put("segmentindex",billDetail.getSegmentindex());
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
@@ -1168,6 +1292,7 @@ public class SchoolBillDetailFragment extends Fragment{
 			v.setFocusable(true);
 			v.setFocusableInTouchMode(true);
 			v.requestFocus();
+			lastFocusEt=null;
 			closeInputMethod(v);
 			return false;
 		}
@@ -1183,8 +1308,13 @@ public class SchoolBillDetailFragment extends Fragment{
 		showProgress(true);
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 		JSONObject jo = new JSONObject();
-		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
-		
+		if(billDetail!=null && billDetail.getSegmentedArr()!=null) {
+            if (segmented2.getCheckedRadioButtonId() == R.id.button21 && billDetail.getSegmentedArr().optJSONObject(0) != null)
+				interfaceName = billDetail.getSegmentedArr().optJSONObject(0).optString("url");
+            if (segmented2.getCheckedRadioButtonId() == R.id.button23 && billDetail.getSegmentedArr().optJSONObject(1) != null)
+				interfaceName = billDetail.getSegmentedArr().optJSONObject(1).optString("url");
+        }
+        JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
 		try {
 			jo.put("用户较验码", checkCode);
 			Iterator it = queryJson.keys();
@@ -1255,6 +1385,9 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.et_zhekou=(EditText)convertView.findViewById(R.id.et_zhekou);
 				holder.ll_editSection=(LinearLayout)convertView.findViewById(R.id.ll_editSection);
 				holder.tv_operSign = (TextView) convertView.findViewById(R.id.tv_operSign);
+				holder.pb_right=(CustomCircleProgressBar) convertView.findViewById(R.id.pb_right);
+				holder.tv_right = (TextView) convertView.findViewById(R.id.tv_right);
+				holder.et_memo=(EditText)convertView.findViewById(R.id.et_memo);
 				convertView.setTag(holder);
 				convertView.setOnTouchListener(touchListener);
 			} else {
@@ -1272,11 +1405,31 @@ public class SchoolBillDetailFragment extends Fragment{
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent=new Intent(getActivity(),ShowPersonInfo.class);
-					intent.putExtra("studentId", detailItem.getProdid());
-					intent.putExtra("userImage", detailItem.getProdImage());
-					intent.putExtra("userType", "-1");
-					startActivity(intent);
+					if(detailItem.getProdid()!=null && detailItem.getProdid().length()>0) {
+						Intent intent = new Intent(getActivity(), ShowPersonInfo.class);
+						intent.putExtra("studentId", detailItem.getProdid());
+						intent.putExtra("userImage", detailItem.getProdImage());
+						intent.putExtra("userType", "-1");
+						startActivity(intent);
+					}
+					else
+					{
+						Intent intent = new Intent(getActivity(),
+								ImagesActivity.class);
+						ArrayList<String> picturePaths=new ArrayList<String>();
+						picturePaths.add(detailItem.getProdImage());
+						intent.putStringArrayListExtra("pics",
+								(ArrayList<String>) picturePaths);
+						if(detailItem.getPicDesc().length()>0)
+						{
+							ArrayList<String> pictureNames=new ArrayList<String>();
+							pictureNames.add(detailItem.getPicDesc());
+							intent.putStringArrayListExtra("txts",
+									(ArrayList<String>) pictureNames);
+
+						}
+						startActivity(intent);
+					}
 				}
 				
 			});
@@ -1289,7 +1442,7 @@ public class SchoolBillDetailFragment extends Fragment{
 				{
 					holder.tv_opertype.setBackground(getResources().getDrawable(R.drawable.school_achievement_red));
 				}
-				else if(detailItem.getOpertype().equals("赠") || detailItem.getOpertype().equals("平"))
+				else if(detailItem.getOpertype().equals("赠") || detailItem.getOpertype().equals("平") || detailItem.getOpertype().equals("配件"))
 				{
 					holder.tv_opertype.setBackground(getResources().getDrawable(R.drawable.school_achievement_blue));
 				}
@@ -1302,7 +1455,7 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.tv_opertype.setVisibility(View.GONE);
 			holder.tv_bottom.setText(detailItem.getDetail());
 			
-			if(billDetail.getOpertionType().equals("edit") || billDetail.getOpertionType().equals("caigouedit")) {
+			if(billDetail.getOpertionType().equals("edit") || billDetail.getOpertionType().equals("caigouedit") || billDetail.getOpertionType().equals("chuku")) {
 				holder.ll_editSection.setVisibility(View.VISIBLE);
 				if (detailItem.isShowzhekou()) {
 					holder.et_zhekou.setVisibility(View.VISIBLE);
@@ -1314,6 +1467,11 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.et_zhekou.setEnabled(detailItem.isEditzhekou());
 				holder.et_zhekou.setText(String.valueOf(detailItem.getZhekou()));
 				holder.et_num.setText(String.valueOf(detailItem.getNum()));
+				holder.et_memo.setText(detailItem.getBeizhu());
+				if(holder.et_memo.getText().length()>0)
+					holder.et_memo.setVisibility(View.VISIBLE);
+				else
+					holder.et_memo.setVisibility(View.GONE);
 				OnFocusChangeListenerImpl listener = listenerhm.get(position);
 				if (listener == null) {
 					listener = new OnFocusChangeListenerImpl(position);
@@ -1327,6 +1485,13 @@ public class SchoolBillDetailFragment extends Fragment{
 					}
 				});
 				holder.et_zhekou.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						v.setOnFocusChangeListener(listenerhm.get(position));
+						return false;
+					}
+				});
+				holder.et_memo.setOnTouchListener(new OnTouchListener() {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						v.setOnFocusChangeListener(listenerhm.get(position));
@@ -1350,7 +1515,20 @@ public class SchoolBillDetailFragment extends Fragment{
 					holder.et_num.setTextColor(Color.BLACK);
 				}
 				holder.et_num.setGravity(Gravity.CENTER);
+				holder.et_num.setTag(position);
+				holder.et_zhekou.setTag(position);
+				holder.et_memo.setTag(position);
+				if (lastFocusEt!=null && lastFocusEt.getTag().equals(position))
+				{
+					EditText et=(EditText) convertView.findViewById(lastFocusEt.getId());
+					if(et!=null) {
+						et.setOnFocusChangeListener(listenerhm.get(position));
+						if(detailItem.isEditNum()) {
+							popInputDelay(et);
+						}
 
+					}
+				}
 				if(detailItem.getHiddenBtnUrl()!=null && detailItem.getHiddenBtnUrl().length()>0)
 				{
 					
@@ -1374,9 +1552,10 @@ public class SchoolBillDetailFragment extends Fragment{
 							{
 								holder.ly_hidden.setVisibility(View.VISIBLE);
 								Timer timer = new Timer(); 
-								timer.schedule(new Task(holder), 3 * 1000);
+								timer.schedule(new Task(holder.ly_hidden,2), 3 * 1000);
 								holder.ly_hidden.setTag(timer);
 							}
+							/*
 							else
 							{
 								holder.ly_hidden.setVisibility(View.GONE);
@@ -1384,6 +1563,19 @@ public class SchoolBillDetailFragment extends Fragment{
 								if(timer!=null)
 									timer.cancel();
 							}
+
+							*/
+						}
+						if(detailItem.isShowmemo())
+						{
+							ViewHolder holder = (ViewHolder) v.getTag();
+							if(holder.et_memo.getVisibility()==View.GONE)
+							{
+								holder.et_memo.setVisibility(View.VISIBLE);
+								Timer timer = new Timer();
+								timer.schedule(new Task(holder.et_memo,12), 3 * 1000);
+							}
+
 						}
 						 
 						
@@ -1397,26 +1589,37 @@ public class SchoolBillDetailFragment extends Fragment{
 				holder.ll_editSection.setVisibility(View.GONE);
 				holder.tv_operSign.setText("X "+detailItem.getNum());
 			}
-			
-			
-			
-			
+			if(detailItem.getProgress()>=0) {
+				holder.pb_right.setVisibility(View.VISIBLE);
+
+				if(detailItem.getProgress()>=100)
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.subject_single));
+				else if(detailItem.getProgress()>=80)
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.edit_color));
+				else if(detailItem.getProgress()>=60)
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.blue_color_shade));
+				else if(detailItem.getProgress()>=40)
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.blue_color_2));
+				else if(detailItem.getProgress()>=20)
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.moban_color_brown));
+				else
+					holder.pb_right.setOutsideColor(getActivity().getResources().getColor(R.color.red_color));
+				holder.pb_right.setProgressText(detailItem.getProgressText());
+				holder.pb_right.setProgress(detailItem.getProgress());
+
+			}
+			else
+				holder.pb_right.setVisibility(View.GONE);
+			if(detailItem.getRightText().length()>0)
+			{
+				holder.tv_right.setVisibility(View.VISIBLE);
+				holder.tv_right.setText(detailItem.getRightText());
+			}
+			else
+				holder.tv_right.setVisibility(View.GONE);
 			return convertView;
 		}
-		class Task extends TimerTask {
-			private ViewHolder holder;
-			public Task(ViewHolder h)
-			{
-				holder=h;
-			}
-			public void run()
-			{
-				Message msg = new Message();
-				msg.what = 2;
-				msg.obj = holder.ly_hidden;
-				mHandler.sendMessage(msg);   
-			}
-		}
+
 		class ViewHolder {
 			ImageView iv_leftImage;
 			TextView tv_up;
@@ -1430,7 +1633,11 @@ public class SchoolBillDetailFragment extends Fragment{
 			ImageView iv_down;
 			LinearLayout ll_editSection;
 			TextView tv_operSign;
+			CustomCircleProgressBar pb_right;
+			TextView tv_right;
+			EditText et_memo;
 		}
+
 		private class OnFocusChangeListenerImpl implements OnFocusChangeListener {
 	        private int position;
 	        public OnFocusChangeListenerImpl(int position) {
@@ -1442,6 +1649,7 @@ public class SchoolBillDetailFragment extends Fragment{
 	            BillDetailItem detailItem = (BillDetailItem) getItem(position);
 	            if(arg1) {
 	                Log.d("", "获得焦点"+position);
+					lastFocusEt=et;
 	            } else {
 	                Log.d("", "失去焦点"+position);
 	                try
@@ -1450,7 +1658,7 @@ public class SchoolBillDetailFragment extends Fragment{
 							int num = Integer.parseInt(et.getText().toString());
 							if (detailItem.getNum() != num) {
 								updateAmount(detailItem.getId(), num);
-								et.setOnFocusChangeListener(null);
+								//et.setOnFocusChangeListener(null);
 							}
 						}
 						else if(et.getId()==R.id.et_zhekou)
@@ -1458,7 +1666,15 @@ public class SchoolBillDetailFragment extends Fragment{
 							float zhekou = Float.parseFloat(et.getText().toString());
 							if (detailItem.getZhekou() != zhekou) {
 								updateZhekou(detailItem.getId(), zhekou);
-								et.setOnFocusChangeListener(null);
+								//et.setOnFocusChangeListener(null);
+							}
+						}
+						else if(et.getId()==R.id.et_memo)
+						{
+							String beizhu = et.getText().toString();
+							if (!detailItem.getBeizhu().equals(beizhu)) {
+								updateBeizhu(detailItem.getId(), beizhu);
+								//et.setOnFocusChangeListener(null);
 							}
 						}
 	                }
@@ -1472,6 +1688,23 @@ public class SchoolBillDetailFragment extends Fragment{
 	        }
 	    }
 	}
+	class Task extends TimerTask {
+		private View v;
+		private int what;
+		public Task(View h,int what)
+		{
+			this.v=h;
+			this.what=what;
+		}
+		public void run()
+		{
+			Message msg = new Message();
+			msg.what = what;
+			msg.obj = v;
+			mHandler.sendMessage(msg);
+		}
+	}
+
 	private void updateAmount(int id,int num)
 	{
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
@@ -1529,6 +1762,27 @@ public class SchoolBillDetailFragment extends Fragment{
 			}
 			jo.put("action", "updateZhekouAll");
 			jo.put("zhekou", zhekou);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		CampusAPI.httpPost(jo, mHandler, 6);
+	}
+	private void updateBeizhu(int id,String beizhu)
+	{
+		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+		JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
+		JSONObject jo = new JSONObject();
+		try {
+			jo.put("用户较验码", checkCode);
+			Iterator it = queryJson.keys();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = queryJson.getString(key);
+				jo.put(key, value);
+			}
+			jo.put("action", "updateBeizhu");
+			jo.put("detailId", id);
+			jo.put("beizhu", beizhu);
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}

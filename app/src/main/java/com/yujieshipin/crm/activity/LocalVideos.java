@@ -216,7 +216,7 @@ public class LocalVideos extends Activity {
 				fileText.setText("正在扫描："+msg.obj.toString()+"文件夹...");
 				break;
 			case 2:
-				AppUtility.showToast(LocalVideos.this, "已扫描到"+msg.obj.toString()+"视频文件", 10);
+				AppUtility.showToastMsgLong(LocalVideos.this, "已扫描到"+msg.obj.toString()+"视频文件");
 				break;
 			}
 		}

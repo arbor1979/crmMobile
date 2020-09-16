@@ -126,6 +126,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 	private int curPositon;
 	private int size = 5;//已提交图片数量;size:图片最大数量
 	private Timer timer;
+	private EditText lastFocusEt;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -278,6 +279,8 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 										if(subjo!=null)
 											setQuestionByJson(subjo);
 									}
+									//if(lastFocusEt!=null)
+									//	closeInputMethod(lastFocusEt);
 									adapter.notifyDataSetChanged();
 								}
 
@@ -331,6 +334,34 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 						question.setColorName(subjo.optString(key));
 					else if(key.equals("颜色图片"))
 						question.setColorImage(subjo.optString(key));
+					else if(key.equals("背景色"))
+						question.setBackgroundcolor(subjo.optString(key));
+					else if(key.equals("颜色名称只读"))
+						question.setColorNameReadonly(subjo.optBoolean(key));
+					else if(key.equals("选项")) {
+						ArrayList options = new ArrayList<JSONObject>();
+						try {
+							JSONArray josArr = subjo.optJSONArray(key);
+							if (josArr != null) {
+								for (int j = 0; j < josArr.length(); j++) {
+									JSONObject obj = (JSONObject) josArr.get(j);
+									if (obj != null)
+										options.add(obj);
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						question.setOptions(options);
+					}
+					else if(key.equals("类型"))
+						question.setStatus(subjo.optString(key));
+					else if(key.equals("回调"))
+						question.setCallback(subjo.optString(key));
+					else if(key.equals("是否必填"))
+						question.setIsRequired(subjo.optString(key));
+
 				}
 				//questions.set(i,question);
 				break;
@@ -991,6 +1022,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			v.setFocusable(true);
 			v.setFocusableInTouchMode(true);
 			v.requestFocus();
+			lastFocusEt=null;
 			closeInputMethod(v);
 			return false;
 		}
@@ -1003,6 +1035,18 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 	        // imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);//没有显示则显示
 	    	imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	    }
+	}
+	private void popInputDelay(final EditText et)
+	{
+		new Handler().postDelayed(new Runnable(){
+		@Override
+		public void run(){
+			et.requestFocus();
+			et.setSelection(et.getText().length());
+			//InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			//imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+		}
+		},300);
 	}
 	class QuestionAdapter extends BaseAdapter {
 	
@@ -1075,7 +1119,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			holder.lv_imagecolornum=(LinearLayout)convertView.findViewById(R.id.lv_imagecolornum);
 			holder.iv_coloradd=(ImageView)convertView.findViewById(R.id.iv_coloradd);
 			holder.pb_colorimage=(ProgressBar)convertView.findViewById(R.id.pb_colorimage);
-			holder.et_colorname=(EditText)convertView.findViewById(R.id.et_colorname);
+			holder.et_colorname=(AutoCompleteTextView)convertView.findViewById(R.id.et_colorname);
 			holder.et_colornum=(EditText)convertView.findViewById(R.id.et_colornum);
 			//holder.etAnswer.setOnFocusChangeListener(mListener);
 			//holder.et_autotext.setOnFocusChangeListener(mListener);
@@ -1114,6 +1158,16 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			});
 			holder.etAnswer.setTag(position);
 			holder.et_autotext.setTag(position);
+			holder.et_colorname.setTag(position);
+			holder.et_colornum.setTag(position);
+			if (lastFocusEt!=null && lastFocusEt.getTag().equals(position))
+			{
+				EditText et=(EditText) convertView.findViewById(lastFocusEt.getId());
+				if(et!=null) {
+					et.setOnFocusChangeListener(listenerhm.get(position));
+					popInputDelay(et);
+				}
+			}
 			convertView.setOnTouchListener(touchListener);
 
 			if(question.isIfHide())
@@ -1225,17 +1279,12 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 						if (question.getLines() > 0)
 							holder.etAnswer.setLines(question.getLines());
 					}
-					/*
-					if (mFocusPosition == position) {
-						holder.etAnswer.requestFocus();
-			        } else {
-			        	holder.etAnswer.clearFocus();
-			        }
-			        */
+
 					if(question.getBackgroundcolor().length()>0)
 						holder.lv_layout.setBackgroundColor(Color.parseColor(question.getBackgroundcolor()));
 					else
 						holder.lv_layout.setBackgroundColor(Color.TRANSPARENT);
+
 					/*
 					holder.etAnswer.addTextChangedListener(new TextWatcher() {
 						
@@ -1273,6 +1322,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				holder.imageGridView.setVisibility(View.VISIBLE);
 
 				List<ImageItem> images = question.getImages();
+				picturePaths.clear();
 				if(images != null){
 					for (int i = 0; i < images.size(); i++) {
 						String imagePath = images.get(i).getDownAddress();
@@ -1382,7 +1432,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				}
 				ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,listStr);
 				holder.sp_select.setAdapter(aa);
-				holder.sp_select.setSelection(pos);
+				holder.sp_select.setSelection(pos,true);
 				holder.sp_select.setOnItemSelectedListener(new OnItemSelectedListener() {
 					
 					@Override
@@ -1452,8 +1502,11 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					holder.lv_layout.setBackgroundColor(Color.parseColor(question.getBackgroundcolor()));
 				else
 					holder.lv_layout.setBackgroundColor(Color.TRANSPARENT);
+
 				holder.et_colornum.setEnabled(!question.isIfRead());
 				holder.et_colorname.setEnabled(!question.isIfRead());
+				if(question.getColorNameReadonly())
+					holder.et_colorname.setEnabled(false);
 				if (AppUtility.isNotEmpty(question.getColorImage())) {
 					aq.id(holder.iv_coloradd).progress(R.id.pb_colorimage).image(question.getColorImage(),false,true);
 
@@ -1462,7 +1515,29 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				}
 				holder.et_colorname.setText(question.getColorName());
 				holder.et_colornum.setText(question.getUsersAnswer());
+				String [] listStr=new String[question.getOptions().size()];
+				int pos=0;
+				for(int i=0;i<question.getOptions().size();i++)
+				{
+					JSONObject obj=question.getOptions().get(i);
+					listStr[i]=obj.optString("value");
+				}
+				ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,listStr);
+				holder.et_colorname.setAdapter(aa);
 
+				holder.et_colorname.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+						question.setColorName(holder.et_colorname.getText().toString());
+						questions.set(position, question);
+						if(question.getCallback().length()>0)
+						{
+							//startTimer(question, 300, null);
+							String callback=question.getCallback()+"&colorname="+question.getColorName();
+							sendCallBack(callback,4);
+						}
+					}
+				});
 				holder.iv_coloradd.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -1516,7 +1591,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			LinearLayout lv_imagecolornum;
 			ImageView iv_coloradd;
 			ProgressBar pb_colorimage;
-			EditText et_colorname;
+			AutoCompleteTextView et_colorname;
 			EditText et_colornum;
 		}
 		private class OnFocusChangeListenerImpl implements OnFocusChangeListener {
@@ -1530,6 +1605,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				Question question = (Question) getItem(position);
 				if(arg1) {
 					Log.d("", "获得焦点"+position);
+					lastFocusEt=et;
 				} else {
 					Log.d("", "失去焦点"+position);
 					String newtxt = et.getText().toString();
@@ -1541,7 +1617,8 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 							if (question.getCallback().length()>0 ) {
 								String callback=question.getCallback()+"&"+question.getTitle()+"="+question.getUsersAnswer();
 								sendCallBack(callback,4);
-								et.setOnFocusChangeListener(null);
+								//et.setOnFocusChangeListener(null);
+
 							}
 
 						}
@@ -1550,7 +1627,11 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					{
 						if(!question.getColorName().equals(newtxt)) {
 							question.setColorName(newtxt);
-							et.setOnFocusChangeListener(null);
+							if (question.getCallback().length()>0 ) {
+								String callback=question.getCallback()+"&colorname="+newtxt;
+								sendCallBack(callback,4);
+								//et.setOnFocusChangeListener(null);
+							}
 						}
 					}
 

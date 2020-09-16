@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.umeng.umsdk:meizu-umengaccs:1.0.6@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

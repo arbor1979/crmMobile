@@ -38,6 +38,7 @@ public class Question implements Serializable{
 	private String validate;
 	private String remardColor;
 	private String colorName;
+	private boolean colorNameReadonly;
 	private String colorImage;
 	private String imageFolder;
 	public String getValidate() {
@@ -113,9 +114,13 @@ public class Question implements Serializable{
 		ifHide=jo.optBoolean("隐藏");
 		colorImage=jo.optString("颜色图片");
 		colorName=jo.optString("颜色名称");
+        colorNameReadonly=jo.optBoolean("颜色名称只读");
 		imageFolder=jo.optString("图片目录");
 	}
-
+    public boolean getColorNameReadonly() {
+        return colorNameReadonly;
+    }
+    public void setColorNameReadonly(boolean flag){this.colorNameReadonly=flag;}
 	public boolean isIfHide() {
 		return ifHide;
 	}
@@ -172,8 +177,25 @@ public class Question implements Serializable{
 		return usersAnswer;
 	}
 
-	public void setUsersAnswer(String usersAnswer) {
-		this.usersAnswer = usersAnswer;
+	public void setUsersAnswer(String usersAnswer)  {
+
+		if(status.equals("图片") && usersAnswer.length()>0)
+		{
+			try {
+				JSONArray jsonArr = new JSONArray(usersAnswer);
+				if(jsonArr!=null && jsonArr.length()>0){
+					setImages(ImageItem.toList(jsonArr));
+				}else{
+					setImages(new ArrayList<ImageItem>());
+				}
+			}
+			catch (Exception e)
+			{
+
+			}
+		}
+		else
+			this.usersAnswer = usersAnswer;
 	}
 
 	public String getRemark() {

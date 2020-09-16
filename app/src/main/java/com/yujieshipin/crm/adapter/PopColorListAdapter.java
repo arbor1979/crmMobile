@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -105,7 +106,25 @@ public class PopColorListAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
+    private View.OnTouchListener touchListener= new View.OnTouchListener(){
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            v.setFocusable(true);
+            v.setFocusableInTouchMode(true);
+            v.requestFocus();
+            closeInputMethod(v);
+            return false;
+        }
 
+    };
+    private void closeInputMethod(View v) {
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        boolean isOpen = imm.isActive();
+        if (isOpen) {
+            // imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);//没有显示则显示
+            imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Person person = null;
@@ -124,6 +143,7 @@ public class PopColorListAdapter extends BaseAdapter {
         }else{
             person = (Person)convertView.getTag();
         }
+        convertView.setOnTouchListener(touchListener);
         final JSONObject detailItem=mlist.optJSONObject(position);
         if(bedit)
         {

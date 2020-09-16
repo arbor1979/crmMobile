@@ -202,7 +202,7 @@ public class LocalDocument extends Activity {
 				fileText.setText("正在扫描："+msg.obj.toString()+"文件夹...");
 				break;
 			case 2:
-				AppUtility.showToast(LocalDocument.this, "已扫描到"+msg.obj.toString()+"文档文件", 10);
+				AppUtility.showToastMsgLong(LocalDocument.this, "已扫描到"+msg.obj.toString()+"文档文件");
 				break;
 			}
 		}

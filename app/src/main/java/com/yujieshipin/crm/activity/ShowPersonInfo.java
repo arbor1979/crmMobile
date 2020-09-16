@@ -422,7 +422,7 @@ public class ShowPersonInfo extends Activity {
 					JSONObject obj=new JSONObject(result);
 					
 					if (obj.optString("result").equals("失败")) {
-						AppUtility.showToastMsg(ShowPersonInfo.this, obj.optString("errorMsg"),1);
+						AppUtility.showToastMsgLong(ShowPersonInfo.this, obj.optString("errorMsg"));
 					} 
 					else 
 					{

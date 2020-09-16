@@ -30,6 +30,11 @@ public class BillDetail {
 	private String huizong2;
 	private boolean shouzhekouall;
 	private JSONObject allColor;
+	private JSONArray segmentedArr;
+	private int segmentindex;
+	private int limitSupplyId;
+	private boolean allowAddBatch;
+	private int billid;
 	public String getOpertionType() {
 		return opertionType;
 	}
@@ -72,6 +77,46 @@ public class BillDetail {
 		return allColor;
 	}
 
+	public JSONArray getSegmentedArr() {
+		return segmentedArr;
+	}
+
+	public void setSegmentedArr(JSONArray segmentedObj) {
+		this.segmentedArr = segmentedObj;
+	}
+
+	public int getSegmentindex() {
+		return segmentindex;
+	}
+
+	public void setSegmentindex(int subtable) {
+		this.segmentindex = subtable;
+	}
+
+	public int getLimitSupplyId() {
+		return limitSupplyId;
+	}
+
+	public void setLimitSupplyId(int limitSupplyId) {
+		this.limitSupplyId = limitSupplyId;
+	}
+
+	public boolean isAllowAddBatch() {
+		return allowAddBatch;
+	}
+
+	public void setAllowAddBatch(boolean allowAddBatch) {
+		this.allowAddBatch = allowAddBatch;
+	}
+
+	public int getBillid() {
+		return billid;
+	}
+
+	public void setBillid(int billid) {
+		this.billid = billid;
+	}
+
 	public BillDetail(JSONObject jo) {
 		title = jo.optString("标题显示");
 		opertionType=jo.optString("操作类型");
@@ -88,9 +133,12 @@ public class BillDetail {
 		huizong2= jo.optString("汇总2");
 		shouzhekouall=jo.optBoolean("showzhekouall");
 		allColor=jo.optJSONObject("allcolor");
+		segmentedArr=jo.optJSONArray("分段标题");
+		segmentindex=jo.optInt("segmentindex");
+		limitSupplyId=jo.optInt("限制供应商");
+		allowAddBatch=jo.optBoolean("允许批量添加");
+		billid=jo.optInt("billid");
 	}
-
-
 
 	public String getHuizong1() {
 		return huizong1;

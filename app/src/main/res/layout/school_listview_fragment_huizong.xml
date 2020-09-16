@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <include layout="@layout/topbar" />
+    <include layout="@layout/topbar_album" />
 
     <LinearLayout
         android:id="@+id/content_layout"

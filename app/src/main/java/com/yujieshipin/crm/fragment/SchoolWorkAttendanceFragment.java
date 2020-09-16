@@ -445,7 +445,7 @@ public class SchoolWorkAttendanceFragment extends Fragment {
 	 */
 	public void getWeeks(String interfacePath) {
 		// showProgress(true);
-		AppUtility.showToast(getActivity(), "正在获取数据",0);
+		AppUtility.showToastMsg(getActivity(), "正在获取数据");
 		Log.d(TAG, "--------" + String.valueOf(new Date().getTime()));
 		long datatime = System.currentTimeMillis();
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");

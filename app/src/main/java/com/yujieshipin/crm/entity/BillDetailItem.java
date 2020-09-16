@@ -17,6 +17,9 @@ public class BillDetailItem {
         private boolean isShowJine;
         private boolean isEditJine;
         private boolean isEditNum;
+        private int progress;
+        private String progressText;
+        private String rightText;
 
 	public boolean isEditNum() {
 		return isEditNum;
@@ -39,6 +42,18 @@ public class BillDetailItem {
 		private String hiddenBtn;
 		private String hiddenBtnUrl;
 		private String opertype;
+
+	public String getPicDesc() {
+		return picDesc;
+	}
+
+	public void setPicDesc(String picDesc) {
+		this.picDesc = picDesc;
+	}
+
+	private String picDesc;
+	private boolean showmemo;
+	private String beizhu;
 		public BillDetailItem()
 
 		{
@@ -65,7 +80,31 @@ public class BillDetailItem {
         return isEditJine;
     }
 
-    public BillDetailItem(JSONObject jo) {
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+
+	public String getProgressText() {
+		return progressText;
+	}
+
+	public void setProgressText(String progressText) {
+		this.progressText = progressText;
+	}
+
+	public boolean isShowmemo() {
+		return showmemo;
+	}
+
+	public String getBeizhu() {
+		return beizhu;
+	}
+
+	public BillDetailItem(JSONObject jo) {
 			
 			id=jo.optInt("id");
 			title=jo.optString("title");
@@ -84,10 +123,26 @@ public class BillDetailItem {
             isEditJine=jo.optBoolean("editjine");
 			isEditNum=jo.optBoolean("editnum");
 			colorNum=jo.optJSONObject("colornum");
+			if(jo.optString("进度条").length()>0)
+				progress=jo.optInt("进度条");
+			else
+				progress=-1;
+			progressText=jo.optString("进度条文本");
+			rightText=jo.optString("rightText");
+			showmemo=jo.optBoolean("showmemo");
+			beizhu=jo.optString("beizhu");
+			picDesc=jo.optString("picDesc");
 		}
 
+	public String getRightText() {
+		return rightText;
+	}
 
-		public String getProdid() {
+	public void setRightText(String rightText) {
+		this.rightText = rightText;
+	}
+
+	public String getProdid() {
 			return prodid;
 		}
 

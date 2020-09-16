@@ -39,6 +39,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.ConnectivityManager;
@@ -54,12 +55,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -168,27 +171,6 @@ public class AppUtility {
 		}
 		return size;
 	}
-	/**
-	 * 功能描述:快速取消Toast提示
-	 *
-	 * @author linrr  2014-1-25 上午11:32:21
-	 * 
-	 * @param context
-	 * @param msg
-	 * @param duration
-	 */
-	public static void showToast(Context context, String msg, int duration) {
-        // if (mToast != null) {
-        // mToast.cancel();
-        // }
-        // mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-        if (mToast == null) {
-                mToast = Toast.makeText(context, msg, duration);
-        } else {
-                mToast.setText(msg);
-        }
-        mToast.show();
-}
    public static void cancelToast()
    {
 	   if(mToast!=null)
@@ -284,37 +266,34 @@ public class AppUtility {
 	 *            message content
 	 */
 	public static void showToastMsg(Context context, String msg) {
-		Toast toast=Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-		toast.setGravity(Gravity.CENTER, 0, 0);
-		toast.show();
-		if(msg.equals("用户令牌失效，将自动重新登录"))
-		{
-			new Handler().postDelayed(new Runnable(){  
-			    public void run() {  
-			    	((CampusApplication)AppUtility.context).reLogin();
-			    }  
-			 }, 1500);
-			
-		}
+
+		showDefaultToast(context, msg,0);
 	}
-	public static void showToastMsg(Context context, String msg,int duration) {
-		if(context!=null && msg!=null)
-		{
-			Toast toast=Toast.makeText(context, msg, duration);
+	public static void showToastMsgLong(Context context, String msg) {
+		showDefaultToast(context, msg,1);
+	}
+
+	public  static void  showDefaultToast(Context context, String msg,int duration)
+	{
+		if(context!=null && msg!=null) {
+			View toastRoot = LayoutInflater.from(context).inflate(R.layout.my_toast, null);
+			Toast toast = new Toast(context);
+			toast.setDuration(duration);
+			toast.setView(toastRoot);
+			TextView tv = (TextView) toastRoot.findViewById(R.id.TextViewInfo);
+			tv.setText(msg);
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
-			if(msg.equals("用户令牌失效，将自动重新登录"))
-			{
-				new Handler().postDelayed(new Runnable(){  
-				    public void run() {  
-				    	((CampusApplication)AppUtility.context).reLogin();
-				    }  
-				 }, 1500);
-				
+			if (msg.equals("用户令牌失效，将自动重新登录") || msg.equals("用户令牌过期，请重新登录")) {
+				new Handler().postDelayed(new Runnable() {
+					public void run() {
+						((CampusApplication) AppUtility.context).reLogin();
+					}
+				}, 1500);
+
 			}
 		}
 	}
-
 	/**
 	 * 生成UUID
 	 * 
@@ -707,7 +686,7 @@ public class AppUtility {
 		if (exception.equals("UnknownHostException")) {
 			string = "服务器无法访问，请检查网络连接";
 		}
-		AppUtility.showToastMsg(context, string,1);
+		AppUtility.showToastMsgLong(context, string);
 	}
 	//程序是否进入后台
 	public static boolean isApplicationBroughtToBackground(final Context context) { 
