@@ -536,6 +536,8 @@ public class SchoolBillDetailFragment extends Fragment{
 			}
 		});
 		getAchievesItem();
+		myListview.setOnTouchListener(touchListener);
+		tvRight.setOnTouchListener(touchListener);
 		return view;
 	}
 	private void closeInputMethod(View v) {
@@ -597,6 +599,7 @@ public class SchoolBillDetailFragment extends Fragment{
 		    if(myListview.getFooterViewsCount()==0) {
 				View ll_foot = inflater.inflate(R.layout.bill_detail_bottom,null);
 		    	Button bottomBtn=ll_foot.findViewById(R.id.btn_startscan);
+				bottomBtn.setOnTouchListener(touchListener);
                 bottomBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -605,6 +608,7 @@ public class SchoolBillDetailFragment extends Fragment{
                                 openScanCode();
                         } else
                             openScanCode();
+
                     }
                 });
                 EditText et_zhekouall=ll_foot.findViewById(R.id.et_zhekouall);

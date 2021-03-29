@@ -56,6 +56,7 @@ import com.yujieshipin.crm.entity.AlbumMsgInfo;
 import com.yujieshipin.crm.entity.ChatFriend;
 import com.yujieshipin.crm.entity.Notice;
 import com.yujieshipin.crm.entity.User;
+import com.yujieshipin.crm.fragment.SchoolNoticeFragment;
 import com.yujieshipin.crm.lib.SlidingMenu;
 import com.yujieshipin.crm.service.Alarmreceiver;
 import com.yujieshipin.crm.util.AppUtility;
@@ -717,10 +718,9 @@ public class TabHostActivity extends TabActivity   {
 	}
 
 	private void showExit() {
-		View dialog_view = LayoutInflater.from(TabHostActivity.this).inflate(
-				R.layout.dialog_exit, null);
+
 		AlertDialog dialog_exit = new AlertDialog.Builder(TabHostActivity.this)
-				.setView(dialog_view)
+				.setTitle("确定退出当前登录?")
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
 					@Override
@@ -758,6 +758,7 @@ public class TabHostActivity extends TabActivity   {
 					}
 				}).create();
 		dialog_exit.show();
+
 	}
 
 	// /**

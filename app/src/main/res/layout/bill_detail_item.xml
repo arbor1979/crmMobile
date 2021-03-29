@@ -27,146 +27,149 @@
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
-        <LinearLayout
-        android:id="@+id/cell_layout"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:background="@drawable/common_frame_selector"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/iv_leftImage"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_margin="5dp"
-            android:contentDescription="商品图片"
-            android:scaleType="fitCenter"
-            android:src="@drawable/gift" />
 
         <LinearLayout
-            android:id="@+id/right_layout"
+            android:id="@+id/cell_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:background="@drawable/common_frame_selector"
+            android:orientation="horizontal"
+            android:paddingRight="5dp">
+
+            <ImageView
+                android:id="@+id/iv_leftImage"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_margin="5dp"
+                android:contentDescription="商品图片"
+                android:scaleType="fitCenter"
+                android:src="@drawable/gift" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp">
+                android:id="@+id/right_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_up"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:singleLine="true"
-                    android:text="2000276300017 发饰"
-                    android:textSize="@dimen/text_size_big" />
+                    android:layout_marginBottom="3dp">
+
+                    <TextView
+                        android:id="@+id/tv_up"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:singleLine="true"
+                        android:text="2000276300017 发饰"
+                        android:textSize="@dimen/text_size_big" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_opertype"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:gravity="left"
+                        android:singleLine="true"
+                        android:text="售"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:singleLine="true"
+                        android:text="￥:119.9" />
+
+                    <TextView
+                        android:id="@+id/tv_operSign"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="%" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:id="@+id/ll_editSection"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/et_zhekou"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:inputType="numberSigned"
+                    android:lines="1"
+                    android:maxLength="10"
+                    android:selectAllOnFocus="true"
+                    android:text="100"
+                    android:textSize="@dimen/text_size_small" />
 
                 <TextView
-                    android:id="@+id/tv_opertype"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:gravity="left"
-                    android:singleLine="true"
-                    android:text="售"
-                    android:textColor="@color/white" />
-
-                <TextView
-                    android:id="@+id/tv_bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:singleLine="true"
-                    android:text="￥:119.9" />
-
-                <TextView
-                    android:id="@+id/tv_operSign"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="%" />
+                    android:text="X" />
+
+                <EditText
+                    android:id="@+id/et_num"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:gravity="center_vertical|bottom"
+                    android:inputType="numberSigned"
+                    android:lines="1"
+                    android:maxLength="10"
+                    android:selectAllOnFocus="true"
+                    android:text="1"
+                    android:textSize="@dimen/text_size_small" />
 
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_editSection"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:id="@+id/et_zhekou"
-                android:layout_width="45dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:gravity="center"
-                android:inputType="numberSigned"
-                android:lines="1"
-                android:maxLength="10"
-                android:selectAllOnFocus="true"
-                android:text="100"
-                android:textSize="@dimen/text_size_small" />
+            <com.yujieshipin.crm.widget.CustomCircleProgressBar
+                android:id="@+id/pb_right"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="3dp"
+                app:direction="bottom"
+                app:max_progress="100"
+                app:outside_radius="12dp"
+                app:progress="0"
+                app:progress_text_color="#000000"
+                app:progress_text_size="9dp"
+                app:progress_width="4dp" />
 
             <TextView
+                android:id="@+id/tv_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="X" />
-
-            <EditText
-                android:id="@+id/et_num"
-                android:layout_width="45dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:gravity="center_vertical|bottom"
-                android:inputType="numberSigned"
-                android:lines="1"
-                android:maxLength="10"
-                android:selectAllOnFocus="true"
-                android:text="1"
-                android:textSize="@dimen/text_size_small" />
-
-
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:text="/100" />
         </LinearLayout>
-
-        <com.yujieshipin.crm.widget.CustomCircleProgressBar
-            android:id="@+id/pb_right"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="3dp"
-            app:direction="bottom"
-            app:max_progress="100"
-            app:outside_radius="12dp"
-            app:progress="0"
-            app:progress_text_color="#000000"
-            app:progress_text_size="9dp"
-            app:progress_width="4dp" />
-        <TextView
-            android:id="@+id/tv_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:singleLine="true"
-            android:text="/100" />
-    </LinearLayout>
 
         <EditText
             android:id="@+id/et_memo"

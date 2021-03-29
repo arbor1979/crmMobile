@@ -188,6 +188,8 @@ public class LoginActivity extends UmengNotifyClickActivity implements OnClickLi
 			attemptLogin();
 			break;
 		case R.id.login_choose:
+
+
 			if (adapter == null) {
 				listView = new ListView(this);
 				int color=PrefUtility.getInt(Constants.PREF_THEME_LISTCOLOR, 0);
@@ -207,6 +209,12 @@ public class LoginActivity extends UmengNotifyClickActivity implements OnClickLi
 				popupWindow.showAsDropDown(table_item);
 				login_choose.setImageResource(R.drawable.login_btn_bg_sel);
 			} else {
+				if(adapter.getCount()==0)
+				{
+					if(popupWindow!=null)
+						popupWindow.dismiss();
+					break;
+				}
 				adapter.notifyDataSetChanged();
 				popupWindow = new PopupWindow(listView, table_item.getWidth(),
 						LayoutParams.WRAP_CONTENT);

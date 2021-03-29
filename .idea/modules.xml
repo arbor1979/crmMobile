@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="crmMobile/app" />
-      <module fileurl="file://$PROJECT_DIR$/crmMobile.iml" filepath="$PROJECT_DIR$/crmMobile.iml" group="crmMobile" />
-      <module fileurl="file://$PROJECT_DIR$/push/push.iml" filepath="$PROJECT_DIR$/push/push.iml" group="crmMobile/push" />
+      <module fileurl="file://$PROJECT_DIR$/crmMobile.iml" filepath="$PROJECT_DIR$/crmMobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/crmMobile.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/crmMobile.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/push/crmMobile.push.iml" filepath="$PROJECT_DIR$/.idea/modules/push/crmMobile.push.iml" />
     </modules>
   </component>
 </project>

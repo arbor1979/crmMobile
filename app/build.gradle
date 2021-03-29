@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "com.yujieshipin.crm"
@@ -22,6 +22,7 @@ android {
         }
     }
     packagingOptions {
+        exclude 'classes.dex'
         exclude 'META-INF/DEPENDENCIES'
     }
     lintOptions {
@@ -57,5 +58,5 @@ dependencies {
     //魅族Push通道
     implementation 'com.umeng.umsdk:meizu-push:3.8.1'
     implementation 'com.umeng.umsdk:meizu-umengaccs:1.0.6'
-    implementation 'com.android.support:multidex:1.0.3'
+    //implementation 'com.android.support:multidex:1.0.3'
 }

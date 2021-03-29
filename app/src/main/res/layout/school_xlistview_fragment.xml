@@ -21,7 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
+            <com.yujieshipin.crm.widget.SegmentedGroup
+                android:id="@+id/segmentedGroup2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
+            </com.yujieshipin.crm.widget.SegmentedGroup>
             <com.yujieshipin.crm.widget.XListView
                 android:id="@+id/my_listview"
                 android:layout_width="match_parent"
@@ -71,6 +80,20 @@
 
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="120dp"
+            android:src="@drawable/multiselwhite"
+            app:backgroundTint="#cc0366cb"
+            app:elevation="0dp"
+            android:visibility="gone"
+            app:rippleColor="#ff0366cb"
+            app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

@@ -469,6 +469,10 @@ public class SchoolAchievementDetailFragment extends Fragment {
 			final Achievement achievement = (Achievement) getItem(position);
 			holder.left.setText(achievement.getSubject());
 			holder.right.setText(achievement.getFraction());
+			if(achievement.getRightbgcolor().length()>0)
+				holder.celllayout.setBackgroundColor(Color.parseColor(achievement.getRightbgcolor()));
+			else
+				holder.celllayout.setBackgroundColor(Color.TRANSPARENT);
 			if(achievement.getHiddenBtn()!=null && achievement.getHiddenBtn().length()>0)
 			{
 				

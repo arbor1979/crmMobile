@@ -1439,10 +1439,13 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
+						boolean ischanged=false;
 						JSONObject obj=question.getOptions().get(position);
-						question.setUsersAnswer(obj.optString("key"));
-
-						if(question.getCallback().length()>0) {
+						if(!question.getUsersAnswer().equals(obj.optString("key"))) {
+							ischanged = true;
+							question.setUsersAnswer(obj.optString("key"));
+						}
+						if(question.getCallback().length()>0 && ischanged) {
                             //startTimer(question,300,null);
 							String callback=question.getCallback()+"&"+question.getTitle()+"="+question.getUsersAnswer();
 							sendCallBack(callback,4);
@@ -1748,7 +1751,10 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 			} else {
 				cb.setChecked(false);
 			}
-			cb.setEnabled(isEnable);
+			boolean bflag=false;
+			if(isEnable && !question.isIfRead())
+				bflag=true;
+			cb.setEnabled(bflag);
 			cb.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {

@@ -50,10 +50,20 @@ public class AchievementItem {
 	private List<String> filterParams1;
 	private List<String> filterParams2;
 	private JSONArray MutiSelArr;
-
+	private JSONArray groupArr;
+	private int curGroupId=0;
 
 	public JSONArray getMutiSelArr() {
 		return MutiSelArr;
+	}
+
+
+	public JSONArray getGroupArr() {
+		return groupArr;
+	}
+
+	public int getCurGroup() {
+		return curGroupId;
 	}
 
 	public AchievementItem(JSONObject jo) {
@@ -91,10 +101,14 @@ public class AchievementItem {
 		}
 		filterArr=jo.optJSONArray("过滤条件");
 		MutiSelArr=jo.optJSONArray("显示复选");
+		groupArr=jo.optJSONArray("显示分组");
 		if(filterArr==null)
 			filterArr=new JSONArray();
 		if(MutiSelArr==null)
 			MutiSelArr=new JSONArray();
+		if(groupArr==null)
+			groupArr=new JSONArray();
+		curGroupId=jo.optInt("当前分组");
 	}
 
 	public int getAllnum() {

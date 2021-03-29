@@ -1,15 +1,18 @@
 <component name="libraryTable">
   <library name="Gradle: com.umeng.umsdk:meizu-umengaccs:1.0.6@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/03f454dfedb0c7cb6bdb18b03555a24e/meizu-umengaccs-1.0.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/429b6390a4f1a37cdf5495cb0a5c7e63/meizu-umengaccs-1.0.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8e55e5cb3edf0f9998789a3b1069ae79/meizu-umengaccs-1.0.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3b19cddb98003e79648de2e5749979c0/meizu-umengaccs-1.0.6/res" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/3b19cddb98003e79648de2e5749979c0/meizu-umengaccs-1.0.6/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/3b19cddb98003e79648de2e5749979c0/meizu-umengaccs-1.0.6/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/3b19cddb98003e79648de2e5749979c0/meizu-umengaccs-1.0.6/res" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-javadoc.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/modules-2/files-2.1/com.umeng.umsdk/meizu-umengaccs/1.0.6/b9b38f6a75e444fff5568f5a65e47a1859639050/meizu-umengaccs-1.0.6-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

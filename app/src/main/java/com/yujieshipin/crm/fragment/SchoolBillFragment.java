@@ -45,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
@@ -68,8 +69,11 @@ import com.yujieshipin.crm.util.DialogUtility;
 import com.yujieshipin.crm.util.PrefUtility;
 import com.yujieshipin.crm.util.PrinterShareUtil;
 import com.yujieshipin.crm.util.TimeUtility;
+import com.yujieshipin.crm.widget.SegmentedGroup;
 import com.yujieshipin.crm.widget.XListView;
 import com.yujieshipin.crm.widget.XListView.IXListViewListener;
+
+import static android.view.View.VISIBLE;
 
 
 /**
@@ -95,10 +99,12 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	private final static int SCANNIN_GREQUEST_CODE = 2;
 	private Dialog searchDialog;
 	private boolean isLoading=false;
-	private FloatingActionButton mFab;
+	private FloatingActionButton mFab,mFab1;
 	private int mPreviousVisibleItem;
 	private boolean bShowMutiSel=false;
 	private CheckBox cb_selAll;
+	private SegmentedGroup segmentedGroup2;
+
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -128,12 +134,40 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								myListview.setPullLoadEnable(false);
 
 							achievements = achievementItem.getAchievements();
+							if(achievementItem.getGroupArr().length()>0)
+							{
+								segmentedGroup2.setVisibility(VISIBLE);
+								segmentedGroup2.removeAllViews();
+								segmentedGroup2.setOnCheckedChangeListener(null);
+								for(int i=0;i<achievementItem.getGroupArr().length();i++)
+								{
+									String groupname=achievementItem.getGroupArr().getString(i);
+									RadioButton rdbtn = (RadioButton) LayoutInflater.from(getActivity()).inflate(R.layout.tabmenu_radiobutton, null);
+									rdbtn.setText(groupname);
+									if(achievementItem.getCurGroup()==i)
+									{
+										rdbtn.setChecked(true);
+									}
+									rdbtn.setId(i);
+									segmentedGroup2.addView(rdbtn);
+								}
+								segmentedGroup2.updateBackground();
+								segmentedGroup2.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+									@Override
+									public void onCheckedChanged(RadioGroup group, int checkedId) {
+										// TODO Auto-generated method stub
+										getAchievesItem(true);
+									}
+
+								});
+							}
 							adapter.notifyDataSetChanged();
 							tvTitle.setText(achievementItem.getTitle());
 							if(achievementItem.getHuizong()!=null && achievementItem.getHuizong().length()>0)
 							{
 								tv_huizong1.setText(achievementItem.getHuizong());
-								tv_huizong1.setVisibility(View.VISIBLE);
+								tv_huizong1.setVisibility(VISIBLE);
 							}
 							else
 							{
@@ -142,7 +176,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 							if(achievementItem.getRightButton()!=null && achievementItem.getRightButton().length()>0)
 							{
 								tvRight.setText(achievementItem.getRightButton());
-								tvRight.setVisibility(View.VISIBLE);
+								tvRight.setVisibility(VISIBLE);
 								lyRight.setOnClickListener(new OnClickListener() {
 
 									@Override
@@ -172,19 +206,14 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								tvRight.setVisibility(View.GONE);
 								lyRight.setOnClickListener(null);
 							}
-							if(achievementItem.getFilterArr().length()>0 || achievementItem.getMutiSelArr().length()>0) {
-
-								if(achievementItem.getMutiSelArr().length()>0) {
-									mFab.setImageResource(R.drawable.multiselwhite);
-								}
-								else {
-									mFab.setImageResource(R.drawable.filterwhite);
-								}
-								mFab.hide();
+							if(achievementItem.getFilterArr().length()>0)
 								mFab.show();
-							}
 							else
 								mFab.hide();
+							 if(achievementItem.getMutiSelArr().length()>0)
+								 mFab1.show();
+							 else
+								 mFab1.hide();
 
 								
 						}
@@ -328,7 +357,9 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		myListview.setPullLoadEnable(false);
 		myListview.setXListViewListener(this);
 		mFab = (FloatingActionButton) view.findViewById(R.id.fab);
-		btnLeft.setVisibility(View.VISIBLE);
+		mFab1 = (FloatingActionButton) view.findViewById(R.id.fab1);
+		segmentedGroup2=(SegmentedGroup)view.findViewById(R.id.segmentedGroup2);
+		btnLeft.setVisibility(VISIBLE);
 		btnLeft.setCompoundDrawablesWithIntrinsicBounds(
 				R.drawable.bg_btn_left_nor, 0, 0, 0);
 		tvTitle.setText(title);
@@ -357,6 +388,12 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 				popFilterDlg();
 			}
 		});
+		mFab1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				showbatchpass();
+			}
+		});
 		myListview.setOnScrollListener(new AbsListView.OnScrollListener() {
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -382,17 +419,17 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	private void showFetchFailedView() {
 		loadingLayout.setVisibility(View.GONE);
 		contentLayout.setVisibility(View.GONE);
-		failedLayout.setVisibility(View.VISIBLE);
+		failedLayout.setVisibility(VISIBLE);
 	}
 
 	private void showProgress(boolean progress) {
 		if (progress) {
-			loadingLayout.setVisibility(View.VISIBLE);
+			loadingLayout.setVisibility(VISIBLE);
 			contentLayout.setVisibility(View.GONE);
 			failedLayout.setVisibility(View.GONE);
 		} else {
 			loadingLayout.setVisibility(View.GONE);
-			contentLayout.setVisibility(View.VISIBLE);
+			contentLayout.setVisibility(VISIBLE);
 			failedLayout.setVisibility(View.GONE);
 		}
 	}
@@ -414,7 +451,16 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			String[] tmpurlarr=interfaceName.split(".php");
 			String functionName=tmpurlarr[0];
 			jo.put("function", functionName);
-
+			if(segmentedGroup2.getVisibility()==VISIBLE)
+			{
+				for(int i = 0 ;i < segmentedGroup2.getChildCount();i++) {
+					RadioButton rb = (RadioButton) segmentedGroup2.getChildAt(i);
+					if (rb.isChecked()){
+						jo.put("curGroupId",rb.getId());
+						break;
+					}
+				}
+			}
 			JSONObject queryJson=AppUtility.parseQueryStrToJson(interfaceName);
 			try {
 				Iterator it = queryJson.keys();
@@ -469,7 +515,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			ViewHolder holder = null;
 
 			if (null == convertView) {
@@ -542,7 +588,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			if(achievement.getExtraMenu()==null)
 				holder.moreMenu.setVisibility(View.GONE);
 			else
-				holder.moreMenu.setVisibility(View.VISIBLE);
+				holder.moreMenu.setVisibility(VISIBLE);
 			if(achievement.getThecolor()!=null && achievement.getThecolor().length()>0)
 			{
 				if(achievement.getThecolor().toLowerCase().equals("red"))
@@ -558,12 +604,15 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 				holder.total.setTextColor(getActivity().getResources().getColor(R.color.white));
 			}
 			if(bShowMutiSel) {
-				holder.cb_checkitem.setVisibility(View.VISIBLE);
+				holder.cb_checkitem.setVisibility(VISIBLE);
 				holder.cb_checkitem.setChecked(achievement.isIfChecked());
 				holder.cb_checkitem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 					@Override
 					public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+						if(!compoundButton.isPressed())
+							return ;
 						achievement.setIfChecked(b);
+						achievements.set(position,achievement);
 					}
 				});
 			}
@@ -571,7 +620,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 				holder.cb_checkitem.setVisibility(View.GONE);
 			if(achievement.getProgress()>-1)
 			{
-				holder.pb_bottom.setVisibility(View.VISIBLE);
+				holder.pb_bottom.setVisibility(VISIBLE);
 				holder.pb_bottom.setProgress(achievement.getProgress());
 			}
 			else
@@ -1317,168 +1366,167 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	};
 	private void popFilterDlg()
 	{
-		if(achievementItem.getMutiSelArr().length()>0)
-		{
-			bShowMutiSel=!bShowMutiSel;
-			if(bShowMutiSel) {
-				LinearLayout ll_btns=null;
-				for(int i=0;i<ll_multisel.getChildCount();i++) {
-					View subview = ll_multisel.getChildAt(i);
-					if (subview instanceof LinearLayout) {
-						ll_btns=(LinearLayout)subview;
-						ll_btns.removeAllViews();
-						break;
+		final LinearLayout layout = new LinearLayout(getActivity());
+		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setPadding(10, 10, 10, 10);
+		for (int i = 0; i < achievementItem.getFilterArr().length(); i++) {
+			JSONObject filterObj = achievementItem.getFilterArr().optJSONObject(i);
+			if (filterObj != null) {
+				if (filterObj.optString("类型").equals("文本框")) {
+					final EditText et_billid = new EditText(getActivity());
+					et_billid.setContentDescription(filterObj.optString("标题"));
+					et_billid.setHint(filterObj.optString("标题"));
+					if (filterObj.optString("输入法").equals("数字"))
+						et_billid.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+					et_billid.setSingleLine();
+					et_billid.setText(filterObj.optString("值"));
+					layout.addView(et_billid);
+				} else if (filterObj.optString("类型").equals("下拉框")) {
+					Spinner sp_filter1 = new Spinner(getActivity());
+					sp_filter1.setContentDescription(filterObj.optString("标题"));
+					String[] mItems1 = new String[filterObj.optJSONArray("选项").length()];
+					int selection = 0;
+					for (int j = 0; j < filterObj.optJSONArray("选项").length(); j++) {
+						mItems1[j] = filterObj.optJSONArray("选项").optString(j);
+						if (filterObj.optString("值").equals(filterObj.optJSONArray("选项").optString(j)))
+							selection = j;
 					}
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
+					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					sp_filter1.setAdapter(adapter);
+					sp_filter1.setSelection(selection);
+					layout.addView(sp_filter1);
+					sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
 				}
-				cb_selAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+			}
+		}
 
-						for(int i=0;i<achievements.size();i++)
-						{
-							Achievement item=achievements.get(i);
-							item.setIfChecked(b);
+		new AlertDialog.Builder(getActivity()).setTitle("过滤条件").setView(layout)
+			.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+					for (int i = 0; i < layout.getChildCount(); i++) {
+						View view = layout.getChildAt(i);
+						String key = "";
+						String value = "";
+						if (view instanceof EditText) {
+							EditText editText = (EditText) view;
+							key = (String) editText.getContentDescription();
+							value = editText.getText().toString();
+						} else if (view instanceof Spinner) {
+							Spinner spinner = (Spinner) view;
+							key = (String) spinner.getContentDescription();
+							value = spinner.getSelectedItem().toString();
 						}
-						adapter.notifyDataSetChanged();
-					}
-
-				});
-				for(int i=0;i<achievementItem.getMutiSelArr().length();i++)
-				{
-					final JSONObject jo=achievementItem.getMutiSelArr().optJSONObject(i);
-					if(jo!=null)
-					{
-						Button btn=new Button(getActivity());
-						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-						layoutParams.setMargins(10,0,10,0);//4个参数按顺序分别是左上右下
-						layoutParams.height=95;
-						btn.setLayoutParams(layoutParams);
-						btn.setText(jo.optString("name"));
-						ll_btns.addView(btn);
-						btn.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								String selIdStr="";
-								for(int i=0;i<achievements.size();i++)
-								{
-									Achievement item=achievements.get(i);
-									if(item.isIfChecked())
-									{
-										if(selIdStr.length()>0)
-											selIdStr+=","+item.getId();
-										else
-											selIdStr=item.getId();
-									}
-								}
-								if(selIdStr.length()==0) {
-									AppUtility.showToastMsg(getActivity(),"请先勾选记录");
-									return;
-								}
-								String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
-								JSONObject queryObj=AppUtility.parseQueryStrToJson(jo.optString("url"));
-								JSONObject jo = new JSONObject();
+						for (int j = 0; j < achievementItem.getFilterArr().length(); j++) {
+							JSONObject item = achievementItem.getFilterArr().optJSONObject(j);
+							if (item.optString("标题").equals(key)) {
 								try {
-									jo.put("用户较验码", checkCode);
-									jo.put("selIdStr",selIdStr);
-									Iterator it = queryObj.keys();
-									while (it.hasNext()) {
-										String key = (String) it.next();
-										String value = queryObj.getString(key);
-										jo.put(key, value);
-									}
-
-								} catch (JSONException e1) {
-									e1.printStackTrace();
+									item.put("值", value);
+								} catch (JSONException e) {
+									e.printStackTrace();
 								}
-								CampusAPI.httpPost(jo, mHandler, 2);
 							}
-						});
-						if(jo.optString("color").length()>0)
-						{
-							if(jo.optString("color").equals("orange"))
-								btn.setBackgroundResource(R.drawable.button_round_corner_orange);
-							else if(jo.optString("color").equals("blue"))
-								btn.setBackgroundResource(R.drawable.button_round_corner_blue);
-							else
-								btn.setBackgroundResource(R.drawable.button_round_corner_green);
-
 						}
 					}
+					getAchievesItem(true);
 				}
-				ll_multisel.setVisibility(View.VISIBLE);
-			}
-			else
-				ll_multisel.setVisibility(View.GONE);
-			adapter.notifyDataSetChanged();
-		}
-		else {
-			final LinearLayout layout = new LinearLayout(getActivity());
-			layout.setOrientation(LinearLayout.VERTICAL);
-			layout.setPadding(10, 10, 10, 10);
-			for (int i = 0; i < achievementItem.getFilterArr().length(); i++) {
-				JSONObject filterObj = achievementItem.getFilterArr().optJSONObject(i);
-				if (filterObj != null) {
-					if (filterObj.optString("类型").equals("文本框")) {
-						final EditText et_billid = new EditText(getActivity());
-						et_billid.setContentDescription(filterObj.optString("标题"));
-						et_billid.setHint(filterObj.optString("标题"));
-						if (filterObj.optString("输入法").equals("数字"))
-							et_billid.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-						et_billid.setSingleLine();
-						et_billid.setText(filterObj.optString("值"));
-						layout.addView(et_billid);
-					} else if (filterObj.optString("类型").equals("下拉框")) {
-						Spinner sp_filter1 = new Spinner(getActivity());
-						sp_filter1.setContentDescription(filterObj.optString("标题"));
-						String[] mItems1 = new String[filterObj.optJSONArray("选项").length()];
-						int selection = 0;
-						for (int j = 0; j < filterObj.optJSONArray("选项").length(); j++) {
-							mItems1[j] = filterObj.optJSONArray("选项").optString(j);
-							if (filterObj.optString("值").equals(filterObj.optJSONArray("选项").optString(j)))
-								selection = j;
-						}
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems1);
-						adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-						sp_filter1.setAdapter(adapter);
-						sp_filter1.setSelection(selection);
-						layout.addView(sp_filter1);
-						sp_filter1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
-					}
-				}
-			}
+			}).setNegativeButton("取消", null).show();
 
-			new AlertDialog.Builder(getActivity()).setTitle("过滤条件").setView(layout)
-					.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+	}
+	private void showbatchpass()
+	{
+		bShowMutiSel=!bShowMutiSel;
+		if(bShowMutiSel) {
+			LinearLayout ll_btns=null;
+			for(int i=0;i<ll_multisel.getChildCount();i++) {
+				View subview = ll_multisel.getChildAt(i);
+				if (subview instanceof LinearLayout) {
+					ll_btns=(LinearLayout)subview;
+					ll_btns.removeAllViews();
+					break;
+				}
+			}
+			cb_selAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+					for(int i=0;i<achievements.size();i++)
+					{
+						Achievement item=achievements.get(i);
+						item.setIfChecked(b);
+					}
+					adapter.notifyDataSetChanged();
+				}
+
+			});
+			for(int i=0;i<achievementItem.getMutiSelArr().length();i++)
+			{
+				final JSONObject jo=achievementItem.getMutiSelArr().optJSONObject(i);
+				if(jo!=null)
+				{
+					Button btn=new Button(getActivity());
+					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+					layoutParams.setMargins(10,0,10,0);//4个参数按顺序分别是左上右下
+					layoutParams.height=95;
+					btn.setLayoutParams(layoutParams);
+					btn.setText(jo.optString("name"));
+					ll_btns.addView(btn);
+					btn.setOnClickListener(new OnClickListener() {
 						@Override
-						public void onClick(DialogInterface dialog, int which) {
-
-							for (int i = 0; i < layout.getChildCount(); i++) {
-								View view = layout.getChildAt(i);
-								String key = "";
-								String value = "";
-								if (view instanceof EditText) {
-									EditText editText = (EditText) view;
-									key = (String) editText.getContentDescription();
-									value = editText.getText().toString();
-								} else if (view instanceof Spinner) {
-									Spinner spinner = (Spinner) view;
-									key = (String) spinner.getContentDescription();
-									value = spinner.getSelectedItem().toString();
-								}
-								for (int j = 0; j < achievementItem.getFilterArr().length(); j++) {
-									JSONObject item = achievementItem.getFilterArr().optJSONObject(j);
-									if (item.optString("标题").equals(key)) {
-										try {
-											item.put("值", value);
-										} catch (JSONException e) {
-											e.printStackTrace();
-										}
-									}
+						public void onClick(View view) {
+							String selIdStr="";
+							for(int i=0;i<achievements.size();i++)
+							{
+								Achievement item=achievements.get(i);
+								if(item.isIfChecked())
+								{
+									if(selIdStr.length()>0)
+										selIdStr+=","+item.getId();
+									else
+										selIdStr=item.getId();
 								}
 							}
-							getAchievesItem(true);
+							if(selIdStr.length()==0) {
+								AppUtility.showToastMsg(getActivity(),"请先勾选记录");
+								return;
+							}
+							String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+							JSONObject queryObj=AppUtility.parseQueryStrToJson(jo.optString("url"));
+							JSONObject jo = new JSONObject();
+							try {
+								jo.put("用户较验码", checkCode);
+								jo.put("selIdStr",selIdStr);
+								Iterator it = queryObj.keys();
+								while (it.hasNext()) {
+									String key = (String) it.next();
+									String value = queryObj.getString(key);
+									jo.put(key, value);
+								}
+
+							} catch (JSONException e1) {
+								e1.printStackTrace();
+							}
+							CampusAPI.httpPost(jo, mHandler, 2);
 						}
-					}).setNegativeButton("取消", null).show();
+					});
+					if(jo.optString("color").length()>0)
+					{
+						if(jo.optString("color").equals("orange"))
+							btn.setBackgroundResource(R.drawable.button_round_corner_orange);
+						else if(jo.optString("color").equals("blue"))
+							btn.setBackgroundResource(R.drawable.button_round_corner_blue);
+						else
+							btn.setBackgroundResource(R.drawable.button_round_corner_green);
+
+					}
+				}
+			}
+			ll_multisel.setVisibility(VISIBLE);
 		}
+		else
+			ll_multisel.setVisibility(View.GONE);
+		adapter.notifyDataSetChanged();
 	}
 }

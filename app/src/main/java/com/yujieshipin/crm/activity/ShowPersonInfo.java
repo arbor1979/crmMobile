@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,8 +28,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewPager;
 import android.text.InputType;
+import android.text.Layout;
 import android.text.util.Linkify;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,6 +45,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,6 +60,7 @@ import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.adapter.MyPictureAdapter;
 import com.yujieshipin.crm.api.CampusAPI;
 import com.yujieshipin.crm.api.CampusParameters;
+import com.yujieshipin.crm.api.Utility;
 import com.yujieshipin.crm.base.Constants;
 import com.yujieshipin.crm.db.DatabaseHelper;
 import com.yujieshipin.crm.entity.User;
@@ -82,6 +88,7 @@ public class ShowPersonInfo extends Activity {
 	DatabaseHelper database;
 	JSONObject userObj;
 	String[] keyList;
+	LinearLayout bottomly;
 	User user;
 	MyAdapter adapter;
 	Button changeheader;
@@ -148,6 +155,7 @@ public class ShowPersonInfo extends Activity {
 		return database;
 	}
 	
+
 	private void initContent() {
 		
         ImageOptions options = new ImageOptions();
@@ -218,7 +226,65 @@ public class ShowPersonInfo extends Activity {
 			keyList=new String[0];
 		adapter=new MyAdapter(this);
 		aq.id(R.id.listView1).adapter(adapter);
-		
+		JSONArray funcMenu=userObj.optJSONArray("功能菜单");
+		if(funcMenu!=null && funcMenu.length()>0)
+		{
+			ListView listview=(ListView)findViewById(R.id.listView1);
+
+			if(listview.getFooterViewsCount()==0) {
+				bottomly = new LinearLayout(this);
+				bottomly.setOrientation(LinearLayout.VERTICAL);
+				listview.addFooterView(bottomly);
+			}
+			bottomly.removeAllViews();
+
+			for(int i=0;i<funcMenu.length();i++)
+			{
+				final JSONObject obj=funcMenu.optJSONObject(i);
+				Button btn=new Button(this);
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+				lp.setMargins(10, 10, 10, 10);
+				if(android.os.Build.VERSION.SDK_INT>=Build.VERSION_CODES.M) {
+					if(obj.optString("color").equals("green"))
+						btn.setBackgroundResource(R.drawable.button_round_corner_green);
+					else if(obj.optString("color").equals("orange"))
+						btn.setBackgroundResource(R.drawable.button_round_corner_orange);
+					else
+						btn.setBackgroundResource(R.drawable.button_round_corner_blue);
+					btn.setTextColor(getResources().getColor(R.color.white) );
+				}
+				btn.setText(obj.optString("name"));
+				btn.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						String url=obj.optString("url");
+						if(url.length()>0) {
+
+							String template=obj.optString("template");
+							String templategrade=obj.optString("templategrade");
+							Intent intent =null;
+							if(template.length()==0)
+							{
+								intent=new Intent(ShowPersonInfo.this,SchoolDetailActivity.class);
+								intent.putExtra("templateName", "成绩");
+							}
+							else
+							{
+								if(templategrade.equals("main"))
+									intent=new Intent(ShowPersonInfo.this,SchoolActivity.class);
+								else
+									intent=new Intent(ShowPersonInfo.this,SchoolDetailActivity.class);
+								intent.putExtra("templateName", template);
+							}
+
+							intent.putExtra("interfaceName", url);
+							startActivityForResult(intent,101);
+						}
+					}
+				});
+				bottomly.addView(btn,lp);
+			}
+		}
 	}
 	
 	public class MyAdapter extends BaseAdapter{
@@ -631,6 +697,11 @@ public class ShowPersonInfo extends Activity {
 				String picPath = data.getStringExtra("picPath");
 				SubmitUploadFile(picPath);
 			}
+			break;
+		case 101:
+			if(resultCode==1)
+				getPrivateAlbum();
+			break;
 		default:
 			break;
 		}

@@ -240,7 +240,7 @@ public class TabSchoolActivtiy extends FragmentActivity {
 		btnLeft.setVisibility(View.VISIBLE);
 		adapter=new SchoolWorkAdapter(TabSchoolActivtiy.this, schoolWorkItems);
 		int screenWidth=AppUtility.getAndroiodScreenProperty(this);
-		int spancount= (int) Math.floor(screenWidth / 75);
+		int spancount= (int) Math.floor(screenWidth / 85);
 		GridLayoutManager manager = new GridLayoutManager(this,spancount);
 		//设置header
 		manager.setSpanSizeLookup(new SectionedSpanSizeLookup(adapter,manager));
