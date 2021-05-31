@@ -552,12 +552,12 @@ public class ImageUtility {
 	{
 		int orientation = ImageUtility.readPictureDegree(filePath);
     	if(Math.abs(orientation) > 0){
-    	    Bitmap bitmap =  rotaingImageView(orientation, getBitmapFromPath(filePath,1080));//旋转图片
+    	    Bitmap bitmap =  rotaingImageView(orientation, getBitmapFromPath(filePath,1280));//旋转图片
     	    writeTofiles(bitmap,filePath);
     	}
     	else
     	{
-    		Bitmap bitmap=getBitmapFromPath(filePath,1080);
+    		Bitmap bitmap=getBitmapFromPath(filePath,1280);
     		writeTofiles(bitmap,filePath);
     	}
 	}

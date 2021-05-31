@@ -5,8 +5,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b710926bc593076215662755d6d21cef/huawei-umengaccs-1.2.1/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/df736b1ecfe312e5d06e0f2c69eefa46/huawei-umengaccs-1.2.1/res" />
       <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/df736b1ecfe312e5d06e0f2c69eefa46/huawei-umengaccs-1.2.1/res" />
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/df736b1ecfe312e5d06e0f2c69eefa46/huawei-umengaccs-1.2.1/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/df736b1ecfe312e5d06e0f2c69eefa46/huawei-umengaccs-1.2.1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/05dc95903a3e88c9e04fafa140a94fcd/huawei-umengaccs-1.2.1/res" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/05dc95903a3e88c9e04fafa140a94fcd/huawei-umengaccs-1.2.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/05dc95903a3e88c9e04fafa140a94fcd/huawei-umengaccs-1.2.1/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/modules-2/files-2.1/com.umeng.umsdk/huawei-umengaccs/1.2.1/f750519919ccc30f5022a2bb82cd920130c7cc66/huawei-umengaccs-1.2.1-javadoc.jar!/" />

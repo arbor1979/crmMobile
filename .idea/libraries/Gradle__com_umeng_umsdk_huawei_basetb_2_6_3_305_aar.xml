@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.umeng.umsdk:huawei-basetb:2.6.3.305@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/17c421603842aa9f191802fedce9dca0/huawei-basetb-2.6.3.305/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/17c421603842aa9f191802fedce9dca0/huawei-basetb-2.6.3.305/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/17c421603842aa9f191802fedce9dca0/huawei-basetb-2.6.3.305/jars/libs/HiAnalytics_SDK_2.1.4.300.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/17c421603842aa9f191802fedce9dca0/huawei-basetb-2.6.3.305/jars/libs/UpdateSdk_release_V2.0.3.301.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/17c421603842aa9f191802fedce9dca0/huawei-basetb-2.6.3.305/res" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/fda9a74fa686d580e83c44ed6f129ed0/huawei-basetb-2.6.3.305/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/fda9a74fa686d580e83c44ed6f129ed0/huawei-basetb-2.6.3.305/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/fda9a74fa686d580e83c44ed6f129ed0/huawei-basetb-2.6.3.305/jars/libs/HiAnalytics_SDK_2.1.4.300.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/fda9a74fa686d580e83c44ed6f129ed0/huawei-basetb-2.6.3.305/jars/libs/UpdateSdk_release_V2.0.3.301.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/fda9a74fa686d580e83c44ed6f129ed0/huawei-basetb-2.6.3.305/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/modules-2/files-2.1/com.umeng.umsdk/huawei-basetb/2.6.3.305/383472ac2145d95129fd60613bacdc4db7db8e74/huawei-basetb-2.6.3.305-javadoc.jar!/" />

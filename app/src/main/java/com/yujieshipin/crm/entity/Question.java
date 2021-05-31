@@ -99,7 +99,7 @@ public class Question implements Serializable{
 		lines=jo.optInt("行数");
 		if(status.equals("图片")){
 			JSONArray jaimages = jo.optJSONArray("用户答案");
-			if(jaimages!=null){
+			if(jaimages!=null && jaimages.length()>0){
 				setImages(ImageItem.toList(jaimages));
 			}else{
 				setImages(new ArrayList<ImageItem>());

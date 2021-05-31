@@ -108,6 +108,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
+			if(getActivity()==null)
+				return;
 			switch (msg.what) {
 			case -1:
 				showFetchFailedView();
@@ -142,6 +144,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 								for(int i=0;i<achievementItem.getGroupArr().length();i++)
 								{
 									String groupname=achievementItem.getGroupArr().getString(i);
+
 									RadioButton rdbtn = (RadioButton) LayoutInflater.from(getActivity()).inflate(R.layout.tabmenu_radiobutton, null);
 									rdbtn.setText(groupname);
 									if(achievementItem.getCurGroup()==i)
@@ -554,8 +557,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 		        options.fileCache=false;
 		        options.fallback=R.drawable.ic_launcher1;
 				options.targetWidth=200;
-				if(achievement.getHeadtype().equals("-1"))
-					options.round = 100;
+				//if(achievement.getHeadtype().equals("-1"))
+				//	options.round = 100;
 				aq.id(holder.icon).image(imagurl,options);
 			}
 			else
@@ -584,6 +587,10 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 			holder.title.setText(achievement.getTitle());
 			holder.theTotalMoney.setText(achievement.getThirdline());
 			holder.total.setText(achievement.getTotal());
+			if(achievement.getTotal().length()>0)
+				holder.total.setVisibility(View.VISIBLE);
+			else
+				holder.total.setVisibility(View.GONE);
 			holder.theShopper.setText(achievement.getRank());
 			if(achievement.getExtraMenu()==null)
 				holder.moreMenu.setVisibility(View.GONE);
@@ -599,6 +606,8 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					holder.total.setBackground(getResources().getDrawable(R.drawable.school_achievement_brown));
 				else if(achievement.getThecolor().toLowerCase().equals("pink"))
 					holder.total.setBackground(getResources().getDrawable(R.drawable.school_achievement_pink));
+				else if(achievement.getThecolor().toLowerCase().equals("gray"))
+					holder.total.setBackground(getResources().getDrawable(R.drawable.school_achievement_gray));
 				else
 					holder.total.setBackground(getResources().getDrawable(R.drawable.school_achievement_bg));
 				holder.total.setTextColor(getActivity().getResources().getColor(R.color.white));
@@ -612,7 +621,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 						if(!compoundButton.isPressed())
 							return ;
 						achievement.setIfChecked(b);
-						achievements.set(position,achievement);
+						//achievements.set(position,achievement);
 					}
 				});
 			}
@@ -632,6 +641,7 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 					if(bShowMutiSel) {
 						CheckBox cb_checkitem=(CheckBox)v.findViewById(R.id.cb_checkitem);
 						cb_checkitem.setChecked(!cb_checkitem.isChecked());
+						achievement.setIfChecked(cb_checkitem.isChecked());
 						return;
 					}
 					String DetailUrl = achievement.getDetailUrl();
@@ -1494,21 +1504,30 @@ public class SchoolBillFragment extends Fragment implements IXListViewListener{
 							}
 							String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
 							JSONObject queryObj=AppUtility.parseQueryStrToJson(jo.optString("url"));
-							JSONObject jo = new JSONObject();
-							try {
-								jo.put("用户较验码", checkCode);
-								jo.put("selIdStr",selIdStr);
-								Iterator it = queryObj.keys();
-								while (it.hasNext()) {
-									String key = (String) it.next();
-									String value = queryObj.getString(key);
-									jo.put(key, value);
-								}
-
-							} catch (JSONException e1) {
-								e1.printStackTrace();
+							if(queryObj.optString("templateName").length()>0) {
+								Intent intent = new Intent(getActivity(), SchoolDetailActivity.class);
+								intent.putExtra("templateName", queryObj.optString("templateName"));
+								intent.putExtra("interfaceName", jo.optString("url")+"&ID="+selIdStr);
+								intent.putExtra("title", title);
+								startActivityForResult(intent, 101);
 							}
-							CampusAPI.httpPost(jo, mHandler, 2);
+							else {
+								JSONObject jo = new JSONObject();
+								try {
+									jo.put("用户较验码", checkCode);
+									jo.put("selIdStr", selIdStr);
+									Iterator it = queryObj.keys();
+									while (it.hasNext()) {
+										String key = (String) it.next();
+										String value = queryObj.getString(key);
+										jo.put(key, value);
+									}
+
+								} catch (JSONException e1) {
+									e1.printStackTrace();
+								}
+								CampusAPI.httpPost(jo, mHandler, 2);
+							}
 						}
 					});
 					if(jo.optString("color").length()>0)

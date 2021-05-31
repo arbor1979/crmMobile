@@ -4,9 +4,10 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8e72a1bf7caeb1899c5f2afbd927e0e8/xiaomi-umengaccs-1.1.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8f9e18bb834b93dac0e72437deba6910/xiaomi-umengaccs-1.1.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/54d1801a6bd7e411ce0332c03ad2a138/xiaomi-umengaccs-1.1.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/54d1801a6bd7e411ce0332c03ad2a138/xiaomi-umengaccs-1.1.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/54d1801a6bd7e411ce0332c03ad2a138/xiaomi-umengaccs-1.1.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/54d1801a6bd7e411ce0332c03ad2a138/xiaomi-umengaccs-1.1.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/d4f36695209c71e7de906966dd9b69b6/xiaomi-umengaccs-1.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/d4f36695209c71e7de906966dd9b69b6/xiaomi-umengaccs-1.1.0/res" />
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/transforms-2/files-2.1/d4f36695209c71e7de906966dd9b69b6/xiaomi-umengaccs-1.1.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-6.5-bin/caches/modules-2/files-2.1/com.umeng.umsdk/xiaomi-umengaccs/1.1.0/57f8729d914562de801fb5bbd556fb5210988d79/xiaomi-umengaccs-1.1.0-javadoc.jar!/" />
