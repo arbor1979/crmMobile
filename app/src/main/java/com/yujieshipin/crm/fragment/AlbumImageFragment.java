@@ -336,7 +336,7 @@ public class AlbumImageFragment extends Fragment{
 	{
 	    super.onDestroy();
 	    main_image.setImageDrawable(null);
-        headimgView.setImageDrawable(null);
+        //.setImageDrawable(null);
         for (MyTextViewEx item:MyTextList)
         {
             if(item!=null)

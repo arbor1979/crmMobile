@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -43,6 +44,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -57,6 +59,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.yujieshipin.crm.R;
 import com.yujieshipin.crm.CampusApplication;
+import com.yujieshipin.crm.adapter.MyPictureAdapter;
 import com.yujieshipin.crm.api.CampusAPI;
 import com.yujieshipin.crm.api.CampusException;
 import com.yujieshipin.crm.api.CampusParameters;
@@ -81,7 +84,7 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 	public static final int REQUEST_CODE_TAKE_PICTURE = 2;// //设置图片操作的标志
 	public static final int REQUEST_CODE_TAKE_CAMERA = 1;// //设置拍照操作的标志
 	public static final int MY_PERMISSIONS_REQUEST_Camera=6;
-	private String picturePath,hostId,userId;
+	private String picturePath,userType,userId;
 	private User user;
 	private static final String SD_PATH = "相册";
 	private AlbumImageInfo imageInfo;
@@ -113,59 +116,9 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 		});
 		user=((CampusApplication)getApplicationContext()).getLoginUserObj();
 	
-		String hostName=getIntent().getStringExtra("hostName");
-		title.setText(hostName+"的相册");
-		if(user.getLatestAddress().isEmpty())
-		{
-			if (Build.VERSION.SDK_INT >= 23)
-		    {
-		          if (ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-		          {  
-		        	  ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-		          }     
-		          else
-		        	  getLocation();
-		    }
-			else
-				getLocation();
-			
-		}
-		hostId=getIntent().getStringExtra("hostId");
-		userId = PrefUtility.get(Constants.PREF_CHECK_HOSTID, "");
-		if(hostId==null || hostId.length()==0)
-			hostId=userId;
-		if(userId.equals(hostId))
-		{
-			title.setText("我的相册");
-			LinearLayout layout=(LinearLayout)findViewById(R.id.setting_layout_goto);
-			layout.setVisibility(View.VISIBLE);
-			Button btnRight = (Button) findViewById(R.id.setting_btn_goto);
-			btnRight.setBackgroundResource(R.drawable.photograph);
-			layout.setOnClickListener(new OnClickListener(){
-	
-				@Override
-				public void onClick(View v) {
-					showGetPictureDiaLog();
-					
-				}
-				
-			});
-			LinearLayout layout1=(LinearLayout)findViewById(R.id.setting_layout_goto1);
-			layout1.setVisibility(View.VISIBLE);
-			Button btnRight1 = (Button) findViewById(R.id.setting_btn_goto1);
-			btnRight1.setBackgroundResource(R.drawable.album_message_history);
-			layout1.setOnClickListener(new OnClickListener(){
-	
-				@Override
-				public void onClick(View v) {
-					Intent intent=new Intent(AlbumPersonalActivity.this,AlbumShowMessage.class);
-					intent.putExtra("ifRead", 1);
-					startActivity(intent);
-					
-				}
-				
-			});
-		}
+		userId=getIntent().getStringExtra("userId");
+		userType=getIntent().getStringExtra("userType");
+
 		loadingLayout = (LinearLayout) findViewById(R.id.data_load);
 		
 		swipeLayout = (SwipeRefreshLayout) this.findViewById(R.id.swip);  
@@ -202,47 +155,19 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 	private void getDownloadSubject(boolean showProg) {
 		showProgress(showProg);
 
-		long datatime = System.currentTimeMillis();
 		String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
-		JSONObject jo = new JSONObject();
+		JSONObject jsonObj = new JSONObject();
 		try {
-			
-			jo.put("action","个人相册");
-			jo.put("hostId",hostId);
-			jo.put("用户较验码", checkCode);
-			jo.put("DATETIME", datatime);
+			jsonObj.put("function", "getContracts");
+			jsonObj.put("用户较验码", checkCode);
+			jsonObj.put("action", "getCusterPics");
+			jsonObj.put("userId", userId);
+			jsonObj.put("userType", userType);
+
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		String base64Str = Base64.encode(jo.toString().getBytes());
-		CampusParameters params = new CampusParameters();
-		params.add(Constants.PARAMS_DATA, base64Str);
-		CampusAPI.getDownloadSubject(params, mInterface, new RequestListener() {
-
-			@Override
-			public void onIOException(IOException e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onError(CampusException e) {
-				Message msg = new Message();
-				msg.what = -1;
-				msg.obj = e.getMessage();
-				mHandler.sendMessage(msg);
-				
-			}
-
-			@Override
-			public void onComplete(String response) {
-				Message msg = new Message();
-				msg.what = 3;
-				msg.obj = response;
-				mHandler.sendMessage(msg);
-				
-			}
-		});
+		CampusAPI.httpPost(jsonObj, mHandler, 3);
 	}
 	
 	private void showProgress(boolean progress) {
@@ -475,10 +400,7 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 			}
 			
 			final EditText et=(EditText)layout.findViewById(R.id.editText1);
-			final RadioButton radio0=(RadioButton)layout.findViewById(R.id.radio0);
-			RadioButton radio1=(RadioButton)layout.findViewById(R.id.radio1);
-			if(user.getUserType().equals("老师"))
-				radio1.setText("仅本部门可见");
+
 			new AlertDialog.Builder(this).setTitle("请输入图片的描述")
 			.setCancelable(false)
 			.setView(layout)
@@ -501,10 +423,7 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 							}
 							imageInfo.setDescription(et.getText().toString());
 						}
-						if(radio0.isChecked())
-							imageInfo.setShowLimit("全校");
-						else
-							imageInfo.setShowLimit("本班");
+
 						SubmitUploadFile(imageInfo);
 						((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS); 
 						field.set(dialog, true);  
@@ -546,24 +465,23 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 		params.add("老师姓名", downloadSubject.getUserName());
 		params.add("文件名", downloadSubject.getFileName());
 		*/
-		params.add("JiaoYanMa", checkCode);
-		
-		
+		params.add("token", checkCode);
 		params.add("pic", image.getLocalPath());
-		params.add("TuPianLeiBie", "相册");
-		params.add("Description", image.getDescription());
-		params.add("Address", image.getAddress());
 		params.add("device", image.getDevice());
-		params.add("ShowLimit", image.getShowLimit());
+		params.add("Description", image.getDescription());
+		params.add("function","uploadAvatar");
+
+		params.add("action", "customerPhotos");
+		params.add("ID", userId);
+		params.add("userType", userType);
+
 		HttpMultipartPost post = new HttpMultipartPost(this, params){
 			@Override  
 		    protected void onPostExecute(String result) {  
-				Bundle bundle = new Bundle();
-				bundle.putString("result", result);
-				bundle.putSerializable("image", image);
+
 				Message msg = new Message();
 				msg.what = 5;
-				msg.obj = bundle; 
+				msg.obj = result;
 				mHandler.sendMessage(msg);	
 				this.pd.dismiss();
 		    }
@@ -588,69 +506,58 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 				break;
 			case 3:// 获取相册
 				showProgress(false); 
-				swipeLayout.setRefreshing(false);  
-				result = msg.obj.toString();
-				resultStr = "";
-				if (AppUtility.isNotEmpty(result)) {
-					try {
-						resultStr = new String(Base64.decode(result
-								.getBytes("GBK")));
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}
+				swipeLayout.setRefreshing(false);
+				resultStr = msg.obj.toString();
 				try {
 					JSONObject jo=new JSONObject(resultStr);
 					JSONArray ja = jo.getJSONArray("相册");
 					list.clear();
 					if(ja!=null)
 						list=AlbumImageInfo.toList(ja);
-					
+					if(jo.optString("sysuser").equals(user.getUsername()) || user.getUserType().equals("1"))
+					{
+						LinearLayout layout=(LinearLayout)findViewById(R.id.setting_layout_goto);
+						layout.setVisibility(View.VISIBLE);
+						Button btnRight = (Button) findViewById(R.id.setting_btn_goto);
+						btnRight.setBackgroundResource(R.drawable.photograph);
+						layout.setOnClickListener(new OnClickListener(){
+
+							@Override
+							public void onClick(View v) {
+								showGetPictureDiaLog();
+
+							}
+
+						});
+
+					}
 					if (list.size()==0) {
 						String tipmsg="目前还没有照片";
 						AppUtility.showToastMsg(AlbumPersonalActivity.this, tipmsg);
 					}
+
 					pAdpter.notifyDataSetChanged();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				break;
 			case 5:
-				
-				Bundle	upLoadbundle = (Bundle) msg.obj;
-				result = upLoadbundle.getString("result");
-				AlbumImageInfo image = (AlbumImageInfo) upLoadbundle.getSerializable("image");
-				
-				
+
+				result = msg.obj.toString();
 				try {
-					resultStr = new String(Base64.decode(result.getBytes("GBK")));
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
-				}
-				
-				try {
-					JSONObject jo = new JSONObject(resultStr);
-					
-					if("OK".equals(jo.optString("STATUS"))){
-						DialogUtility.showMsg(AlbumPersonalActivity.this, "上传成功！");
-						
-						AlbumImageInfo ds = new AlbumImageInfo(jo);
-						String newFileName=FileUtility.creatSDDir(SD_PATH)+ds.getName();
-						FileUtility.copyFile(image.getLocalPath(),newFileName);
-						FileUtility.deleteFile(image.getLocalPath());
-						ds.setLocalPath(newFileName);
-						list.add(0,ds);
-						
-						pAdpter.notifyDataSetChanged();
-						
+					JSONObject jo = new JSONObject(result);
+
+					if("成功".equals(jo.optString("result"))){
+						getDownloadSubject(false);
 					}else{
-						DialogUtility.showMsg(AlbumPersonalActivity.this, "上传失败！");
+						DialogUtility.showMsg(AlbumPersonalActivity.this, "失败:"+jo.optString("errorMsg"));
 					}
 				}catch (Exception e) {
 					AppUtility.showToastMsg(AlbumPersonalActivity.this, e.getMessage());
 					e.printStackTrace();
-				}	
+				}
 				break;
+
 			}
 		}
 	};
@@ -692,11 +599,13 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 				vh=new ViewHolder();
 				vh.theDay=(TextView)convertView.findViewById(R.id.theDay);
 				vh.theMonth=(TextView)convertView.findViewById(R.id.theMonth);
-				vh.theAddress=(TextView)convertView.findViewById(R.id.theAddress);
+
 				vh.theImage=(ImageView)convertView.findViewById(R.id.theImage);
 				vh.theDescription=(TextView)convertView.findViewById(R.id.theDescription);
 				vh.thePraise=(TextView)convertView.findViewById(R.id.thePraise);
 				vh.theComment=(TextView)convertView.findViewById(R.id.theComment);
+				vh.delBtn=(ImageButton)convertView.findViewById(R.id.delBtn);
+
 				convertView.setTag(vh);
 			}
 			else
@@ -704,11 +613,10 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 				vh = (ViewHolder) convertView.getTag();
 			}
 			
-			AlbumImageInfo aii=list.get(position);
+			final AlbumImageInfo aii=list.get(position);
 			vh.theDay.setText("");
 			vh.theMonth.setText("");
-			vh.thePraise.setText("0");
-			vh.theComment.setText("0");
+
 			boolean flag=false;
 			if(position==0)
 			{
@@ -738,10 +646,10 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 		        }            
 		    };
 			aq.id(vh.theImage).image(aii.getUrl(),false,true,200,R.drawable.empty_photo,cb);
-			vh.theAddress.setText(aii.getAddress());
+
 			vh.theDescription.setText(aii.getDescription());
-			vh.thePraise.setText(String.valueOf(aii.getPraiseCount()));
-			vh.theComment.setText(String.valueOf(aii.getCommentCount()));
+			vh.thePraise.setText(aii.getHostName());
+			vh.theComment.setText(aii.getDevice());
 			vh.theImage.setTag(position);
 			convertView.setOnClickListener(new OnClickListener(){
 			
@@ -751,31 +659,75 @@ public class AlbumPersonalActivity extends FragmentActivity implements SwipeRefr
 					int index=(Integer) v.findViewById(R.id.theImage).getTag();
 					ArrayList<AlbumImageInfo> detailList=new ArrayList<AlbumImageInfo>();
 					int PAGE_SIZE=20;
-					for(int i=index;i<list.size();i++)
+					ArrayList<String> picPaths= new ArrayList<String>();
+					ArrayList<String> picNames= new ArrayList<String>();
+					for(int i=0;i<list.size();i++)
 					{
+						picPaths.add(list.get(i).getUrl());
+						picNames.add(list.get(i).getDescription());
 						detailList.add(list.get(i));
 						if(detailList.size()>PAGE_SIZE)
 							break;
 					}
-					Intent intent=new Intent(context,AlbumShowImagePage.class);
-					intent.putExtra("imageList", detailList);
-					intent.putExtra("allList", list);
-					((FragmentActivity) context).startActivityForResult(intent,3);
+
+					Intent intent = new Intent(context,ImagesActivity.class);
+					intent.putStringArrayListExtra("pics",
+							(ArrayList<String>) picPaths);
+					intent.putStringArrayListExtra("txts",
+							(ArrayList<String>) picNames);
+					intent.putExtra("position", index);
+
+					context.startActivity(intent);
+
 				}
 				
 			});
-			
+			if(aii.getHostId().equals(user.getUsername()) || user.getUserType().equals("1"))
+				vh.delBtn.setVisibility(View.VISIBLE);
+			else
+				vh.delBtn.setVisibility(View.GONE);
+			vh.delBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+
+					new AlertDialog.Builder(context)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle("确认对话框")
+						.setMessage("是否确认删除?")
+						.setPositiveButton("是", new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								String checkCode = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
+								JSONObject jo = new JSONObject();
+								try {
+									jo.put("用户较验码", checkCode);
+									jo.put("function", "getContracts");
+									jo.put("action", "delCusterPic");
+									jo.put("id", aii.getName());
+								} catch (JSONException e1) {
+									e1.printStackTrace();
+								}
+								CampusAPI.httpPost(jo, mHandler, 5);
+							}
+						})
+						.setNegativeButton("否", null)
+						.show();
+
+				}
+			});
 			return convertView;
 		}
 		public class ViewHolder {
 			public TextView theDay;
 			public TextView theMonth;
-			public TextView theAddress;
+
 			public ImageView theImage;
 			public TextView theDescription;
 			public TextView thePraise;
 			public TextView theComment;
-			
+			public ImageButton delBtn;
 		}
 		
 	}

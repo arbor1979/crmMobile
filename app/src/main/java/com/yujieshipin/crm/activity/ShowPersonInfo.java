@@ -119,29 +119,23 @@ public class ShowPersonInfo extends Activity {
 		user=((CampusApplication)getApplicationContext()).getLoginUserObj();
 		changeheader= (Button) findViewById(R.id.bt_changeHeader);
 		changeheader.setVisibility(View.GONE);
+		changeheader.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				showGetPictureDiaLog();
+			}
+
+		});
 		if(userType>0 && studentId.equals(user.getId()))//用户
 		{
 			changeheader.setVisibility(View.VISIBLE);
-			changeheader.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					showGetPictureDiaLog();
-				}
-				
-			});
 		}
 		else if(userType==-1)//产品
 		{
 			changeheader.setVisibility(View.VISIBLE);
 			changeheader.setText("更换图片");
-			changeheader.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v) {
-					showGetPictureDiaLog();
-				}
-
-			});
 		}
+
 		aq = new AQuery(this);
 		userObj=new JSONObject();
 		getPrivateAlbum();
@@ -243,14 +237,16 @@ public class ShowPersonInfo extends Activity {
 				final JSONObject obj=funcMenu.optJSONObject(i);
 				Button btn=new Button(this);
 				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-				lp.setMargins(10, 10, 10, 10);
+				lp.setMargins(20, 20, 20, 20);
 				if(android.os.Build.VERSION.SDK_INT>=Build.VERSION_CODES.M) {
-					if(obj.optString("color").equals("green"))
-						btn.setBackgroundResource(R.drawable.button_round_corner_green);
+					if(obj.optString("color").equals("blue"))
+						btn.setBackgroundResource(R.drawable.button_round_corner_blue);
 					else if(obj.optString("color").equals("orange"))
 						btn.setBackgroundResource(R.drawable.button_round_corner_orange);
+					else if(obj.optString("color").equals("pink"))
+						btn.setBackgroundResource(R.drawable.school_achievement_pink);
 					else
-						btn.setBackgroundResource(R.drawable.button_round_corner_blue);
+						btn.setBackgroundResource(R.drawable.button_round_corner_green);
 					btn.setTextColor(getResources().getColor(R.color.white) );
 				}
 				btn.setText(obj.optString("name"));
@@ -258,28 +254,27 @@ public class ShowPersonInfo extends Activity {
 					@Override
 					public void onClick(View v) {
 						String url=obj.optString("url");
-						if(url.length()>0) {
-
-							String template=obj.optString("template");
-							String templategrade=obj.optString("templategrade");
-							Intent intent =null;
-							if(template.length()==0)
-							{
-								intent=new Intent(ShowPersonInfo.this,SchoolDetailActivity.class);
-								intent.putExtra("templateName", "成绩");
-							}
-							else
-							{
-								if(templategrade.equals("main"))
-									intent=new Intent(ShowPersonInfo.this,SchoolActivity.class);
-								else
-									intent=new Intent(ShowPersonInfo.this,SchoolDetailActivity.class);
-								intent.putExtra("templateName", template);
-							}
-
-							intent.putExtra("interfaceName", url);
-							startActivityForResult(intent,101);
+						String template=obj.optString("template");
+						String templategrade=obj.optString("templategrade");
+						Intent intent =null;
+						if(template.equals("相册"))
+						{
+							String ID=obj.optString("ID");
+							intent=new Intent(ShowPersonInfo.this,AlbumPersonalActivity.class);
+							intent.putExtra("userId", ID);
+							intent.putExtra("userType", userType);
 						}
+						else
+						{
+							if(templategrade.equals("main"))
+								intent=new Intent(ShowPersonInfo.this,SchoolActivity.class);
+							else
+								intent=new Intent(ShowPersonInfo.this,SchoolDetailActivity.class);
+							intent.putExtra("templateName", template);
+							intent.putExtra("interfaceName", url);
+						}
+						startActivityForResult(intent,101);
+
 					}
 				});
 				bottomly.addView(btn,lp);
@@ -350,7 +345,7 @@ public class ShowPersonInfo extends Activity {
 				if(holder.grid_picture.getAdapter()==null)
 				{
 					MyPictureAdapter myPictureAdapter = new MyPictureAdapter(ShowPersonInfo.this,
-							false,picturePaths,10,"课堂笔记",position);
+							false,picturePaths,10,"customer",position);
 					myPictureAdapter.setPicNames(pictureNames);
 					holder.grid_picture.setAdapter(myPictureAdapter);
 				}
@@ -495,6 +490,10 @@ public class ShowPersonInfo extends Activity {
 						userObj=obj;
 						userImage=userObj.optString("用户头像");
 						initContent();
+						if(userType==0 && (userObj.optString("sysuser").equals(user.getUsername()) || user.getUserType().equals("1")))
+						{
+							changeheader.setVisibility(View.VISIBLE);
+						}
 						
 					}
 
@@ -737,6 +736,10 @@ public class ShowPersonInfo extends Activity {
 		if(userType==-1) {
 			params.add("action", "product");
 			params.add("productid", studentId);
+		}
+		else if(userType==0) {
+			params.add("action", "customer");
+			params.add("customerid", studentId);
 		}
 		else
 			params.add("action","user");

@@ -1128,6 +1128,11 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 				listener=new OnFocusChangeListenerImpl(position);
 				listenerhm.put(position,listener);
 			}
+			holder.etAnswer.setOnFocusChangeListener(listener);
+			holder.et_autotext.setOnFocusChangeListener(listener);
+			holder.et_colorname.setOnFocusChangeListener(listener);
+			holder.et_colornum.setOnFocusChangeListener(listener);
+			/*
 			holder.etAnswer.setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -1156,6 +1161,7 @@ public class SchoolQuestionnaireDetailFragment extends Fragment {
 					return false;
 				}
 			});
+			 */
 			holder.etAnswer.setTag(position);
 			holder.et_autotext.setTag(position);
 			holder.et_colorname.setTag(position);

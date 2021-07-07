@@ -39,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <RadioButton
             android:id="@+id/radio0"

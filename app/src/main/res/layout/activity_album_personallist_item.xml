@@ -53,24 +53,34 @@
             android:layout_height="80dp"
             android:layout_marginLeft="5dp"
             android:gravity="top|left"
+            android:layout_weight="1"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/theAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="地址"
-                android:textSize="@dimen/text_size_micro"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/theDescription"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="top|left"
                 android:layout_weight="1"
-                android:text="照片描述"
-                android:textSize="@dimen/text_size_micro" />
+                android:orientation="horizontal" >
 
+
+                <TextView
+                    android:id="@+id/theDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="照片描述"
+                    android:textSize="@dimen/text_size_micro" />
+                <ImageButton
+                    android:id="@+id/delBtn"
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/trash"
+                    android:visibility="visible" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,9 +88,10 @@
 
                 <ImageView
                     android:id="@+id/iv_changeHead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/heart_fill" />
+                    android:layout_width="26dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/manlittle"
+                    />
 
                 <TextView
                     android:id="@+id/thePraise"
@@ -96,7 +107,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/chat_fill" />
+                    android:src="@drawable/mobilelittle"
+                    />
 
                 <TextView
                     android:id="@+id/theComment"
@@ -109,6 +121,8 @@
 
             </LinearLayout>
         </LinearLayout>
+
+
 
     </LinearLayout>
 

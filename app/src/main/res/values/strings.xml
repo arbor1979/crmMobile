@@ -118,7 +118,7 @@
     <string name="summary_health">教室卫生评价</string>
     <string name="summary_content">授课内容</string>
     <string name="content_hint">请输入授课内容总结</string>
-    <string name="album_hint">天气不错，心情也不错...</string>
+    <string name="album_hint">照片描述</string>
     <string name="summary_homework">作业布置</string>
     <string name="homework_hint">请输入布置作业内容</string>
     <string name="summary_perfect">优</string>

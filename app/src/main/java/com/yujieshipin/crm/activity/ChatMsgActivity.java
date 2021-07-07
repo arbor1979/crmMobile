@@ -1052,42 +1052,11 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 						@Override
 						public void onClick(View view) {
 							String jumpurl = entity.getLinkUrl();
-							String template = AppUtility.findUrlQueryString(jumpurl, "template");
-							String templategrade = AppUtility.findUrlQueryString(jumpurl, "templategrade");
-							String targettitle = AppUtility.findUrlQueryString(jumpurl, "targettitle");
-							if (template.length() == 0)
-								template = "浏览器";
-							if (jumpurl.indexOf("?") > 0)
-								jumpurl += "&";
-							else
-								jumpurl += "?";
-							if (template.equals("浏览器")) {
-								Intent contractIntent = new Intent(ChatMsgActivity.this, WebSiteActivity.class);
-								String jiaoyanma = PrefUtility.get(Constants.PREF_CHECK_CODE, "");
-								JSONObject obj = new JSONObject();
-								try {
-									obj.put("用户较验码", jiaoyanma);
-									jiaoyanma = Base64.encode(obj.toString().getBytes());
-								} catch (JSONException e) {
-									e.printStackTrace();
-								}
-								jumpurl = jumpurl + "jiaoyanma=" + jiaoyanma;
-								contractIntent.putExtra("url", jumpurl);
-								contractIntent.putExtra("title", targettitle);
-								startActivity(contractIntent);
-							} else {
-								if (template.equals("公告通知"))
-									template = "通知";
-								Intent intent;
-								if (templategrade.equals("main"))
-									intent = new Intent(ChatMsgActivity.this, SchoolActivity.class);
-								else
-									intent = new Intent(ChatMsgActivity.this, SchoolDetailActivity.class);
-								intent.putExtra("title", targettitle);
-								intent.putExtra("interfaceName", jumpurl);
-								intent.putExtra("templateName", template);
-								startActivity(intent);
-							}
+							Intent intent = new Intent(ChatMsgActivity.this, SchoolActivity.class);
+							intent.putExtra("title", "");
+							intent.putExtra("interfaceName", jumpurl);
+							intent.putExtra("templateName", "单据");
+							startActivity(intent);
 
 						}
 					});
@@ -1135,7 +1104,11 @@ public class ChatMsgActivity extends FragmentActivity implements IXListViewListe
 				//ImageUtility.getRoundedCornerBitmap(bitmap, 20,800);
 				Log.d(TAG, "----------------------");
 			}else{
-				aq.id(viewHolder.imgUser).image(path);
+				if(path!=null && path.length()>0)
+					aq.id(viewHolder.imgUser).image(path);
+				else
+					aq.id(viewHolder.imgUser).image(R.drawable.ic_launcher1);
+
 			}
 		    
 			viewHolder.imgUser.setOnClickListener(new OnClickListener() {
